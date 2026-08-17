@@ -545,10 +545,10 @@ html, body {
   .life-age-label { display: none; }
   #life-radar { display: none; }
   .life-attrs {
-    flex: 1; flex-direction: row; flex-wrap: wrap; gap: 1px 10px;
-    font-size: 12.5px; align-content: center;
+    flex: 1; flex-direction: row; flex-wrap: wrap; gap: 1px 8px;
+    font-size: 12px; align-content: center;
   }
-  .life-attr-row { padding: 0; gap: 4px; }
+  .life-attr-row { padding: 0; gap: 3px; white-space: nowrap; }
   .life-talents { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; justify-content: flex-start; }
   .life-talents .chip { flex-shrink: 0; font-size: 11px; padding: 2px 8px; }
   .life-route { margin-top: 0; font-size: 12px; padding: 2px 8px; }
@@ -701,7 +701,7 @@ html, body {
 /* ---------- v2：手机端补充 ---------- */
 @media (max-width: 768px) {
   .hero-card { width: 100%; min-height: 0; }
-  .world-grid { grid-template-columns: 1fr 1fr; }
+  .world-grid { grid-template-columns: 1fr 1fr; width: 100%; }
   .world-card { height: 130px; }
   .world-name { font-size: 17px; }
   .life-v2 { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; }
@@ -710,4 +710,7 @@ html, body {
   .life-quest small { display: none; }
   .bt-skill { font-size: 14px; padding: 8px 12px; }
   .rg-node { width: 110px; height: 62px; font-size: 15px; }
+  .map-act .l-name { white-space: nowrap; font-size: 15px; }
+  .map-act { padding: 10px 12px; }
+  .map-act .l-desc { font-size: 12px; }
 }

@@ -320,6 +320,9 @@
     G.phase = 'life';
     UI.showScreen('life');
     AudioFX.bgm(w.id === 'xiuxian' ? 'xiuxian' : (w.pool === 'life' ? 'life' : 'novel'));
+    // 选项框若被上一世拖进了时间轴，先挪回安全位置，避免被清空时间轴时销毁
+    var cb = $('choice-box');
+    if (cb) { cb.classList.add('hidden'); $('life-main').appendChild(cb); }
     $('life-timeline').innerHTML = '';
     $('life-route').textContent = '';
     updateScene.current = null;
