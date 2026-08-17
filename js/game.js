@@ -47,12 +47,13 @@
     var pool = talentPool();
     var batch = [], usedIds = {}, usedGroups = {};
     var guard = 0;
+    var W = hasExtra('legend_up') ? [55, 42, 24, 18] : RARITY_W;   // 天命所归：天品翻倍
     while (batch.length < 10 && guard++ < 500) {
       var total = 0, i;
-      for (i = 0; i < pool.length; i++) total += RARITY_W[pool[i].rarity];
+      for (i = 0; i < pool.length; i++) total += W[pool[i].rarity];
       var roll = Math.random() * total, pick = pool[0];
       for (i = 0; i < pool.length; i++) {
-        roll -= RARITY_W[pool[i].rarity];
+        roll -= W[pool[i].rarity];
         if (roll <= 0) { pick = pool[i]; break; }
       }
       if (usedIds[pick.id]) continue;
@@ -371,6 +372,15 @@
       });
       (tpl.skills || []).forEach(function (sid) { G.life.skills.push(sid); });
     }
+    // 轮回殿增益：出生盘缠/传家宝/武学启蒙
+    if (hasExtra('coin_start')) G.life.coin += 150;
+    if (hasExtra('item_start')) {
+      var pool1 = ITEMS.filter(function (it) { return it.slot !== 'use' && it.rarity >= 1; });
+      gainItem(pool1[Engine.rnd(pool1.length)].id);
+    }
+    if (hasExtra('skill_start')) {
+      learnSkill(SKILLS[Engine.rnd(SKILLS.length)].id);
+    }
     G.phase = 'life';
     UI.showScreen('life');
     AudioFX.bgm(w.id === 'xiuxian' ? 'xiuxian' : (w.pool === 'life' ? 'life' : 'novel'));
@@ -550,8 +560,9 @@
     L.age++;
     if (L.age > 0) addTimeline('<div class="age-marker">' + L.age + ' 岁</div>');
 
-    // 自然死亡
+    // 自然死亡（涅槃符可免死一次）
     if (L.age > 0 && Engine.mortality(L)) {
+      if (tryRevive('一阵眩晕袭来，你倒在路边——颈间的涅槃符骤然发烫，寸寸碎裂。你睁开眼，命，捡回来了。')) return afterYear();
       L.deathText = '岁月不饶人。' + L.age + ' 岁那年，你安详地合上了眼。';
       return finishLife();
     }
@@ -770,15 +781,39 @@
       UI.sealToast('幻境登顶', '幽冥幻境八层尽破，' + coinName() + ' +200，体质+2，智力+2');
       questCheck();
     },
-    questCheck: questCheck
+    questCheck: questCheck,
+    legacyCombat: function () {
+      return {
+        atk: hasExtra('atk_plus') ? 5 : 0,
+        hp: hasExtra('hp_plus') ? 60 : 0
+      };
+    }
   };
+
+  /* 涅槃符：免死一次（仅自然死亡/病逝触发） */
+  function tryRevive(text) {
+    var L = G.life;
+    if (!hasExtra('revive') || L.flags['revived']) return false;
+    L.flags['revived'] = true;
+    L.attr.str = Math.max(L.attr.str, 3);
+    addTimeline('<div class="event-card fate">' + text + '（涅槃符 · 免死一次）</div>');
+    UI.sealToast('涅槃', '死而复生，大道可期');
+    AudioFX.stamp();
+    return true;
+  }
 
   function afterYear() {
     var L = G.life;
-    // 体质耗尽死亡
+    // 体质耗尽死亡（涅槃符可免死一次）
     var bodyDeath = Engine.checkBodyDeath(L);
-    if (bodyDeath) { L.deathText = bodyDeath; return finishLife(); }
-    L.ap++;                      // 每年 +1 行动点
+    if (bodyDeath) {
+      if (tryRevive('油尽灯枯之际，涅槃符化作一缕暖流传遍全身。你从鬼门关前退了回来。')) {
+        renderSide(); snapshot(); checkAchievements('life');
+        return;
+      }
+      L.deathText = bodyDeath; return finishLife();
+    }
+    L.ap += hasExtra('ap_plus') ? 2 : 1;   // 每年行动点
     questCheck();                // 主线推进检查
     renderSide();
     snapshot();

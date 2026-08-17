@@ -47,9 +47,10 @@ var Combat = (function () {
       if (sid && !seen[sid]) { seen[sid] = 1; skills.push(sid); }
     });
     var tb = talentBonus(life);
+    var lb = (typeof Game !== 'undefined' && Game.legacyCombat) ? Game.legacyCombat() : { atk: 0, hp: 0 };
     return {
-      maxhp: Math.round(60 + life.attr.str * 12 + hp + tb.hp),
-      atk: Math.round(6 + life.attr.str * 0.8 + life.attr.int * 0.4 + atk + tb.atk),
+      maxhp: Math.round(60 + life.attr.str * 12 + hp + tb.hp + lb.hp),
+      atk: Math.round(6 + life.attr.str * 0.8 + life.attr.int * 0.4 + atk + tb.atk + lb.atk),
       def: Math.round(2 + life.attr.str * 0.3 + def),
       crit: 0.05 + (life.attr.luk || 0) * 0.012,
       skills: skills.slice(0, 3)   // 普攻之外最多 3 个技能

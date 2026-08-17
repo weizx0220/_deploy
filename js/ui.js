@@ -223,7 +223,15 @@ var UI = (function () {
     { id: 'mny2', name: '衔金而生', desc: '出生家境 +2', cost: 30, extra: true },
     { id: 'sudden_up', name: '多事之秋', desc: '突发事件概率翻倍，人生更跌宕', cost: 25, extra: true },
     { id: 'gender_pick', name: '阴阳自择', desc: '入世前可自选性别', cost: 15, extra: true },
-    { id: 'self_name', name: '自署其名', desc: '入世前可自定义姓名', cost: 15, extra: true }
+    { id: 'self_name', name: '自署其名', desc: '入世前可自定义姓名', cost: 15, extra: true },
+    { id: 'coin_start', name: '万贯家财', desc: '出生盘缠 +150', cost: 30, extra: true },
+    { id: 'item_start', name: '传家宝', desc: '出生自带一件随机良品以上装备', cost: 40, extra: true },
+    { id: 'skill_start', name: '武学启蒙', desc: '出生随机习得一个战斗技能', cost: 35, extra: true },
+    { id: 'ap_plus', name: '只争朝夕', desc: '每年行动点 +2（原 +1）', cost: 50, extra: true },
+    { id: 'atk_plus', name: '天生神力', desc: '战斗攻击 +5', cost: 45, extra: true },
+    { id: 'hp_plus', name: '百炼之躯', desc: '战斗生命上限 +60', cost: 45, extra: true },
+    { id: 'legend_up', name: '天命所归', desc: '天品天赋出率翻倍', cost: 60, extra: true },
+    { id: 'revive', name: '涅槃符', desc: '每世可免死一次（寿终/病逝时触发，体质回正）', cost: 80, extra: true }
   ];
 
   LEGACY_SHOP.forEach(function (item) {
