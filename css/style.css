@@ -567,6 +567,7 @@ html, body {
   .choice-opt { font-size: 14.5px; padding: 10px 12px; }
   .life-controls {
     position: sticky; bottom: 0; z-index: 5; gap: 8px;
+    flex-wrap: wrap;
     background: linear-gradient(to top, var(--paper) 70%, transparent);
     padding: 12px 0 8px;
   }
@@ -720,4 +721,41 @@ html, body {
   .map-act .l-name { white-space: nowrap; font-size: 15px; }
   .map-act { padding: 10px 12px; }
   .map-act .l-desc { font-size: 12px; }
+}
+
+/* ---------- 问号介绍 ---------- */
+.qmark {
+  display: inline-block; font-style: normal; font-size: 10px;
+  width: 14px; height: 14px; line-height: 14px; text-align: center;
+  border: 1px solid var(--ink-faint); border-radius: 50%;
+  color: var(--ink-faint); margin-left: 3px; vertical-align: 2px;
+}
+[data-help], [data-talent], [data-item] { cursor: help; }
+#help-panel {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(42,42,46,0.35);
+  display: none; align-items: center; justify-content: center;
+}
+#help-panel.on { display: flex; animation: fadeIn .2s ease; }
+#help-card {
+  width: min(420px, 88vw); padding: 22px 26px;
+  background: var(--paper); border: 1.5px solid var(--ink-soft); border-radius: 8px;
+  box-shadow: 0 16px 44px rgba(0,0,0,0.3);
+}
+#help-name {
+  font-size: 21px; letter-spacing: 5px; margin-bottom: 10px;
+  border-bottom: 1px solid rgba(42,42,46,0.15); padding-bottom: 8px;
+}
+#help-text { font-size: 14.5px; line-height: 1.9; color: var(--ink-soft); }
+#help-text .help-kv { color: var(--jade); font-size: 13.5px; margin-top: 4px; }
+#help-close {
+  margin-top: 14px; text-align: center; font-size: 13px; letter-spacing: 3px;
+  color: var(--ink-faint); cursor: pointer; border-top: 1px dashed rgba(42,42,46,0.15); padding-top: 10px;
+}
+#help-close:hover { color: var(--cinnabar); }
+
+/* ---------- 行动按钮（底部放大） ---------- */
+.btn-action { font-size: 20px; letter-spacing: 4px; padding: 10px 34px; }
+@media (max-width: 768px) {
+  .btn-action { font-size: 17px; padding: 9px 24px; }
 }

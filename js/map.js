@@ -12,6 +12,7 @@ var MapX = (function () {
     var L = Game.life();
     $('map-world').textContent = Game.worldName();
     $('map-ap').textContent = L.ap;
+    $('map-ap-note').textContent = '每 ' + Game.apInterval() + ' 年 +1，上限 3';
     $('map-coin').textContent = L.coin + ' ' + Game.coinName();
     var acts = [
       { id: 'train', name: '历练', desc: '出门闯荡，或遇敌或遇缘（1 行动点）' },

@@ -261,7 +261,7 @@
       var row = document.createElement('div');
       row.className = 'alloc-row';
       row.innerHTML =
-        '<div class="alloc-name">' + Engine.ATTR_NAMES[k] + '</div>' +
+        '<div class="alloc-name" data-help="attr_' + k + '">' + Engine.ATTR_NAMES[k] + '<i class="qmark">?</i></div>' +
         '<button class="alloc-pm" data-k="' + k + '" data-d="-1">−</button>' +
         '<div class="alloc-bar"><div class="alloc-fill" style="width:' + (G.alloc[k] * 10) + '%"></div></div>' +
         '<div class="alloc-val">' + G.alloc[k] + '</div>' +
@@ -350,7 +350,7 @@
       route: w.setRoute || '',
       world: w.id,
       coin: tpl ? (tpl.coin || 0) : 30,
-      ap: 1,
+      ap: 3,
       inventory: [],
       equip: { weapon: null, armor: null, trinket: null },
       skills: [],
@@ -456,11 +456,11 @@
     var html = '';
     Engine.ATTR_KEYS.forEach(function (k) {
       if (k === 'luk' && !L.flags['luck_revealed']) return;   // 气运默认隐藏
-      html += '<div class="life-attr-row"><span>' + Engine.ATTR_NAMES[k] + '</span><span>' + (L.attr[k] || 0) + '</span></div>';
+      html += '<div class="life-attr-row" data-help="attr_' + k + '"><span>' + Engine.ATTR_NAMES[k] + '<i class="qmark">?</i></span><span>' + (L.attr[k] || 0) + '</span></div>';
     });
     $('life-attrs').innerHTML = html;
     var chips = '';
-    L.talents.forEach(function (t) { chips += '<span class="chip r' + t.rarity + '">' + t.name + '</span>'; });
+    L.talents.forEach(function (t) { chips += '<span class="chip r' + t.rarity + '" data-talent="' + t.id + '">' + t.name + '</span>'; });
     $('life-talents').innerHTML = chips;
     // v2：行动点 / 货币 / 装备 / 主线
     $('life-ap').textContent = L.ap;
@@ -470,7 +470,7 @@
     var eqHtml = '';
     [['weapon', '兵刃'], ['armor', '衣甲'], ['trinket', '饰品']].forEach(function (s) {
       var it = eq[s[0]] ? itemById(eq[s[0]]) : null;
-      eqHtml += '<span class="chip" title="' + (it ? it.desc : '') + '">' + s[1] + '·' + (it ? it.name : '无') + '</span>';
+      eqHtml += '<span class="chip" data-help="equip"' + (it ? ' data-item="' + it.id + '"' : '') + '>' + s[1] + '·' + (it ? it.name : '无') + '</span>';
     });
     $('life-equips').innerHTML = eqHtml;
     var w = worldDef(L.world);
@@ -782,6 +782,7 @@
       questCheck();
     },
     questCheck: questCheck,
+    apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
     legacyCombat: function () {
       return {
         atk: hasExtra('atk_plus') ? 5 : 0,
@@ -813,7 +814,12 @@
       }
       L.deathText = bodyDeath; return finishLife();
     }
-    L.ap += hasExtra('ap_plus') ? 2 : 1;   // 每年行动点
+    // 行动点：每 3 年回复 1 点（轮回殿增益可缩至 2 年），上限 3，回满提醒
+    var apInterval = hasExtra('ap_plus') ? 2 : 3;
+    if (L.age > 0 && L.age % apInterval === 0 && L.ap < 3) {
+      L.ap++;
+      if (L.ap >= 3) UI.miniToast('行动点已回满，去「行动」大展身手吧');
+    }
     questCheck();                // 主线推进检查
     renderSide();
     snapshot();
@@ -1119,6 +1125,7 @@
   }
 
   /* 启动 */
+  Help.setTalentSource(function () { return G.life ? G.life.talents : G.picked; });
   bind();
   showTitle();
 })();
