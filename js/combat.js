@@ -191,6 +191,8 @@ var Combat = (function () {
   }
 
   function end(win) {
+    if (S.done) return;
+    S.done = true;
     $('bt-skills').innerHTML = '';
     var btn = document.createElement('button');
     btn.className = 'ink-btn primary';
@@ -233,5 +235,6 @@ var Combat = (function () {
     AudioFX.pluck(180, 0.15);
   }
 
-  return { start: start, playerStats: playerStats };
+  return { start: start, playerStats: playerStats,
+           concede: function () { if (S && !S.done) end(false); } };
 })();

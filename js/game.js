@@ -950,6 +950,9 @@
     var speed = parseInt($('auto-speed').value);
     G.autoTimer = setInterval(function () {
       if (!G.auto || G.waiting || !G.life || G.life.dead) return;
+      // 任何弹层（战斗/幻境/地图等）打开时暂停自动推进
+      var ovs = document.querySelectorAll('.overlay');
+      for (var i = 0; i < ovs.length; i++) if (!ovs[i].classList.contains('hidden')) return;
       advanceYear();
     }, speed);
   }
@@ -989,7 +992,10 @@
       }
     })();
     $('btn-next').onclick = function () { if (!G.waiting) advanceYear(); };
-    $('btn-map').onclick = function () { AudioFX.tick(); MapX.open(); };
+    $('btn-map').onclick = function () {
+      if (G.waiting) { UI.miniToast('眼前有未做的抉择，先选择再继续'); return; }
+      AudioFX.tick(); MapX.open();
+    };
     $('btn-inv').onclick = function () { AudioFX.tick(); MapX.openInventory(); };
     $('btn-auto').onclick = toggleAuto;
     $('auto-speed').onchange = function () {

@@ -455,5 +455,6 @@ var CardBattle = (function () {
     if (x2) { ctx.beginPath(); ctx.arc(x2, y2, 3, 0, 7); ctx.fill(); }
   }
 
-  return { start: start, buildDeck: buildDeck, endTurn: endTurn };
+  return { start: start, buildDeck: buildDeck, endTurn: endTurn,
+           concede: function () { if (S && !S.over) finish(false); } };
 })();

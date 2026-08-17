@@ -79,6 +79,7 @@ var Rogue = (function () {
   }
 
   function bar() {
+    if (!R) return;
     $('rg-hp').textContent = '生命 ' + Math.max(0, Math.round(R.hpState.hp)) + '/' + R.hpState.max;
     $('rg-hp-bar').style.width = Math.max(0, R.hpState.hp / R.hpState.max * 100) + '%';
   }
@@ -92,6 +93,7 @@ var Rogue = (function () {
   }
 
   function enterNode(type) {
+    if (!R || R.busy) return;   // 切换中（如战败结算）禁止重复点击
     if (type === 'fight') return fight(scaled(pick(data().mobs), 1), 1);
     if (type === 'elite') return fight(scaled(pick(data().elites), 1.5), 2);
     if (type === 'boss') return fight(pick(data().bosses), 3, true);
@@ -141,6 +143,9 @@ var Rogue = (function () {
   }
 
   function fight(enemy, rewardPicks, isBoss) {
+    if (!R) return;
+    R.busy = true;
+    $('rg-nodes').innerHTML = '';   // 清空节点，防止战斗中残留可点
     $('overlay-rogue').classList.add('hidden');
     CardBattle.start({
       title: '幽冥幻境 · 第 ' + R.floor + ' 层',
@@ -149,10 +154,13 @@ var Rogue = (function () {
       deck: R.deck,
       hpState: R.hpState,
       onEnd: function (win) {
+        if (!R) return;
+        R.busy = false;
         $('overlay-rogue').classList.remove('hidden');
         bar();
         if (!win) {
           logLine('你不敌倒地，幻境把你吐回了入口。这一趟到此为止。');
+          $('rg-nodes').innerHTML = '';
           return setTimeout(function () { close(false); }, 1400);
         }
         if (isBoss) {
