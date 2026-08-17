@@ -245,6 +245,28 @@
   </div>
 </div>
 
+<!-- 卡牌战斗弹层（肉鸽） -->
+<div id="overlay-cbattle" class="overlay hidden">
+  <div class="overlay-panel cbattle-panel">
+    <div class="overlay-head">
+      <div class="overlay-title" id="cb-title">幻境战斗</div>
+    </div>
+    <div class="overlay-body cb-body">
+      <canvas id="cb-canvas" width="880" height="300"></canvas>
+      <div id="cb-msg" class="cb-msg"></div>
+      <div class="cb-bottom">
+        <div class="cb-pile">牌库 <b id="cb-draw-n">0</b></div>
+        <div id="cb-hand" class="cb-hand"></div>
+        <div class="cb-pile">弃牌 <b id="cb-discard-n">0</b></div>
+      </div>
+      <div class="cb-controls">
+        <div class="cb-energy-orb"><span id="cb-energy">3</span><small>能量</small></div>
+        <button id="cb-endturn" class="ink-btn primary" onclick="CardBattle.endTurn()">结束回合</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 轮回者档案弹层 -->
 <div id="overlay-profile" class="overlay hidden">
   <div class="overlay-panel">
@@ -272,6 +294,7 @@
 <script src="js/data/talents.js"></script>
 <script src="js/data/items.js"></script>
 <script src="js/data/skills.js"></script>
+<script src="js/data/cards.js"></script>
 <script src="js/data/dungeons.js"></script>
 <script src="js/data/rogue_data.js"></script>
 <script src="js/data/worlds.js"></script>
@@ -288,6 +311,7 @@
 <script src="js/assets.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/combat.js"></script>
+<script src="js/cardbattle.js"></script>
 <script src="js/rogue.js"></script>
 <script src="js/map.js"></script>
 <script src="js/ui.js"></script>

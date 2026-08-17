@@ -37,7 +37,7 @@ var Rogue = (function () {
   }
 
   function start(life, onEnd) {
-    R = { life: life, floor: 1, hpState: { hp: 9999, max: 0 }, onEnd: onEnd, usedEvent: {} };
+    R = { life: life, floor: 1, hpState: { hp: 9999, max: 0 }, onEnd: onEnd, usedEvent: {}, deck: CardBattle.buildDeck(life) };
     // 用玩家满血开战
     var st = Combat.playerStats(life);
     R.hpState.hp = st.maxhp;
@@ -142,10 +142,11 @@ var Rogue = (function () {
 
   function fight(enemy, rewardPicks, isBoss) {
     $('overlay-rogue').classList.add('hidden');
-    Combat.start({
+    CardBattle.start({
       title: '幽冥幻境 · 第 ' + R.floor + ' 层',
       life: R.life,
-      enemies: [enemy],
+      enemy: enemy,
+      deck: R.deck,
       hpState: R.hpState,
       onEnd: function (win) {
         $('overlay-rogue').classList.remove('hidden');
@@ -164,44 +165,46 @@ var Rogue = (function () {
     });
   }
 
-  /* ---------- 三选一强化 ---------- */
+  /* ---------- 三选一抓牌（类杀戮尖塔） ---------- */
+  function draftCards() {
+    var pool = CARDS.filter(function (c) { return c.id !== 'c_strike' && c.id !== 'c_guard' && c.id !== 'c_focus' && c.id !== 'c_spark'; });
+    var W = [40, 30, 20, 10];   // 品质权重
+    var opts = [];
+    while (opts.length < 3 && pool.length) {
+      var total = 0, i;
+      for (i = 0; i < pool.length; i++) total += W[pool[i].rarity] || 10;
+      var roll = Math.random() * total, pickC = pool[0];
+      for (i = 0; i < pool.length; i++) { roll -= W[pool[i].rarity] || 10; if (roll <= 0) { pickC = pool[i]; break; } }
+      pool.splice(pool.indexOf(pickC), 1);
+      opts.push(pickC);
+    }
+    return opts;
+  }
+
   function offerRewards(n) {
     var wrap = $('rg-nodes');
     wrap.innerHTML = '';
     logLine('战利品浮现，择一而取：');
-    var pool = buildRewardPool();
-    // 抽 3 个不重复
-    var opts = [];
-    while (opts.length < 3 && pool.length) {
-      var i = Math.floor(Math.random() * pool.length);
-      opts.push(pool.splice(i, 1)[0]);
-    }
-    opts.forEach(function (r) {
+    draftCards().forEach(function (c) {
       var b = document.createElement('button');
-      b.className = 'rg-node rg-reward';
-      b.textContent = r.label;
-      b.onclick = function () { r.apply(); logLine('你选择了「' + r.label + '」。'); n--; if (n > 0) offerRewards(n); else nextFloor(); };
+      b.className = 'rg-node rg-reward rg-card';
+      b.innerHTML = '<b>' + c.name + '</b><small>' + c.desc + '</small>';
+      b.onclick = function () {
+        R.deck.push(c.id);
+        logLine('获得卡牌「' + c.name + '」。');
+        n--; if (n > 0) offerRewards(n); else nextFloor();
+      };
       wrap.appendChild(b);
     });
-  }
-
-  function buildRewardPool() {
-    var life = R.life, hs = R.hpState;
-    var pool = [
-      { label: '攻击 +3', apply: function () { life.attr.str += 2; } },
-      { label: '生命上限 +25 并回复 25', apply: function () { life.attr.str += 2; hs.hp = Math.min(hs.max, hs.hp + 25); } },
-      { label: '回复 40% 生命', apply: function () { hs.hp = Math.min(hs.max, hs.hp + Math.round(hs.max * 0.4)); } },
-      { label: '防御稳固（体质+1 快乐+1）', apply: function () { life.attr.str += 1; life.attr.spr += 1; } }
-    ];
-    // 随机技能（未拥有的）
-    var learnable = SKILLS.filter(function (s) { return life.skills.indexOf(s.id) < 0; });
-    if (learnable.length) {
-      var sk = pick(learnable);
-      pool.push({ label: '习得技能「' + sk.name + '」', apply: function () { Game.learnSkill(sk.id); } });
-    }
-    // 随机物品
-    pool.push({ label: '一件随机物品', apply: function () { Game.gainItem(Game.randomItem()); } });
-    return pool;
+    // 跳过：回血
+    var skip = document.createElement('button');
+    skip.className = 'rg-node rg-rest';
+    skip.innerHTML = '<b>放弃抓牌</b><small>回复 15% 生命</small>';
+    skip.onclick = function () {
+      R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.15));
+      n--; if (n > 0) offerRewards(n); else nextFloor();
+    };
+    wrap.appendChild(skip);
   }
 
   function nextFloor() {
