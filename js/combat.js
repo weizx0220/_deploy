@@ -10,14 +10,23 @@ var Combat = (function () {
   function $(id) { return document.getElementById(id); }
 
   /* ---------- 玩家战力 ---------- */
+  /* 天赋战力加成：每点稀有度 攻+2 血+10 */
   function talentBonus(life) {
     var atk = 0, hp = 0;
     (life.talents || []).forEach(function (t) {
       var r = t.rarity || 0;
-      atk += r; hp += r * 6;
+      atk += r * 2; hp += r * 10;
     });
     return { atk: atk, hp: hp };
   }
+
+  /* 天赋附带战斗技能 */
+  var TALENT_SKILLS = {
+    t_box: 'sk_heal',          // 神秘小盒：灵种护体
+    t_cthulhu: 'sk_dark',      // 不可名状之影
+    t_jade: 'sk_shield',       // 玉佩护主
+    t_luck: 'sk_double'        // 天眷之人
+  };
 
   function playerStats(life) {
     var atk = 0, def = 0, hp = 0;
@@ -32,6 +41,11 @@ var Combat = (function () {
       if (it.skill && !seen[it.skill]) { seen[it.skill] = 1; skills.push(it.skill); }
     });
     (life.skills || []).forEach(function (sid) { if (!seen[sid]) { seen[sid] = 1; skills.push(sid); } });
+    // 天赋附带技能
+    (life.talents || []).forEach(function (t) {
+      var sid = TALENT_SKILLS[t.id];
+      if (sid && !seen[sid]) { seen[sid] = 1; skills.push(sid); }
+    });
     var tb = talentBonus(life);
     return {
       maxhp: Math.round(60 + life.attr.str * 12 + hp + tb.hp),

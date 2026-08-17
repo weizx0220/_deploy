@@ -173,6 +173,13 @@ html, body {
 .tcard-front .tname { font-size: 19px; letter-spacing: 2px; margin-bottom: 8px; }
 .tcard-front .tdesc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
 .tcard-front .trarity { font-size: 11px; letter-spacing: 3px; margin-top: 10px; }
+.tcard-front .teff {
+  font-size: 11px; line-height: 1.6; margin-top: 6px;
+  border-top: 1px dashed rgba(42,42,46,0.18); padding-top: 5px;
+}
+.tcard-front .teff .up { color: var(--jade); }
+.tcard-front .teff .down { color: var(--cinnabar); }
+.tcard-front .teff .tag-fate { color: var(--gold); }
 .tcard.r0 .tcard-front { border-color: #9a978a; } .tcard.r0 .trarity { color: #9a978a; }
 .tcard.r1 .tcard-front { border-color: var(--jade); box-shadow: 0 0 14px rgba(61,107,94,0.35); } .tcard.r1 .trarity { color: var(--jade); }
 .tcard.r2 .tcard-front { border-color: #6b4d8f; box-shadow: 0 0 16px rgba(107,77,143,0.4); } .tcard.r2 .trarity { color: #6b4d8f; }

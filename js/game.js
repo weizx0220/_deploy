@@ -33,7 +33,7 @@
   }
 
   /* ============ 抽签 ============ */
-  var RARITY_W = [100, 38, 13, 3.5];   // 普通/稀有/史诗/传说
+  var RARITY_W = [55, 42, 24, 9];   // 普通/稀有/史诗/传说（提高高品质出率）
   var RARITY_NAMES = ['凡品', '良品', '上品', '天品'];
 
   function talentPool() {
@@ -61,6 +61,25 @@
       if (pick.exclusive) usedGroups[pick.exclusive] = true;
       batch.push(pick);
     }
+    // 保底：每批至少 1 张上品及以上、2 张良品及以上
+    function countR(min) { return batch.filter(function (t) { return t.rarity >= min; }).length; }
+    function forceRarity(minR) {
+      var cands = pool.filter(function (t) {
+        return t.rarity >= minR && !usedIds[t.id] && !(t.exclusive && usedGroups[t.exclusive]);
+      });
+      if (!cands.length) return;
+      var t = cands[Engine.rnd(cands.length)];
+      for (var i = 0; i < batch.length; i++) {
+        if (batch[i].rarity === 0) {   // 顶掉一张凡品
+          usedIds[t.id] = true;
+          if (t.exclusive) usedGroups[t.exclusive] = true;
+          batch[i] = t;
+          return;
+        }
+      }
+    }
+    if (countR(2) < 1) forceRarity(2);
+    while (countR(1) < 2) { var before = countR(1); forceRarity(1); if (countR(1) === before) break; }
     return batch;
   }
 
@@ -126,6 +145,40 @@
     AudioFX.bgm('draw');
   }
 
+  /* 天赋卡上的具体效果说明 */
+  var FLAG_TAGS = {
+    has_box: '百岁开盒 · 踏入仙途',
+    cthulhu_touched: '隐藏路线 · 诡秘',
+    jade_pendant: '隐藏路线 · 魂修',
+    biz_mind: '隐藏路线 · 商途',
+    star_aura: '隐藏路线 · 星途',
+    luck_revealed: '气运可见'
+  };
+  var TALENT_SKILL_TAGS = {
+    t_box: '附带技能 · 回春诀',
+    t_cthulhu: '附带技能 · 暗蚀',
+    t_jade: '附带技能 · 铁壁',
+    t_luck: '附带技能 · 二连斩'
+  };
+  function talentEffectHtml(t) {
+    var parts = [];
+    if (t.attr) {
+      var a = [];
+      for (var k in t.attr) {
+        var v = t.attr[k];
+        a.push('<span class="' + (v > 0 ? 'up' : 'down') + '">' + Engine.ATTR_NAMES[k] + (v > 0 ? '+' : '') + v + '</span>');
+      }
+      if (a.length) parts.push(a.join(' '));
+    }
+    var r = t.rarity || 0;
+    if (r > 0) parts.push('<span class="up">战斗 攻+' + (r * 2) + ' 血+' + (r * 10) + '</span>');
+    (t.flags || []).forEach(function (f) {
+      if (FLAG_TAGS[f]) parts.push('<span class="tag-fate">' + FLAG_TAGS[f] + '</span>');
+    });
+    if (TALENT_SKILL_TAGS[t.id]) parts.push('<span class="tag-fate">' + TALENT_SKILL_TAGS[t.id] + '</span>');
+    return parts.length ? '<div class="teff">' + parts.join('<br>') + '</div>' : '';
+  }
+
   function renderDraw() {
     var grid = $('draw-grid');
     grid.innerHTML = '';
@@ -139,6 +192,7 @@
         '<div class="tcard-face tcard-front">' +
         '<div class="tname">' + t.name + '</div>' +
         '<div class="tdesc">' + t.desc + '</div>' +
+        talentEffectHtml(t) +
         '<div class="trarity">' + RARITY_NAMES[t.rarity] + '</div>' +
         '</div></div>';
       grid.appendChild(card);
