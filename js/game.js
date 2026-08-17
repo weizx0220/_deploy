@@ -64,6 +64,57 @@
     return batch;
   }
 
+  /* ============ 身份选择（自定义 / 角色模板） ============ */
+  function startHeroPick() {
+    G.phase = 'hero';
+    G.template = null;
+    var grid = $('hero-grid');
+    grid.innerHTML = '';
+    // 自定义
+    var custom = document.createElement('div');
+    custom.className = 'hero-card';
+    custom.innerHTML = '<div class="hero-name">自定义命格</div><div class="hero-title">凡胎入世</div>' +
+      '<div class="hero-intro">抽签定天赋，亲手点禀赋。你的命，你自己捏。</div>';
+    custom.onclick = function () { G.template = null; AudioFX.tick(); startWorldPick(); };
+    grid.appendChild(custom);
+    // 模板
+    TEMPLATES.forEach(function (t) {
+      var card = document.createElement('div');
+      card.className = 'hero-card tpl';
+      var attrTxt = ['chr', 'int', 'str', 'mny', 'spr'].map(function (k) {
+        return Engine.ATTR_NAMES[k] + ' ' + t.attr[k];
+      }).join(' · ');
+      card.innerHTML = '<div class="hero-name">' + t.name + '</div><div class="hero-title">' + t.title + '</div>' +
+        '<div class="hero-intro">' + t.intro + '</div><div class="hero-attr">' + attrTxt + '</div>';
+      card.onclick = function () { G.template = t; AudioFX.stamp(); startWorldPick(); };
+      grid.appendChild(card);
+    });
+    UI.showScreen('hero');
+  }
+
+  /* ============ 世界选择 ============ */
+  function startWorldPick() {
+    G.phase = 'world';
+    var grid = $('world-grid');
+    grid.innerHTML = '';
+    WORLDS.forEach(function (w) {
+      var card = document.createElement('div');
+      card.className = 'world-card';
+      var u = (typeof Assets !== 'undefined') ? Assets.url(w.img) : null;
+      if (u) card.style.backgroundImage = 'url("' + u + '")';
+      card.innerHTML = '<div class="world-mask"></div><div class="world-info">' +
+        '<div class="world-name">' + w.name + '</div><div class="world-desc">' + w.desc + '</div></div>';
+      card.onclick = function () {
+        G.world = w.id;
+        AudioFX.stamp();
+        if (G.template) newLife();
+        else startDraw();
+      };
+      grid.appendChild(card);
+    });
+    UI.showScreen('world');
+  }
+
   function startDraw() {
     G.phase = 'draw';
     G.picked = [];
@@ -193,43 +244,93 @@
   }
 
   /* ============ 人生 ============ */
+  function worldDef(id) {
+    for (var i = 0; i < WORLDS.length; i++) if (WORLDS[i].id === id) return WORLDS[i];
+    return WORLDS[0];
+  }
+
   function newLife() {
-    var gender = G.genderPick || (Math.random() < 0.5 ? 'M' : 'F');
-    var attr = previewAttr();
-    attr.luk = Engine.rnd(11);   // 气运天定 0-10
-    G.picked.forEach(function (t) { if (t.attr && t.attr.luk) attr.luk = Math.max(0, attr.luk); });
-    // 轮回殿出生加成
-    if (hasExtra('luk3')) attr.luk += 3;
-    if (hasExtra('str2')) attr.str += 2;
-    if (hasExtra('int2')) attr.int += 2;
-    if (hasExtra('mny2')) attr.mny += 2;
+    var w = worldDef(G.world || 'life');
+    var tpl = G.template || null;
+    var gender, attr, talents, name;
+
+    if (tpl) {
+      // 角色模板：固定属性天赋，跳过抽卡分配
+      gender = tpl.gender || (Math.random() < 0.5 ? 'M' : 'F');
+      attr = JSON.parse(JSON.stringify(tpl.attr));
+      talents = [];
+      (tpl.talents || []).forEach(function (tid) {
+        for (var i = 0; i < TALENTS.length; i++) if (TALENTS[i].id === tid) talents.push(TALENTS[i]);
+      });
+      (tpl.extraTalents || []).forEach(function (t) { talents.push(t); });
+      name = tpl.name;
+    } else {
+      gender = G.genderPick || (Math.random() < 0.5 ? 'M' : 'F');
+      attr = previewAttr();
+      attr.luk = Engine.rnd(11);   // 气运天定 0-10
+      G.picked.forEach(function (t) { if (t.attr && t.attr.luk) attr.luk = Math.max(0, attr.luk); });
+      // 轮回殿出生加成
+      if (hasExtra('luk3')) attr.luk += 3;
+      if (hasExtra('str2')) attr.str += 2;
+      if (hasExtra('int2')) attr.int += 2;
+      if (hasExtra('mny2')) attr.mny += 2;
+      talents = G.picked.slice();
+      var customName = hasExtra('self_name') ? $('alloc-name').value.trim() : '';
+      name = customName || randomName(gender);
+    }
+
     var flags = {};
-    G.picked.forEach(function (t) { if (t.flags) t.flags.forEach(function (f) { flags[f] = true; }); });
-    var customName = hasExtra('self_name') ? $('alloc-name').value.trim() : '';
+    talents.forEach(function (t) { if (t.flags) t.flags.forEach(function (f) { flags[f] = true; }); });
+    (w.setFlags || []).forEach(function (f) { flags[f] = true; });
+
     G.life = {
-      name: customName || randomName(gender),
+      name: name,
       gender: gender,
-      age: -1,
+      age: (w.startAge || 0) - 1,
       attr: attr,
-      talents: G.picked.slice(),
+      talents: talents,
       flags: flags,
       fired: {},
-      pool: 'life',
-      route: '',
+      pool: w.pool || 'life',
+      route: w.setRoute || '',
+      world: w.id,
+      coin: tpl ? (tpl.coin || 0) : 30,
+      ap: 1,
+      inventory: [],
+      equip: { weapon: null, armor: null, trinket: null },
+      skills: [],
+      dungeonCd: {},
+      quest: { stage: 0 },
+      shopStock: null,
+      restYear: -99,
       history: [],
       moments: [],
       dead: false,
       deathText: ''
     };
+    // 模板初始物品与技能
+    if (tpl) {
+      (tpl.items || []).forEach(function (iid) {
+        G.life.inventory.push(iid);
+        var it = itemById(iid);
+        if (it && it.slot !== 'use') G.life.equip[it.slot] = iid;
+      });
+      (tpl.skills || []).forEach(function (sid) { G.life.skills.push(sid); });
+    }
     G.phase = 'life';
     UI.showScreen('life');
-    AudioFX.bgm('life');
+    AudioFX.bgm(w.id === 'xiuxian' ? 'xiuxian' : (w.pool === 'life' ? 'life' : 'novel'));
     $('life-timeline').innerHTML = '';
     $('life-route').textContent = '';
     updateScene.current = null;
     renderSide();
-    addTimeline('<div class="event-card fate">乾道成男，坤道成女。你名唤 <b>' + G.life.name + '</b>，' +
-      (gender === 'M' ? '是个男孩' : '是个女孩') + '，带着 ' + G.picked.length + ' 道天命落入人间。</div>');
+    addTimeline('<div class="event-card fate">' + (w.intro || '') + '</div>');
+    if (tpl) {
+      addTimeline('<div class="event-card fate">这一世，你是 <b>' + tpl.name + '</b>。' + (tpl.birthText || '') + '</div>');
+    } else {
+      addTimeline('<div class="event-card fate">你名唤 <b>' + name + '</b>，' +
+        (gender === 'M' ? '是个男孩' : '是个女孩') + '，带着 ' + talents.length + ' 道天命落入此界。</div>');
+    }
     snapshot();
   }
 
@@ -294,6 +395,22 @@
     var chips = '';
     L.talents.forEach(function (t) { chips += '<span class="chip r' + t.rarity + '">' + t.name + '</span>'; });
     $('life-talents').innerHTML = chips;
+    // v2：行动点 / 货币 / 装备 / 主线
+    $('life-ap').textContent = L.ap;
+    $('life-coin-name').textContent = coinName();
+    $('life-coin').textContent = L.coin;
+    var eq = L.equip;
+    var eqHtml = '';
+    [['weapon', '兵刃'], ['armor', '衣甲'], ['trinket', '饰品']].forEach(function (s) {
+      var it = eq[s[0]] ? itemById(eq[s[0]]) : null;
+      eqHtml += '<span class="chip" title="' + (it ? it.desc : '') + '">' + s[1] + '·' + (it ? it.name : '无') + '</span>';
+    });
+    $('life-equips').innerHTML = eqHtml;
+    var w = worldDef(L.world);
+    var q = w.mainline && w.mainline[L.quest.stage];
+    $('life-quest').innerHTML = q
+      ? '<b>主线·' + q.name + '</b><small>' + q.hint + '</small>'
+      : '<b>主线已了</b><small>此界故事，由你续写</small>';
   }
 
   function addTimeline(html) {
@@ -354,6 +471,7 @@
     }
 
     var res = Engine.applyEffect(L, ev.effect);
+    applyEffectRes(L, res);
     addTimeline(cardOpen(ev, ev.kind) + eventText(ev) + deltaHtml(res.deltas) + '</div>');
     floatDeltas(res.deltas);
     if (ev.big) L.moments.push({ age: L.age, text: eventText(ev) });
@@ -413,12 +531,13 @@
       btn.textContent = ch.text;
       if (ch.cond && !Engine.condPass(ch.cond, L)) {
         btn.disabled = true;
-        btn.textContent += '（机缘未至）';
+        btn.textContent += '（' + condHint(ch.cond) + '）';
       }
       btn.onclick = function () {
         box.classList.add('hidden');
         G.waiting = false;
         var res = Engine.applyEffect(L, ch.effect);
+        applyEffectRes(L, res);
         var txt = resultText(ch.result);
         if (txt || Engine.describeDeltas(res.deltas).length) {
           addTimeline('<div class="event-card ' + (ch.kind || 'normal') + '">' + txt + deltaHtml(res.deltas) + '</div>');
@@ -439,12 +558,171 @@
     AudioFX.pluck(520, 0.1);
   }
 
+  /* ============ v2：条件提示 / 物品货币 / 主线 ============ */
+  /* 把 cond 翻成玩家可读的需求文字 */
+  function condHint(cond) {
+    var parts = [];
+    if (cond.attr) {
+      for (var k in cond.attr) {
+        var c = cond.attr[k];
+        var nm = Engine.ATTR_NAMES[k] || k;
+        if (c.gte !== undefined) parts.push('需' + nm + '≥' + c.gte);
+        else if (c.gt !== undefined) parts.push('需' + nm + '>' + c.gt);
+        else if (c.lte !== undefined) parts.push('需' + nm + '≤' + c.lte);
+        else if (c.lt !== undefined) parts.push('需' + nm + '<' + c.lt);
+      }
+    }
+    if (cond.flags && cond.flags.length) parts.push('需特定机缘');
+    if (!parts.length) parts.push('机缘未至');
+    return parts.join('，');
+  }
+
+  function itemById(id) {
+    for (var i = 0; i < ITEMS.length; i++) if (ITEMS[i].id === id) return ITEMS[i];
+    return null;
+  }
+
+  function coinName() {
+    return worldDef(G.life ? G.life.world : 'life').coinName || '铜钱';
+  }
+
+  /* 事件效果里的货币/物品/技能落地 */
+  function applyEffectRes(L, res) {
+    if (!res) return;
+    if (res.coin) {
+      L.coin = Math.max(0, L.coin + res.coin);
+      UI.floatText(coinName() + (res.coin > 0 ? '+' : '') + res.coin, res.coin > 0);
+    }
+    if (res.items) res.items.forEach(function (iid) { gainItem(iid); });
+    if (res.skills) res.skills.forEach(function (sid) { learnSkill(sid); });
+  }
+
+  function gainItem(iid) {
+    var it = itemById(iid);
+    if (!it) return;
+    G.life.inventory.push(iid);
+    UI.miniToast('获得物品「' + it.name + '」');
+    // 装备位空着则自动穿上
+    if (it.slot !== 'use' && !G.life.equip[it.slot]) G.life.equip[it.slot] = iid;
+  }
+
+  function learnSkill(sid) {
+    if (G.life.skills.indexOf(sid) >= 0) return;
+    G.life.skills.push(sid);
+    var sk = null;
+    for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === sid) sk = SKILLS[i];
+    UI.miniToast('习得技能「' + (sk ? sk.name : sid) + '」');
+  }
+
+  function applyReward(rw, sourceName) {
+    var L = G.life;
+    var parts = [];
+    if (rw.coin) { L.coin += rw.coin; parts.push(coinName() + '+' + rw.coin); }
+    if (rw.attr) for (var k in rw.attr) { L.attr[k] = (L.attr[k] || 0) + rw.attr[k]; parts.push(Engine.ATTR_NAMES[k] + '+' + rw.attr[k]); }
+    if (rw.flags) rw.flags.forEach(function (f) { L.flags[f] = true; });
+    if (rw.items) rw.items.forEach(function (iid) { gainItem(iid); });
+    if (rw.skills) rw.skills.forEach(function (sid) { learnSkill(sid); });
+    UI.sealToast('「' + sourceName + '」告捷', parts.join('　') || '无甚收获');
+    questCheck();
+  }
+
+  /* 主线推进 */
+  function questCheck() {
+    var L = G.life;
+    if (!L || L.dead) return;
+    var w = worldDef(L.world);
+    if (!w.mainline) return;
+    var q = w.mainline[L.quest.stage];
+    while (q && Engine.condPass(q.cond, L)) {
+      L.quest.stage++;
+      if (q.reward) {
+        var rw = q.reward;
+        if (rw.coin) L.coin += rw.coin;
+        if (rw.attr) for (var k in rw.attr) L.attr[k] = (L.attr[k] || 0) + rw.attr[k];
+        if (rw.flags) rw.flags.forEach(function (f) { L.flags[f] = true; });
+        if (rw.items) rw.items.forEach(function (iid) { gainItem(iid); });
+      }
+      UI.sealToast('主线 · ' + q.name, q.toast || '');
+      AudioFX.stamp();
+      q = w.mainline[L.quest.stage];
+    }
+  }
+
+  /* 历练敌人名（按世界） */
+  var ENCOUNTER_NAMES = {
+    life: ['地痞流氓', '抢包的飞车党', '找茬的醉汉', '擂台教练'],
+    novel_wuxia: ['剪径山贼', '魔教小卒', '比武的狂徒', '黑店打手'],
+    novel_wuxian: ['副本傀儡', '失控玩家', '规则怪影', '追猎者'],
+    novel_bazong: ['商业间谍', '挑衅的富二代', '地下拳手', '绑匪'],
+    novel_moshi: ['变异体', '掠夺者', '感染野犬', '饥饿的流民'],
+    xiuxian: ['山中妖兽', '夺宝散修', '心魔幻影', '魔修斥候']
+  };
+
+  /* ============ 对外暴露给 map/rogue/combat 的接口 ============ */
+  window.Game = {
+    life: function () { return G.life; },
+    coinName: coinName,
+    worldName: function () { return worldDef(G.life.world).name; },
+    item: itemById,
+    itemName: function (iid) { var it = itemById(iid); return it ? it.name : iid; },
+    randomItem: function () { return ITEMS[Engine.rnd(ITEMS.length)].id; },
+    gainItem: gainItem,
+    learnSkill: learnSkill,
+    addCoin: function (n) { G.life.coin += n; },
+    spendCoin: function (n) {
+      if (G.life.coin < n) return false;
+      G.life.coin -= n; return true;
+    },
+    toggleEquip: function (iid) {
+      var it = itemById(iid);
+      if (!it || it.slot === 'use') return;
+      var eq = G.life.equip;
+      eq[it.slot] = (eq[it.slot] === iid) ? null : iid;
+      AudioFX.tick();
+    },
+    useItem: function (idx) {
+      var L = G.life;
+      var iid = L.inventory[idx];
+      var it = itemById(iid);
+      if (!it || it.slot !== 'use') return;
+      if (it.use) {
+        if (it.use.attr) for (var k in it.use.attr) L.attr[k] = (L.attr[k] || 0) + it.use.attr[k];
+        if (it.use.coin) L.coin += it.use.coin;
+      }
+      L.inventory.splice(idx, 1);
+      UI.miniToast('使用了「' + it.name + '」');
+    },
+    applyEffectRes: applyEffectRes,
+    applyReward: applyReward,
+    encounterName: function () {
+      var pool = ENCOUNTER_NAMES[G.life.world] || ENCOUNTER_NAMES.life;
+      return pool[Engine.rnd(pool.length)];
+    },
+    toast: function (t) { UI.miniToast(t); },
+    refresh: renderSide,
+    onActionDone: function (text) {
+      if (text) addTimeline('<div class="event-card">' + text + '</div>');
+      $('overlay-map').classList.add('hidden');
+      renderSide();
+    },
+    onRogueClear: function () {
+      var L = G.life;
+      L.flags['rogue_cleared'] = true;
+      L.coin += 200;
+      L.attr.str += 2; L.attr.int += 2;
+      UI.sealToast('幻境登顶', '幽冥幻境八层尽破，' + coinName() + ' +200，体质+2，智力+2');
+      questCheck();
+    },
+    questCheck: questCheck
+  };
+
   function afterYear() {
     var L = G.life;
     // 体质耗尽死亡
     var bodyDeath = Engine.checkBodyDeath(L);
     if (bodyDeath) { L.deathText = bodyDeath; return finishLife(); }
-    // 修仙寿元：pool 为 xiuxian 时不受 130 岁硬顶（mortality 已按 immortal_body 豁免）
+    L.ap++;                      // 每年 +1 行动点
+    questCheck();                // 主线推进检查
     renderSide();
     snapshot();
     checkAchievements('life');
@@ -580,7 +858,7 @@
 
   /* ============ 绑定 ============ */
   function bind() {
-    $('btn-start').onclick = function () { AudioFX.tick(); startDraw(); };
+    $('btn-start').onclick = function () { AudioFX.tick(); startHeroPick(); };
     $('btn-redraw').onclick = function () {
       if (G.redraws <= 0) return;
       G.redraws--; G.picked = [];
@@ -613,11 +891,13 @@
       }
     })();
     $('btn-next').onclick = function () { if (!G.waiting) advanceYear(); };
+    $('btn-map').onclick = function () { AudioFX.tick(); MapX.open(); };
+    $('btn-inv').onclick = function () { AudioFX.tick(); MapX.openInventory(); };
     $('btn-auto').onclick = toggleAuto;
     $('auto-speed').onchange = function () {
       if (G.auto) { stopAuto(); toggleAuto(); }
     };
-    $('btn-again').onclick = function () { AudioFX.tick(); startDraw(); };
+    $('btn-again').onclick = function () { AudioFX.tick(); startHeroPick(); };
     $('btn-home').onclick = function () { AudioFX.tick(); showTitle(); };
     $('btn-mute').onclick = function () {
       var m = AudioFX.toggleMute();

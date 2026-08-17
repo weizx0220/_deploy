@@ -42,6 +42,20 @@
     </div>
   </section>
 
+  <!-- 身份选择 -->
+  <section id="screen-hero" class="screen">
+    <h2 class="screen-title">命格之选</h2>
+    <p class="screen-sub">凡胎自定，或借名人之魂入世</p>
+    <div id="hero-grid" class="hero-grid"></div>
+  </section>
+
+  <!-- 世界选择 -->
+  <section id="screen-world" class="screen">
+    <h2 class="screen-title">择世而栖</h2>
+    <p class="screen-sub">六方天地，各有其法。此世从何处开篇，由你定夺</p>
+    <div id="world-grid" class="world-grid"></div>
+  </section>
+
   <!-- 天赋抽卡 -->
   <section id="screen-draw" class="screen">
     <h2 class="screen-title">天命抽签</h2>
@@ -85,6 +99,16 @@
       <div id="life-attrs" class="life-attrs"></div>
       <div id="life-talents" class="life-talents"></div>
       <div id="life-route" class="life-route"></div>
+      <div class="life-v2">
+        <div class="life-row2"><span>行动点</span><b id="life-ap">0</b></div>
+        <div class="life-row2"><span id="life-coin-name">铜钱</span><b id="life-coin">0</b></div>
+        <div id="life-equips" class="life-equips"></div>
+        <div id="life-quest" class="life-quest"></div>
+        <div class="life-btns">
+          <button id="btn-map" class="ink-btn small">行动</button>
+          <button id="btn-inv" class="ink-btn small">行囊</button>
+        </div>
+      </div>
     </aside>
     <div id="life-main">
       <div id="life-timeline"></div>
@@ -157,6 +181,72 @@
   </div>
 </div>
 
+<!-- 地图行动弹层 -->
+<div id="overlay-map" class="overlay hidden">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <div class="overlay-title"><span id="map-world">人间</span> · 行动</div>
+      <button class="overlay-close" data-close="overlay-map">✕</button>
+    </div>
+    <div class="overlay-body">
+      <p class="legacy-points">行动点：<b id="map-ap">0</b>（每年 +1）　盘缠：<b id="map-coin">0</b></p>
+      <div id="map-actions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 战斗弹层 -->
+<div id="overlay-battle" class="overlay hidden">
+  <div class="overlay-panel battle-panel">
+    <div class="overlay-head">
+      <div class="overlay-title" id="bt-title">遭遇战</div>
+    </div>
+    <div class="overlay-body">
+      <div class="bt-foe">
+        <div id="bt-foe-name" class="bt-foe-name"></div>
+        <div id="bt-foe-intro" class="bt-foe-intro"></div>
+        <div class="bt-bar"><div id="bt-foe-hp" class="bt-fill foe"></div></div>
+      </div>
+      <div id="bt-log" class="bt-log"></div>
+      <div class="bt-me">
+        <div id="bt-stats" class="bt-stats"></div>
+        <div class="bt-bar"><div id="bt-me-hp" class="bt-fill me"></div></div>
+        <div id="bt-me-shield" class="bt-shield"></div>
+      </div>
+      <div id="bt-skills" class="bt-skills"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 肉鸽爬塔弹层 -->
+<div id="overlay-rogue" class="overlay hidden">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <div class="overlay-title">幽冥幻境 · <span id="rg-floor">第 1 层</span></div>
+    </div>
+    <div class="overlay-body">
+      <div class="bt-bar" style="margin-bottom:6px"><div id="rg-hp-bar" class="bt-fill me"></div></div>
+      <p id="rg-hp" class="bt-stats"></p>
+      <div id="rg-log" class="bt-log" style="height:120px"></div>
+      <div id="rg-nodes" class="rg-nodes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 背包弹层 -->
+<div id="overlay-inv" class="overlay hidden">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <div class="overlay-title">行囊</div>
+      <button class="overlay-close" data-close="overlay-inv">✕</button>
+    </div>
+    <div class="overlay-body">
+      <p class="legacy-points">盘缠：<b id="inv-coin">0</b></p>
+      <div id="inv-list"></div>
+    </div>
+  </div>
+</div>
+
 <!-- 轮回者档案弹层 -->
 <div id="overlay-profile" class="overlay hidden">
   <div class="overlay-panel">
@@ -182,6 +272,12 @@
 <div id="float-layer"></div>
 
 <script src="js/data/talents.js"></script>
+<script src="js/data/items.js"></script>
+<script src="js/data/skills.js"></script>
+<script src="js/data/dungeons.js"></script>
+<script src="js/data/rogue_data.js"></script>
+<script src="js/data/worlds.js"></script>
+<script src="js/data/templates.js"></script>
 <script src="js/data/events_reality.js"></script>
 <script src="js/data/events_cultivation.js"></script>
 <script src="js/data/events_novel.js"></script>
@@ -193,6 +289,9 @@
 <script src="js/audio.js"></script>
 <script src="js/assets.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/rogue.js"></script>
+<script src="js/map.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>
 </body>

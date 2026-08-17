@@ -476,5 +476,78 @@ var EVENTS_CULTIVATION = [
   { id: 'ev_c2_die_liefeng', age: [100, 500], pool: 'xiuxian', weight: 2, kind: 'bad', once: true,
     cond: { flags: ['box_opened'], notFlags: ['ascended'], chance: 0.05 },
     text: '你追踪一道新近出现的空间裂隙，想一探本源之秘。裂隙深处星光诡异，你探出神识的刹那，它毫无征兆地闭合了。',
-    effect: { kill: true, deathText: '空间裂隙合拢，连一声涟漪都没留下。你的存在被均匀地涂抹进了万里乱流。修真界从此多了一则告诫：本源之道，可悟，不可追。' } }
+    effect: { kill: true, deathText: '空间裂隙合拢，连一声涟漪都没留下。你的存在被均匀地涂抹进了万里乱流。修真界从此多了一则告诫：本源之道，可悟，不可追。' } },
+
+  /* ========== v2 · 坊市/炼器/传承配套事件 ========== */
+  { id: 'ev_v2_fangshi_taobao', age: [100, 500], pool: 'xiuxian', weight: 8,
+    text: '坊市地摊上，一柄蒙尘的残剑和一瓶丹药摆在一起。摊主眯着眼："都是古修洞府里淘的，概不还价。"',
+    choices: [
+      { text: '买下残剑', cond: { attr: { luk: { gte: 6 } } },
+        effect: { coin: -200, items: ['it_swordqi_blade'] },
+        result: '剑身以灵力一荡，尘埃尽去，露出"承影"古篆。摊主追悔莫及，你已走远。', kind: 'good' },
+      { text: '买下丹药',
+        effect: { coin: -150, items: ['it_elixir'] },
+        result: '丹药药香内敛，是颗正经筑基丹。虽说你早已用不上固本，留着赏人也是人情。', kind: 'good' },
+      { text: '看看就好',
+        effect: { attr: { int: 1 } },
+        result: '你逛遍全摊没掏一块灵石。摊主们私下给你起了个外号："铁公鸡真人"。' }
+    ] },
+  { id: 'ev_v2_lianqi_bingren', age: [100, 500], pool: 'xiuxian', weight: 7, once: true,
+    text: '你采集三载材料，开炉炼器。七七四十九日炉火不熄，出炉之日霞光满室——炼什么，你早有计较。',
+    choices: [
+      { text: '炼一柄随身剑',
+        effect: { coin: -100, items: ['it_swordqi_blade'], attr: { int: 1 } },
+        result: '剑成之日自鸣三声。亲手炼的兵器血脉相连，如臂使指。', kind: 'good', big: true },
+      { text: '炼一件护身道袍', cond: { attr: { mny: { gte: 6 } } },
+        effect: { coin: -300, items: ['it_robe'] },
+        result: '灵丝织就的云纹道袍披上身，万法不沾。同门见了都说：这料子，仙门长老看了都眼馋。', kind: 'good', big: true }
+    ] },
+  { id: 'ev_v2_lingshi_kuangmai', age: [100, 500], pool: 'xiuxian', weight: 6, once: true,
+    text: '你云游至一处荒山，神识扫过，地底竟有一条未被登记的灵石矿脉，储量可观。',
+    choices: [
+      { text: '低调开采，细水长流',
+        effect: { coin: 200, attr: { int: 1 } },
+        result: '你布下隐匿阵法，每年只取三成。十年后故地重游，矿脉犹在——留得青山在，不怕没灵石。', kind: 'good' },
+      { text: '上报宗门换贡献',
+        effect: { coin: 80, attr: { chr: 1, spr: 1 } },
+        result: '宗门赐下贡献点与赏金，长老当众夸你"深明大义"。你心里算着矿脉分红：深明大义，也挺赚。', kind: 'good' },
+      { text: '一夜搬空', cond: { attr: { str: { gte: 20 } } },
+        effect: { coin: 350, attr: { luk: -1, spr: -1 } },
+        result: '你连夜抽干矿脉，山塌了半边。灵石堆满了储物戒，可听着那声轰鸣，你总觉得亏了点什么。', kind: 'bad' }
+    ] },
+  { id: 'ev_v2_dongfu_chuancheng', age: [100, 500], pool: 'xiuxian', weight: 5, once: true, kind: 'fate',
+    text: '古修洞府深处，玉碑亮起："吾之传承，剑修一脉、丹道一脉，有缘者择一受之。贪多者……试试也无妨。"',
+    choices: [
+      { text: '受剑修传承',
+        effect: { skills: ['sk_swordqi'], attr: { str: 2 } },
+        result: '万千剑意灌顶而入。出洞时你随手一剑，三里外的瀑布断流了一息。', kind: 'good', big: true },
+      { text: '受丹道传承',
+        effect: { items: ['it_elixir'], attr: { int: 2 } },
+        result: '丹方千卷尽入识海，随传承一并赐下的还有一枚古修亲炼的筑基丹。', kind: 'good', big: true },
+      { text: '小孩子才做选择', cond: { attr: { luk: { gte: 8 } } },
+        effect: { skills: ['sk_thunder'], items: ['it_jade2'], attr: { luk: 1 } },
+        result: '玉碑沉默良久，竟真的亮起双倍光华："三千年了，头一个敢应这句的。"雷法与暖玉，你全都要。', kind: 'good', big: true }
+    ] },
+  { id: 'ev_v2_fangshi_manghe', age: [100, 500], pool: 'xiuxian', weight: 8,
+    text: '坊市新流行起"古修盲盒"：百枚灵石一个，号称有万分之一概率开出上古传承。你路过时，摊位前排着长队。',
+    effect: { coin: -50, items: ['it_lotto'], attr: { spr: 1 } } },
+  { id: 'ev_v2_shouhu_lingyao', age: [100, 500], pool: 'xiuxian', weight: 7, kind: 'good',
+    text: '你守了半年的灵药即将成熟，一头赤瞳妖猿循着药香杀到。你拔剑迎战，大战三十回合，妖猿落败遁走。',
+    effect: { coin: 120, items: ['it_ginseng'], attr: { str: 2 } } },
+  { id: 'ev_v2_jiuyou_zengqi', age: [100, 500], pool: 'xiuxian', weight: 5, once: true, kind: 'good',
+    text: '凡人时的旧友转世重修，辗转寻到你洞府，捧出一枚暖玉吊坠："上辈子欠你一顿饭，这辈子用这个抵。"',
+    effect: { items: ['it_jade2'], attr: { spr: 2 } } },
+  { id: 'ev_v2_cangjing_lingwu', age: [100, 500], pool: 'xiuxian', weight: 8,
+    text: '藏经阁闭阁参悟三月，守阁长老扔给你一枚玉简："能悟多少，看你造化。"',
+    choices: [
+      { text: '参悟雷法', cond: { attr: { int: { gte: 20 } } },
+        effect: { skills: ['sk_thunder'], attr: { int: 1 } },
+        result: '出阁那日你指尖跃起一缕电光，吓得道童抱头蹲防。你学会了【引雷】。', kind: 'good' },
+      { text: '参悟回春术',
+        effect: { skills: ['sk_heal'] },
+        result: '三月后你掌心凝出一团温润青光，院里枯死的老梅竟抽了新芽。你学会了【回春】。', kind: 'good' },
+      { text: '睡着也算入定',
+        effect: { attr: { spr: 2 } },
+        result: '你结结实实睡了三个月，神完气足。长老看了直摇头："心真大，倒也是种道心。"' }
+    ] }
 ];

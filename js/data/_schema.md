@@ -144,3 +144,57 @@
   check: function (L, save) { return L.age >= 100; } }   // L=life(含 attr/flags/route/talents/age)，save=存档
 ```
 注意：check 必须防御式编写（L.attr.int 可能为 undefined 时用 (L.attr.int||0)）。
+
+---
+
+# v2 扩展契约（战斗/物品/副本/肉鸽/主线/模板）
+
+## effect 新增字段（引擎已支持）
+- `coin: 50` —— 增减货币（可为负）
+- `items: ['it_xxx']` —— 获得物品（id 须存在于 items.js）
+- `skills: ['sk_xxx']` —— 习得技能（id 须存在于 skills.js）
+
+## items.js → var ITEMS
+```js
+{ id:'it_xxx', name:'', slot:'weapon|armor|trinket|use', rarity:0-3, desc:'≤40字',
+  atk:0, def:0, hp:0,        // 装备属性（use 类忽略）
+  skill:'sk_xxx',            // 可选，武器/饰品附带技能
+  price:80,                  // 商店参考价
+  use:{ attr:{str:1}, coin:0 } }  // slot=use 时：使用效果
+```
+
+## skills.js → var SKILLS
+```js
+{ id:'sk_xxx', name:'', desc:'≤30字', mult:1.6,  // 伤害倍率（普攻=1）
+  heal:0, shield:0, dot:0, cd:2 }                // cd 回合数；heal 按最大生命比例 0.2
+```
+
+## dungeons.js → var DUNGEONS（传统副本：连战数场）
+```js
+{ id:'dg_xxx', name:'', world:'life' 或 '*', minAge:16, difficulty:1-5, desc:'',
+  enemies:[{ name:'', hp:80, atk:10, def:3, skills:['sk_xxx'], intro:'登场语' }],  // 2-4 场
+  reward:{ coin:80, items:['it_x'], attr:{str:1}, flags:[] },
+  cooldown:5 }   // 通关后几年可再打
+```
+数值基准（16岁普通玩家：HP≈100, ATK≈12, DEF≈4）：难度1敌人 HP60-100/ATK8-12/DEF2-4；难度3 HP200-300/ATK18-25/DEF6-10；难度5 HP450-600/ATK30-40/DEF12-18。
+
+## rogue.js 数据 → var ROGUE_MOBS / ROGUE_ELITES / ROGUE_BOSSES / ROGUE_EVENTS
+敌人格式同副本敌人；ROGUE_EVENTS: { text, choices:[{text, effect（同事件effect）, result}] }。
+
+## worlds.js → var WORLDS（6 个）
+```js
+{ id:'life|novel_wuxia|novel_wuxian|novel_bazong|novel_moshi|xiuxian',
+  name:'现实都市', img:'novel_wuxia.png'(assets键), startAge:0, coinName:'铜钱',
+  pool:'life', setFlags:[], setRoute:'',
+  desc:'选世界界面一句话', intro:'开局旁白（2-3句世界观）',
+  mainline:[ { name:'阶段名', hint:'当前目标提示', cond:{同事件cond}, reward:{coin,attr,flags,items}, toast:'达成时的文本' } ] }  // 5 阶段，末阶段奖励设置对应 *_win flag
+```
+注意：xiuxian 世界 startAge:100、setFlags:['box_opened','immortal_body']、setRoute:'xiuxian'；novel_* 世界 setFlags 对应 world_xxx、setRoute:'novel'。
+
+## templates.js → var TEMPLATES
+```js
+{ id:'tpl_xxx', name:'', title:'', intro:'简介≤120字', suggest:'life',
+  attr:{chr,int,str,mny,spr,luk}, talents:['t_star'],   // 引用现有天赋id
+  extraTalents:[{id,name,rarity,desc,attr,flags}],      // 模板专属天赋
+  items:['it_xxx'], coin:200, skills:['sk_xxx'] }
+```

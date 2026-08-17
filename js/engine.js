@@ -158,6 +158,10 @@ var Engine = (function () {
     if (effect.setPool) life.pool = effect.setPool;
     if (effect.setRoute) life.route = effect.setRoute;
     if (effect.setAge !== undefined) life.age = effect.setAge;
+    // v2：货币/物品/技能由 game.js 的背包系统落地，这里只做透传
+    if (effect.coin) res.coin = effect.coin;
+    if (effect.items) res.items = effect.items;
+    if (effect.skills) res.skills = effect.skills;
     if (effect.kill) { res.killed = true; res.deathText = effect.deathText || ''; life.route = 'dead'; }
     return res;
   }

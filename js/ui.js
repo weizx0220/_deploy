@@ -268,9 +268,20 @@ var UI = (function () {
     }
   }
 
+  /* ---------- 轻提示（小toast） ---------- */
+  var miniTimer = null;
+  function miniToast(text) {
+    var el = document.createElement('div');
+    el.className = 'mini-toast';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(function () { el.classList.add('out'); }, 1400);
+    setTimeout(function () { el.remove(); }, 1900);
+  }
+
   return {
     $: $, showScreen: showScreen, drawRadar: drawRadar, drawCurve: drawCurve,
-    sealToast: sealToast, floatText: floatText,
+    sealToast: sealToast, miniToast: miniToast, floatText: floatText,
     renderGallery: renderGallery, renderLegacy: renderLegacy
   };
 })();

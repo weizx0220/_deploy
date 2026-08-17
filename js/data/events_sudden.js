@@ -424,5 +424,66 @@ var EVENTS_SUDDEN = [
 
   { id: 'ev_s_ms_cat', sudden: true, once: true, kind: 'good', weight: 6, age: [18, 80], pool: 'novel_moshi',
     text: '巡逻路上，一只三条腿的变异猫从废墟里钻出来，眼睛在黑暗里发着幽绿的光。你没开枪，它也没扑上来，只是远远跟着你回了基地，从此赖在瞭望塔上不走了。末世的动物直觉最准——它觉得你这里安全。',
-    effect: { attr: { spr: 3, luk: 1 } } }
+    effect: { attr: { spr: 3, luk: 1 } } },
+
+  /* ========== v2 · 货币/装备配套突发 ========== */
+  { id: 'ev_v2_airdrop_crate', sudden: true, once: true, kind: 'good', weight: 5, age: [10, 70],
+    text: '只听"哐当"一声巨响，一个军绿色的大铁箱砸穿了你家楼下违建的阳光棚，箱体上印着"空投补给"四个大字。四下无人，监控恰好坏了。',
+    choices: [
+      { text: '拖回家，开箱', cond: { attr: { str: { gte: 5 } } },
+        effect: { items: ['it_vest', 'it_sword'], attr: { spr: 2 } },
+        result: '箱里一件防弹背心一柄短剑，还有张字条："赠有缘人。"你至今不知道这是谁的快递。', kind: 'good' },
+      { text: '上交派出所',
+        effect: { coin: 50, attr: { spr: 1, chr: 1 } },
+        result: '警方查证是影视基地的道具箱，失主送来锦旗和感谢金。你上了本地新闻，标题：拾箱不昧好市民。', kind: 'good' }
+    ] },
+  { id: 'ev_v2_wallet_back', sudden: true, once: true, kind: 'good', weight: 6, age: [16, 70],
+    text: '三年前丢的钱包，被派出所通知去认领。现金分文不少，卡也都在，甚至多了一张字条："当年急用，如今奉还，利息在夹层。"夹层里是几张崭新的钞票。',
+    effect: { coin: 80, attr: { spr: 2, luk: 1 } } },
+  { id: 'ev_v2_old_man_book', sudden: true, once: true, kind: 'good', weight: 4, age: [10, 40],
+    text: '路边一个仙风道骨的老头拦住你："少年，我看你骨骼清奇，是万中无一的练武奇才。这本《基础刀法精要》，原价九十八，收你五块。"',
+    choices: [
+      { text: '掏钱买下',
+        effect: { coin: -5, skills: ['sk_slash'], attr: { spr: 1 } },
+        result: '回家翻开一看，字字珠玑，图图带劲。你照着练了一个月，劈柴如切瓜。五块钱，买不了吃亏。', kind: 'good' },
+      { text: '婉拒并报警',
+        effect: { attr: { int: 1, spr: 1 } },
+        result: '警察来了，老头掏出正规出版物经营许可证，反把你教育了一顿"年轻人要有梦想"。' }
+    ] },
+  { id: 'ev_v2_mistaken_master', sudden: true, once: true, weight: 4, age: [18, 60],
+    text: '武术馆门口，一群人冲你抱拳："久仰久仰，您就是「铁掌水上漂」陈师傅吧？"你低头看看自己——和海报上那位高手确实八分像。',
+    choices: [
+      { text: '将错就错，先撑住场面', cond: { attr: { chr: { gte: 6 } } },
+        effect: { coin: 100, attr: { chr: 1, spr: 2 } },
+        result: '你背着手点评了三句"尚可""差点火候""还需打磨"，众人叹服。真陈师傅赶到时，你已领了指导费潇洒离场。', kind: 'good' },
+      { text: '连连摆手澄清',
+        effect: { attr: { spr: 1, luk: 1 } },
+        result: '误会解开，真陈师傅反倒觉得你面善，请你吃了顿饭，临走还夸你"有武德"。' }
+    ] },
+  { id: 'ev_v2_scratch_win', sudden: true, once: true, kind: 'good', weight: 4, age: [18, 80],
+    text: '买彩票送的刮刮乐，你随手一刮——头奖。店主比你还激动，拉着你在店门口合影，说要把照片裱起来镇店。',
+    effect: { coin: 120, attr: { spr: 2, luk: 2 } } },
+  { id: 'ev_v2_wall_sword', sudden: true, once: true, kind: 'good', weight: 3, age: [20, 70],
+    text: '老房翻新，工人一锤子砸开夹墙，里面赫然躺着一柄油布包裹的古剑。房东看了直摆手："祖传老宅，我什么都不知道，拿走拿走。"',
+    effect: { items: ['it_sword'], attr: { luk: 1, spr: 1 } } },
+  { id: 'ev_v2_old_coin', sudden: true, once: true, weight: 3, age: [22, 60],
+    text: '整理旧硬盘，你突然想起大学时跟风买过一点数字货币。找回密码的手都在抖——当年一顿火锅钱，如今翻了两百倍。',
+    choices: [
+      { text: '全部卖出，落袋为安',
+        effect: { coin: 300, attr: { mny: 1, spr: 2 } },
+        result: '到账提示音响起，你请全家吃了顿真正的火锅。饭桌上你感慨：人生最赚的投资，是忘了自己投资过。', kind: 'good' },
+      { text: '继续持有，赌未来',
+        effect: { attr: { luk: 1, spr: -1 } },
+        result: '你把密码写在纸上锁进抽屉。从此每天睡前看一眼行情，头发以肉眼可见的速度变少。' }
+    ] },
+  { id: 'ev_v2_wrong_parcel', sudden: true, once: true, kind: 'good', weight: 5, age: [16, 60],
+    text: '快递柜里躺着个写着你名字的包裹，可你最近什么都没买。寄件人一栏只写着："一个欣赏你的人。"',
+    choices: [
+      { text: '拆开看看',
+        effect: { items: ['it_hoodie'], attr: { spr: 2 } },
+        result: '一件粉色卫衣，尺码分毫不差。你穿了三天，也没等到认领的人。行吧，神秘人的审美，你认可了。', kind: 'good' },
+      { text: '联系快递退回',
+        effect: { attr: { chr: 1, spr: 1 } },
+        result: '一周后包裹又寄了回来，附言升级："请别退回，你值得。"你挠头收下，权当生活给的小确幸。', kind: 'good' }
+    ] }
 ];

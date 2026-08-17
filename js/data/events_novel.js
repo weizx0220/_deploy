@@ -1135,5 +1135,123 @@ var EVENTS_NOVEL = [
   kind: 'good',
   text: '冬夜，哨塔下燃起一小堆篝火。老兵掏出藏了半年的吉他，弹跑了三个音，全队却听得鸦雀无声。有人往火里丢了两颗珍藏的咖啡豆，香气散开时，谁都舍不得说话。',
   effect: { attr: { spr: 2, str: 1 } }
+},
+
+// ---- v2 · 战斗与装备配套事件 ----
+
+// ---- 武侠 ----
+{
+  id: 'ev_v2_wx_biaoyun',
+  age: [16, 50],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '你随镖队押送一趟红货，行至黑松岭，林中唿哨一声，跳下二十几条好汉："此山是我开！"镖头脸色发白，看向你。',
+  choices: [
+    { text: '抄家伙，护镖！', cond: { attr: { str: { gte: 7 } } }, effect: { coin: 150, attr: { str: 2, chr: 1 } }, result: '你单刀直入连挑三名头目，匪众作鸟兽散。镖头当场封你"镇远镖局头号镖师"，分红丰厚。', kind: 'good', big: true },
+    { text: '护着镖车且战且退', effect: { coin: 40, attr: { str: -1 } }, result: '镖银保下一半，你挂了彩。镖头拍着胸脯说兄弟够意思，医药费全包。' }
+  ]
+},
+{
+  id: 'ev_v2_wx_zhujian',
+  age: [18, 60],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '铸剑山庄三年一开炉，庄门口贴出告示：今有新剑出炉，价高者得，亦寻有缘人。江湖客闻风而动。',
+  choices: [
+    { text: '重金求名剑', cond: { attr: { mny: { gte: 5 } } }, effect: { coin: -260, items: ['it_swordqi_blade'] }, result: '你拍下压轴的"承影"。剑出鞘时满座无声，剑身隐有流光——好剑，值这个价。', kind: 'good', big: true },
+    { text: '买把顺手的旧剑', effect: { coin: -60, items: ['it_sword'] }, result: '库房里你挑了柄青铜剑，庄主笑道："剑老心不老。"趁手，就是最好。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_v2_wx_xuanshang',
+  age: [16, 55],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'good',
+  text: '衙门悬赏缉拿江洋大盗"一阵风"。你在悦来客栈吃面，认出隔壁桌正是通缉令上那张脸，一个眼色唤来便衣捕快。赏银到手，面钱还是大盗替你付的。',
+  effect: { coin: 120, attr: { int: 1, chr: 1 } }
+},
+
+// ---- 玄幻 ----
+{
+  id: 'ev_v2_wxn_heishi',
+  age: [18, 45],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  text: '坊市地下的黑市半夜才开，摊主们面目模糊。一个角落摊上，一柄锈迹斑斑的古剑压着张纸："识货的来。"',
+  choices: [
+    { text: '赌一把，买下锈剑', cond: { attr: { luk: { gte: 6 } } }, effect: { coin: -150, items: ['it_swordqi_blade'] }, result: '回府以灵泉洗去锈迹，剑身露出"承影"二字，流光隐现。摊主今夜怕是睡不着觉了。', kind: 'good', big: true },
+    { text: '买瓶丹药就走', effect: { coin: -100, items: ['it_elixir'] }, result: '丹药成色尚可，药香纯正。黑市规矩：不问来路，不问去处。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_v2_wxn_lianqi',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '炼器峰缺人手，长老许你以工换酬。你抡了一个月锤子拉风箱，炉火烧得你满脸通红，工钱倒是结得爽快。',
+  effect: { coin: 80, attr: { str: 1, int: 1 } }
+},
+{
+  id: 'ev_v2_wxn_hufa',
+  age: [20, 50],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  text: '内门长老闭关冲击瓶颈，点你在外护法七日。出关那日长老红光满面："护法有功，赏。灵石还是功法，自己挑。"',
+  choices: [
+    { text: '要灵石', effect: { coin: 150 }, result: '一袋灵石入手沉甸甸。长老笑骂一声"俗"，转头又多给了两块。', kind: 'good' },
+    { text: '要功法', effect: { skills: ['sk_swordqi'], attr: { int: 1 } }, result: '长老传你一式【剑气】。你练了三个月，剑未出鞘，院里的竹子先秃了一片。', kind: 'good' }
+  ]
+},
+
+// ---- 霸总 ----
+{
+  id: 'ev_v2_bz_anbao',
+  age: [18, 50],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '集团大堂，一个醉酒的合作方闹事，抄起花瓶就砸。保安还没赶到，眼看花瓶飞向总裁办的玻璃门。',
+  choices: [
+    { text: '一个箭步拦下', cond: { attr: { str: { gte: 6 } } }, effect: { coin: 200, attr: { str: 1, chr: 2 } }, result: '你徒手接住花瓶，全场鸦雀无声。第二天你的工位上多了个信封：特别贡献奖，厚度可观。', kind: 'good', big: true },
+    { text: '报警并疏散人群', effect: { attr: { int: 2, spr: 1 } }, result: '你冷静疏散了人群，醉酒者被带走时还在喊"我认识你们总裁"。巧了，总裁本人就站在你旁边。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_v2_bz_hushen',
+  age: [20, 55],
+  pool: 'novel_bazong',
+  weight: 5,
+  once: true,
+  kind: 'good',
+  text: '生日这天，厉承烨让助理抬来一个黑色礼盒，语气别扭："……防身用的。你的安全，现在属于集团重要资产。"',
+  effect: { items: ['it_vest'], coin: 50, attr: { spr: 2 } }
+},
+
+// ---- 末世 ----
+{
+  id: 'ev_v2_ms_shihuang',
+  age: [18, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '尸潮退去的第三天，战场还冒着烟。拾荒队要深入废墟搜刮物资，危险，但油水十足。',
+  choices: [
+    { text: '深入核心区', cond: { attr: { str: { gte: 6 } } }, effect: { coin: 60, items: ['it_gun'], attr: { str: -1 } }, result: '你在报废装甲车里翻出一把改装手枪和半箱压缩饼干。回程遭遇落单丧尸，新枪当场开了张。', kind: 'good', big: true },
+    { text: '外围捡捡就好', effect: { coin: 40, items: ['it_apple'] }, result: '外围物资零碎，但你在一辆翻倒的货车里找到一箱罐头和几颗苹果——末世的苹果，比黄金稀罕。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_v2_ms_junxie',
+  age: [20, 55],
+  pool: 'novel_moshi',
+  weight: 7,
+  text: '基地军械师老烟鬼叼着烟打量你："晶核带够了吗？我这儿的东西，件件都能换命。"',
+  choices: [
+    { text: '换一把改装手枪', cond: { attr: { mny: { gte: 4 } } }, effect: { coin: -250, items: ['it_gun'] }, result: '老烟鬼亲手帮你校了准星："七步之内，它就是真理。"', kind: 'good' },
+    { text: '换一件防弹背心', effect: { coin: -200, items: ['it_vest'] }, result: '背心沉得压肩。老烟鬼咧嘴一笑："沉好啊，命更沉。"', kind: 'good' },
+    { text: '拜师学维修', effect: { attr: { int: 2 }, coin: 30 }, result: '你跟着修了半个月枪械，满手机油。老烟鬼把学费免了："手稳，心细，像年轻时的我。"', kind: 'good' }
+  ]
 }
 ];

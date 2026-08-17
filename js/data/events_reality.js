@@ -1093,6 +1093,83 @@ var EVENTS_REALITY = [
   effect: { kill: true, deathText: '在无人管理的"野生网红景点"失足坠亡' } },
 { id: 'ev_r2_ebike_fire', age: [18, 70], weight: 3, kind: 'bad', once: true, cond: { chance: 0.04 },
   text: '深夜，楼道里那辆入户充电的电动车电池突然爆燃。浓烟封住楼梯时，你还在睡梦中。',
-  effect: { kill: true, deathText: '电动车电池起火，葬身火场' } }
+  effect: { kill: true, deathText: '电动车电池起火，葬身火场' } },
+
+// ========== v2 · 货币/装备/副本配套事件 ==========
+{ id: 'ev_v2_gig_work', age: [16, 28], weight: 12,
+  text: '钱包比你的脸还干净。你打开兼职软件，决定给自己找点活干。',
+  choices: [
+    { text: '去商圈发传单', effect: { coin: 40, attr: { spr: -1 } }, result: '站了一天，腿是酸的，钱包是鼓的。路过镜子时你对自己说：辛苦了，打工人。' },
+    { text: '剧本杀店当DM', cond: { attr: { chr: { gte: 5 } } }, effect: { coin: 70, attr: { chr: 1 } }, result: '你声情并茂地带完三车，玩家们鼓掌叫好，老板当场问你能不能长期来。', kind: 'good' },
+    { text: '奶茶店摇奶茶', effect: { coin: 60, items: ['it_milktea'] }, result: '打烊前老板让你把做错的那杯带走。全糖去冰，是今天的隐藏工资。', kind: 'good' }
+  ] },
+{ id: 'ev_v2_flea_market', age: [18, 60], weight: 10,
+  text: '周末的旧货市场人声鼎沸。一个不起眼的摊位上，旧书、老物件和几件看不出年头的"装备"堆在一起。',
+  choices: [
+    { text: '砍价买下一柄旧刀', cond: { attr: { mny: { gte: 3 } } }, effect: { coin: -90, items: ['it_saber'] }, result: '摊主开价三百，你砍到九十。回家一擦，刀身寒光乍现——捡漏这种事，终于轮到你。', kind: 'good' },
+    { text: '淘一摞旧书', effect: { coin: -25, items: ['it_book'], attr: { int: 1 } }, result: '五块钱一斤的知识，你扛回了半麻袋。' },
+    { text: '只逛不买，练眼力', effect: { attr: { int: 1 } }, result: '你看了三小时，一分钱没花。摊主们都说这年轻人是真能忍。' }
+  ] },
+{ id: 'ev_v2_lottery_draw', age: [16, 55], weight: 5, once: true, kind: 'good',
+  text: '商场周年庆，你的小票抽中了"幸运锦鲤奖"。工作人员比你还激动，拉横幅拍照一条龙。',
+  effect: { items: ['it_lotto'], attr: { spr: 2, luk: 1 } } },
+{ id: 'ev_v2_dungeon_rumor', age: [16, 45], weight: 8,
+  text: '最近城里流传一些奇怪的传闻：旧厂房后巷、城郊的烂尾楼盘，据说敢进去闯一圈的人，出来都发了一笔小财。想去碰碰运气的话，可以去「行动」面板看看副本入口。',
+  effect: { attr: { int: 1, luk: 1 } } },
+{ id: 'ev_v2_smithy', age: [18, 60], weight: 8,
+  text: '老街尽头还开着一家铁匠铺，老师傅光着膀子抡锤，火星四溅。他瞥了你一眼："要点什么？"',
+  choices: [
+    { text: '打一把趁手的刀', effect: { coin: -120, items: ['it_saber'] }, result: '三天后取货，刀身沉手，寒光内敛。老师傅只说了一句："别拿它干坏事。"', kind: 'good' },
+    { text: '修一修家里的旧剑', effect: { coin: -40, attr: { str: 1 } }, result: '旧剑重新开刃。你顺手帮着抡了两锤，胳膊酸了三天，也结实了三天。' },
+    { text: '拜师学打铁', cond: { attr: { str: { gte: 6 } } }, effect: { coin: 50, attr: { str: 1, int: 1 } }, result: '你打了一个月的铁，学费全免还领了工钱。老师傅说你是块打铁的料，就是不知道这话算不算夸人。', kind: 'good' }
+  ] },
+{ id: 'ev_v2_pawnshop', age: [20, 70], weight: 8,
+  text: '路过当铺，柜台后的朝奉推了推老花镜："当东西，还是淘东西？"',
+  choices: [
+    { text: '当掉家里的闲置物件', effect: { coin: 80, attr: { spr: -1 } }, result: '旧相机、旧手表换回一沓现金。东西没了，日子松快了。' },
+    { text: '赎一件流当的旧物', cond: { attr: { luk: { gte: 4 } } }, effect: { coin: -60, items: ['it_ring'] }, result: '一枚没人要的旧戒指，你看着顺眼就收了。戴上那天起，运气好得有点离谱。', kind: 'good' }
+  ] },
+{ id: 'ev_v2_finance', age: [25, 70], weight: 8,
+  cond: { attr: { mny: { gte: 5 } } },
+  text: '你攒下了一笔闲钱，理财顾问笑得像朵向日葵，问你打算怎么安排。',
+  choices: [
+    { text: '稳健理财，细水长流', effect: { coin: 100, attr: { spr: 1 } }, result: '一年下来收益不多但稳。你悟了：慢慢变富，也是一种变富。', kind: 'good' },
+    { text: '梭哈高风险产品', cond: { attr: { luk: { gte: 6 } } }, effect: { coin: 220, attr: { spr: 1 } }, result: '别人恐慌你贪婪，居然真让你赌赢了。你默默把本金撤了出来——见好就收，是赌赢的前提。', kind: 'good' },
+    { text: '全存定期，主打一个稳', effect: { coin: 30, attr: { int: 1 } }, result: '利息跑不赢通胀，但睡得着觉。你觉得值。' }
+  ] },
+{ id: 'ev_v2_night_stall', age: [18, 45], weight: 10,
+  text: '你在夜市支了个小摊，卖自己鼓捣的小玩意儿。城管来了你收摊比谁都快，城管走了你支摊比谁都快。',
+  effect: { coin: 60, attr: { spr: 1 } } },
+{ id: 'ev_v2_live_sell', age: [20, 45], weight: 7,
+  cond: { attr: { chr: { gte: 6 } } },
+  text: '朋友拉你进直播间帮忙带货。灯光一打，镜头一对，三万人看着你。',
+  choices: [
+    { text: '放开嗓子带货', effect: { coin: 120, attr: { chr: 1, spr: 1 } }, result: '"家人们，这个价格我砍了三天三夜！"当晚成交量破纪录，商家塞给你一个大红包。', kind: 'good' },
+    { text: '紧张到当场卡壳', effect: { attr: { spr: -1, int: 1 } }, result: '你对着镜头沉默十秒，弹幕齐刷"主播好安静好喜欢"。意外涨粉两千，可你只想找个地缝。', kind: 'bad' }
+  ] },
+{ id: 'ev_v2_recycle', age: [16, 60], weight: 12,
+  text: '你翻出抽屉里吃灰的三部旧手机和一台笔记本，约了上门回收。验机小哥报价那一刻，你体会到了"断舍离"的快乐。',
+  effect: { coin: 30, attr: { spr: 1 } } },
+{ id: 'ev_v2_boxing_gym', age: [16, 40], weight: 8,
+  text: '新开的拳击馆搞体验课，教练是退役拳王，一身腱子肉，笑起来倒挺和蔼。',
+  choices: [
+    { text: '报名学拳', effect: { coin: -100, skills: ['sk_warcry'], attr: { str: 2 } }, result: '三个月下来，你出拳带风。教练拍着你肩膀："这一嗓子吼出来，气势先赢一半。"你学会了【战吼】。', kind: 'good' },
+    { text: '办张卡先围观', effect: { coin: -20, attr: { spr: 1 } }, result: '你在跑步机上挥汗如雨，顺便看完了三场实战。热血沸腾，虽然血是你的，拳是别人的。' }
+  ] },
+{ id: 'ev_v2_overtime', age: [22, 55], weight: 10, kind: 'bad',
+  text: '项目赶工，你连着加了半个月班。工资到账那天多了一笔可观的加班费，镜子里的黑眼圈也同样可观。',
+  effect: { coin: 90, attr: { str: -1, spr: -1 } } },
+{ id: 'ev_v2_landlord_left', age: [18, 40], weight: 5, once: true,
+  text: '退租的老房子里，房东留下一屋子旧物不要了，临走摆摆手："看得上的都归你。"',
+  choices: [
+    { text: '留下那件旧皮甲', effect: { items: ['it_leather'] }, result: '据说是房东年轻时玩户外穿的，皮面油亮。你穿上对着镜子一照，颇有几分江湖侠客的味道。', kind: 'good' },
+    { text: '挂上二手平台全卖了', effect: { coin: 70, attr: { int: 1 } }, result: '旧物一件件拍出，到账提示音此起彼伏。你第一次体会到"闲置变现"四个字的含金量。', kind: 'good' }
+  ] },
+{ id: 'ev_v2_temple_fair', age: [8, 65], weight: 10,
+  text: '庙会上的套圈摊前围满了人，老板笑得胸有成竹："十块钱五个圈，套中啥拿啥！"',
+  choices: [
+    { text: '买五个圈试试手气', effect: { coin: -10, items: ['it_apple'], attr: { spr: 1 } }, result: '四个圈全空，最后一个稳稳套中一兜苹果。老板鼓掌："好手法！"你怀疑他在安慰你。' },
+    { text: '押上全部零花钱', cond: { attr: { luk: { gte: 7 } } }, effect: { coin: -30, items: ['it_ring'], attr: { spr: 2 } }, result: '最后一个圈划出完美弧线，套中角落里的戒指。摊主脸都绿了："小伙子，明天别来了啊。"', kind: 'good' }
+  ] }
 
 ];
