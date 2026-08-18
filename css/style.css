@@ -1359,3 +1359,137 @@ body[data-world="xiuxian"] .event-card.sudden { border-left-color: var(--cinnaba
   width: 56px; height: 34px; object-fit: cover; border-radius: 5px;
   border: 1px solid rgba(42,42,46,0.2); flex-shrink: 0;
 }
+
+/* ============================================================
+   深色世界主题：每世界独立暗夜皮肤（未来人生启发）
+   结构：body[data-world] 下覆盖全局变量 + 组件深色化
+   ============================================================ */
+/* 通用深色基底（进入任一世界即生效） */
+body[data-world] {
+  --paper: #14161c;
+  --paper-deep: #1c1f28;
+  --ink: #e8e6df;
+  --ink-soft: #b8b4a8;
+  --ink-faint: #7a766a;
+  --shadow: rgba(0,0,0,0.4);
+  background: #14161c;
+  color: #e8e6df;
+}
+body[data-world] #bg-paper { background: none; background-color: var(--wbg, #14161c); }
+body[data-world] #bg-paper::after { opacity: 0.12; mix-blend-mode: screen; }
+body[data-world] #bg-mountains { opacity: 0.35; filter: invert(0.9) hue-rotate(180deg); }
+body[data-world] #topbar {
+  background: rgba(16,18,24,0.85);
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+body[data-world] .tb-title { color: var(--wacc, #c9a35a); }
+body[data-world] .ink-btn {
+  color: var(--ink); border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.04);
+}
+body[data-world] .ink-btn:hover:not(:disabled) { background: var(--wacc, #c9a35a); color: #14161c; border-color: var(--wacc, #c9a35a); }
+body[data-world] .ink-btn.primary { border-color: var(--wacc, #c9a35a); color: var(--wacc, #c9a35a); background: transparent; }
+body[data-world] .ink-btn.primary:hover:not(:disabled) { background: var(--wacc, #c9a35a); color: #14161c; }
+body[data-world] .ink-select { background: #1c1f28; color: var(--ink); border-color: rgba(255,255,255,0.2); }
+
+/* 事件卡：深色玻璃卡 */
+body[data-world] .event-card {
+  background: rgba(28,31,40,0.82);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid var(--wacc, #c9a35a);
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+body[data-world] .event-card .ev-delta { color: var(--ink-faint); }
+body[data-world] .event-card.good { border-left-color: #3d8b6b; }
+body[data-world] .event-card.bad { border-left-color: #c0392b; }
+body[data-world] .event-card.fate { border-left-color: var(--wacc, #c9a35a); background: rgba(40,36,26,0.85); }
+body[data-world] .event-card.sudden { border-left-color: #c0392b; background: rgba(46,26,26,0.85); }
+body[data-world] .age-marker { color: var(--wacc, #c9a35a); }
+body[data-world] .age-marker::before, body[data-world] .age-marker::after { background: rgba(255,255,255,0.12); }
+
+/* HUD / 控制条深色 */
+body[data-world] #life-hud, body[data-world] .life-controls {
+  background: rgba(22,25,33,0.88);
+  border-color: rgba(255,255,255,0.1);
+}
+body[data-world] .hud-item { color: var(--ink-soft); }
+body[data-world] .hud-name { color: var(--ink); border-bottom-color: var(--wacc, #c9a35a); }
+body[data-world] #hud-age { color: var(--wacc, #c9a35a); border-right-color: var(--wacc, #c9a35a); }
+
+/* 选项框深色 */
+body[data-world] #choice-box {
+  background: rgba(26,29,38,0.95);
+  border-color: var(--wacc, #c9a35a);
+}
+body[data-world] .choice-opt {
+  color: var(--ink); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.03);
+}
+body[data-world] .choice-opt:hover:not(:disabled) { border-color: var(--wacc, #c9a35a); color: var(--wacc, #c9a35a); background: rgba(255,255,255,0.06); }
+
+/* 弹层深色 */
+body[data-world] .overlay-panel {
+  background: #1a1d26;
+  border-color: rgba(255,255,255,0.1);
+  color: var(--ink);
+}
+body[data-world] .overlay-title, body[data-world] .overlay-head { color: var(--ink); border-bottom-color: rgba(255,255,255,0.1); }
+body[data-world] .overlay-body { color: var(--ink-soft); }
+body[data-world] .map-place { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+body[data-world] .place-head { background: rgba(255,255,255,0.05); color: var(--ink); border-bottom-color: rgba(255,255,255,0.08); }
+body[data-world] .place-act .l-name { color: var(--ink); }
+body[data-world] .place-act .l-desc { color: var(--ink-faint); }
+body[data-world] .place-act + .place-act { border-top-color: rgba(255,255,255,0.07); }
+body[data-world] .place-icon { background: var(--wacc, #c9a35a); color: #14161c; }
+body[data-world] .legacy-item, body[data-world] .map-act, body[data-world] .gallery-item {
+  background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); color: var(--ink-soft);
+}
+body[data-world] .legacy-item .l-name, body[data-world] .map-act .l-name, body[data-world] .gallery-item .g-name { color: var(--ink); }
+body[data-world] .tab { color: var(--ink-faint); }
+body[data-world] .tab.active { color: var(--wacc, #c9a35a); border-bottom-color: var(--wacc, #c9a35a); }
+body[data-world] .overlay-close { color: var(--ink-faint); }
+body[data-world] .legacy-points { color: var(--ink-soft); }
+
+/* 抽屉深色 */
+body[data-world] #side-drawer { background: #181b24; color: var(--ink); border-right-color: rgba(255,255,255,0.1); }
+body[data-world] .drawer-head { color: var(--ink); border-bottom-color: rgba(255,255,255,0.1); }
+body[data-world] .drawer-sec { color: var(--ink-faint); }
+body[data-world] .life-name, body[data-world] .life-quest b { color: var(--ink); }
+body[data-world] .life-attr-row, body[data-world] .life-row2 { color: var(--ink-soft); }
+body[data-world] .life-attr-row:nth-child(odd) { background: rgba(255,255,255,0.04); }
+body[data-world] .life-quest { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
+body[data-world] .life-quest small { color: var(--ink-faint); }
+body[data-world] .chip { background: rgba(255,255,255,0.06); color: var(--ink-soft); border-color: rgba(255,255,255,0.15); }
+body[data-world] .drawer-close { color: var(--ink-faint); }
+
+/* ============ 各世界强调色 & 底纹 ============ */
+body[data-world="life"]          { --wacc: #4fc3d9; --wbg: #101820; }   /* 都市：赛博青 */
+body[data-world="novel_wuxia"]   { --wacc: #7fb069; --wbg: #101a12; }   /* 武侠：竹青 */
+body[data-world="novel_wuxian"]  { --wacc: #9a6fd0; --wbg: #150f22; }   /* 无限流：幽紫 */
+body[data-world="novel_bazong"]  { --wacc: #d4a04a; --wbg: #1c1216; }   /* 霸总：酒金 */
+body[data-world="novel_moshi"]   { --wacc: #d97b3f; --wbg: #1a130e; }   /* 末世：烬橙 */
+body[data-world="xiuxian"]       { --wacc: #5ac8b8; --wbg: #0e1a1a; }   /* 修仙：青玉 */
+
+/* 世界背景色渲染 */
+body[data-world="life"] #bg-paper { background: linear-gradient(160deg, #101820, #16222e 60%, #101820); }
+body[data-world="novel_wuxia"] #bg-paper { background: linear-gradient(160deg, #101a12, #16241a 60%, #101a12); }
+body[data-world="novel_wuxian"] #bg-paper { background: linear-gradient(160deg, #150f22, #1e1530 60%, #150f22); }
+body[data-world="novel_bazong"] #bg-paper { background: linear-gradient(160deg, #1c1216, #281a20 60%, #1c1216); }
+body[data-world="novel_moshi"] #bg-paper { background: linear-gradient(160deg, #1a130e, #241a12 60%, #1a130e); }
+body[data-world="xiuxian"] #bg-paper { background: linear-gradient(160deg, #0e1a1a, #142624 60%, #0e1a1a); }
+
+/* 切角大按钮（未来人生风） */
+body[data-world] .btn-action {
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  border-radius: 0;
+}
+body[data-world] .menu-btn { border-color: rgba(255,255,255,0.25); color: var(--ink); }
+body[data-world] #top-menu { background: rgba(26,29,38,0.97); border-color: rgba(255,255,255,0.12); }
+body[data-world] .menu-item { color: var(--ink); }
+body[data-world] .menu-item:hover { background: rgba(255,255,255,0.08); color: var(--wacc, #c9a35a); }
+
+/* 深色主题下压暗插画背景 */
+body[data-world] .screen-bg.on { opacity: 0.07; }
+body[data-world] #life-scene { border-color: rgba(255,255,255,0.15); }
