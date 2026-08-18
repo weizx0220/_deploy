@@ -706,7 +706,7 @@ var MapX = (function () {
          (es.lv ? ' <span style="color:var(--gold)">+' + es.lv + '</span>' : '') + '</small>';
       }
       var equipped = it.slot !== 'use' && L.equip[it.slot] === iid;
-      div.innerHTML = '<div class="l-name">' + it.name + (equipped ? ' <small style="color:var(--cinnabar)">已装备</small>' : '') + statTxt + '</div>' +
+      div.innerHTML = '<div class="l-name"><img class="mini-ico" src="' + (typeof Assets !== 'undefined' ? Assets.url(it.id + '.png') : '') + '" onerror="this.remove()">' + it.name + (equipped ? ' <small style="color:var(--cinnabar)">已装备</small>' : '') + statTxt + '</div>' +
         '<div class="l-desc">' + it.desc + '</div>';
       var btnWrap = document.createElement('div');
       btnWrap.style.whiteSpace = 'nowrap';

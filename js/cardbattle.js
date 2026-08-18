@@ -97,7 +97,7 @@ var CardBattle = (function () {
     };
     if (S.hpState) S.hpState.max = maxhp;
     $('overlay-cbattle').classList.remove('hidden');
-    AudioFX.duck();
+    AudioFX.bgm(opts.tier === 'boss' ? 'boss' : 'battle');
     $('cb-title').textContent = S.title;
     // 开场遗物
     if (hasRelic('r_armor_shard')) S.pBlock = Math.round(maxhp * 0.1);
@@ -210,6 +210,7 @@ var CardBattle = (function () {
       msg('自损 ' + sd + ' 点生命，换取爆发');
     }
     if (c.draw) { drawCards(c.draw); msg('抽 ' + c.draw + ' 张牌'); }
+    AudioFX.card();
     if (hasRelic('r_blood_sack')) {   // 血玉髓
       var bh = Math.max(1, Math.round(S.maxhp * 0.01));
       S.hp = Math.min(S.maxhp, S.hp + bh);
@@ -310,6 +311,7 @@ var CardBattle = (function () {
     btn.textContent = win ? '凯旋' : '撤退';
     btn.onclick = function () {
       if (!S) return;   // 防连点
+      AudioFX.bgm(S.life.pool === 'xiuxian' ? 'xiuxian' : (S.life.pool === 'life' ? 'life' : 'novel'));
       AudioFX.unduck();
       $('overlay-cbattle').classList.add('hidden');
       var cb = S.onEnd; S = null;
@@ -430,13 +432,32 @@ var CardBattle = (function () {
     }
   }
 
+  var _imgCache = {};
+  function imgOf(name) {
+    if (_imgCache[name] === undefined) {
+      var im = new Image();
+      im.onload = function () { _imgCache[name] = im; };
+      im.onerror = function () { _imgCache[name] = null; };
+      im.src = (typeof Assets !== 'undefined') ? Assets.url(name) : '';
+      _imgCache[name] = false;   // 加载中
+    }
+    return (_imgCache[name] && _imgCache[name].width) ? _imgCache[name] : null;
+  }
+
   function drawScene(cv) {
     var ctx = cv.getContext('2d');
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
-    // 纸色底 + 淡墨地线
-    ctx.fillStyle = 'rgba(243,237,224,0.6)';
-    ctx.fillRect(0, 0, W, H);
+    // 战斗背景图（有则用，无则纸色）
+    var bg = imgOf('battle_' + (S.life.world || 'life') + '.png');
+    if (bg) {
+      ctx.globalAlpha = 0.35;
+      ctx.drawImage(bg, 0, 0, W, H);
+      ctx.globalAlpha = 1;
+    } else {
+      ctx.fillStyle = 'rgba(243,237,224,0.6)';
+      ctx.fillRect(0, 0, W, H);
+    }
     ctx.strokeStyle = 'rgba(42,42,46,0.15)';
     ctx.beginPath(); ctx.moveTo(0, H - 60); ctx.lineTo(W, H - 60); ctx.stroke();
     // 震屏
@@ -524,6 +545,14 @@ var CardBattle = (function () {
     ctx.save();
     ctx.translate(x, y);
     if (dead) ctx.globalAlpha = 0.35;
+    // 有立绘则用立绘，否则画剪影
+    var mimg = imgOf('mob_' + spec.body + '.png');
+    if (mimg) {
+      var mh = 120, mw = mh * mimg.width / mimg.height;
+      ctx.drawImage(mimg, -mw / 2, -mh, mw, mh);
+      ctx.restore();
+      return;
+    }
     var col = flash ? '#f5f0e6' : spec.color;
     ctx.fillStyle = col;
     ctx.strokeStyle = col;

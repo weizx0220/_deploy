@@ -9,6 +9,10 @@ var AudioFX = (function () {
   var SFX_FILES = {
     flip: 'sfx_flip.mp3',      // 翻卡
     stamp: 'sfx_stamp.mp3',    // 盖章/成就
+    buy: 'sfx_buy.mp3',        // 购买
+    forge: 'sfx_forge.mp3',    // 强化
+    relic: 'sfx_relic.mp3',    // 遗物获得
+    card: 'sfx_card.mp3',      // 出牌
     tick: 'sfx_tick.mp3',      // 点击/木鱼
     doom: 'sfx_doom.mp3',      // 死亡
     thunder: 'sfx_thunder.mp3' // 渡劫雷声
@@ -19,6 +23,8 @@ var AudioFX = (function () {
     life: 'bgm_life.mp4',       // 人生日常：平和
     xiuxian: 'bgm_xiuxian.mp4', // 修仙：仙侠
     novel: 'bgm_novel.mp4',     // 书中界：悬疑/异世
+    battle: 'bgm_battle.mp3',   // 战斗（缺则回退当前曲目）
+    boss: 'bgm_boss.mp3',       // 塔主战
     summary: 'bgm_summary.mp4'  // 总结：舒缓
   };
   var fileBroken = {};   // 文件名 -> true 表示加载失败，之后回退合成
@@ -181,11 +187,18 @@ var AudioFX = (function () {
 
   function bgm(key) {
     if (bgmKey === key) return;
+    var file = BGM_FILES[key];
+    if (!file || fileBroken[file]) {
+      // 战斗/塔主曲缺失时保持当前曲目，不切合成音
+      if (key === 'battle' || key === 'boss') return;
+      bgmKey = key;
+      stopBgm();
+      if (!muted) startSynthBgm();
+      return;
+    }
     bgmKey = key;
     stopBgm();
     if (muted) return;
-    var file = BGM_FILES[key];
-    if (!file || fileBroken[file]) { startSynthBgm(); return; }
     var a = new Audio(FILE_DIR + file);
     a.loop = true;
     a.volume = 0.32;
@@ -213,6 +226,10 @@ var AudioFX = (function () {
     tick: function (vol) { playSfxFile('tick', synthTick, vol); },
     stamp: function () { playSfxFile('stamp', synthStamp); },
     flip: function () { playSfxFile('flip', synthFlip); },
+    buy: function () { playSfxFile('buy', synthStamp); },
+    forge: function () { playSfxFile('forge', synthStamp); },
+    relic: function () { playSfxFile('relic', synthStamp); },
+    card: function () { playSfxFile('card', function () { pluck(500, 0.1); }); },
     doom: function () { playSfxFile('doom', synthDoom); },
     thunder: function () { playSfxFile('thunder', synthThunder); },
     bgm: bgm,

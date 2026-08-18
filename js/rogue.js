@@ -120,7 +120,8 @@ var Rogue = (function () {
       var rh = '';
       R.relics.forEach(function (rid) {
         var rl = relicById(rid);
-        if (rl) rh += '<span class="chip r' + rl.rarity + '" title="' + rl.desc + '">' + rl.name + '</span>';
+        if (rl) rh += '<span class="chip r' + rl.rarity + '" title="' + rl.desc + '">' +
+          '<img class="mini-ico" src="' + (typeof Assets !== 'undefined' ? Assets.url(rl.id + '.png') : '') + '" onerror="this.remove()">' + rl.name + '</span>';
       });
       rw.innerHTML = rh;
     }

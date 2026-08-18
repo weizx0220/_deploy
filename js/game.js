@@ -116,8 +116,18 @@
       var attrTxt = ['chr', 'int', 'str', 'mny', 'spr'].map(function (k) {
         return Engine.ATTR_NAMES[k] + ' ' + t.attr[k];
       }).join(' · ');
-      card.innerHTML = '<div class="hero-name">' + t.name + '</div><div class="hero-title">' + t.title + '</div>' +
+      var artUrl = (typeof Assets !== 'undefined') ? Assets.url('tpl_' + t.id.replace('tpl_','') + '.png') : null;
+      card.innerHTML =
+        '<div class="hero-name">' + t.name + '</div><div class="hero-title">' + t.title + '</div>' +
         '<div class="hero-intro">' + t.intro + '</div><div class="hero-attr">' + attrTxt + '</div>';
+      if (artUrl) {
+        var img = document.createElement('img');
+        img.className = 'hero-art';
+        img.alt = '';
+        img.src = artUrl;
+        img.onerror = function () { this.remove(); };
+        card.insertBefore(img, card.firstChild);
+      }
       card.onclick = function () { G.template = t; AudioFX.stamp(); startWorldPick(); };
       grid.appendChild(card);
     });
