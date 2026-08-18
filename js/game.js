@@ -437,6 +437,7 @@
       learnSkill(SKILLS[Engine.rnd(SKILLS.length)].id);
     }
     G.phase = 'life';
+    document.body.dataset.world = w.id;   // 世界主题画风
     UI.showScreen('life');
     AudioFX.bgm(w.id === 'xiuxian' ? 'xiuxian' : (w.pool === 'life' ? 'life' : 'novel'));
     // 选项框若被上一世拖进了时间轴，先挪回安全位置，避免被清空时间轴时销毁
@@ -1018,6 +1019,7 @@
     if (!hasExtra('revive') || L.flags['revived']) return false;
     L.flags['revived'] = true;
     L.attr.str = Math.max(L.attr.str, 3);
+    L.route = L.pool === 'xiuxian' ? 'xiuxian' : (L.pool === 'life' ? '' : 'novel');   // 复位死亡路线标记
     addTimeline('<div class="event-card fate">' + text + '（涅槃符 · 免死一次）</div>');
     UI.sealToast('涅槃', '死而复生，大道可期');
     AudioFX.stamp();
@@ -1100,6 +1102,8 @@
             L.dead = false;
             L.deathText = '';
             L.attr.str = Math.max(L.attr.str, 3);
+            // 关键修复：死亡时 route 被置 'dead'，复活必须复位，否则再无事件
+            L.route = L.pool === 'xiuxian' ? 'xiuxian' : (L.pool === 'life' ? '' : 'novel');
             addTimeline('<div class="event-card fate">机缘图拼合的刹那，阴差对视一眼，悻悻退去。你拍拍尘土站了起来——命，续上了。（本世续命机缘已用）</div>');
             UI.sealToast('一线生机', '拼图续命成功');
             renderSide();
@@ -1407,6 +1411,7 @@
   }
 
   function showTitle() {
+    delete document.body.dataset.world;
     var s = Save.data.stats;
     refreshProfileLabel();
     // 有进行中的人生则显示「续前缘」

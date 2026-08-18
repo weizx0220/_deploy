@@ -1143,3 +1143,12 @@ html, body {
 }
 .drawer-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink-faint); }
 .drawer-close:hover { color: var(--cinnabar); }
+
+/* ---------- 世界主题画风（基础版：主色与纸色随世界切换） ---------- */
+body[data-world="novel_wuxia"] { --cinnabar: #4a6b3a; --gold: #8a6d2f; --paper: #eef1e4; --paper-deep: #e3e8d2; }
+body[data-world="novel_wuxian"] { --cinnabar: #3a4a7a; --gold: #6a5a9a; --paper: #e9ecf2; --paper-deep: #dadfeb; }
+body[data-world="novel_bazong"] { --cinnabar: #7a2a3a; --gold: #b8862f; --paper: #f4ecec; --paper-deep: #e9dcdc; }
+body[data-world="novel_moshi"] { --cinnabar: #8a4a2a; --gold: #6a6a5a; --paper: #eeeae2; --paper-deep: #e2dccd; }
+body[data-world="xiuxian"] { --cinnabar: #2a6a6a; --gold: #b8862f; --paper: #e8f1ef; --paper-deep: #d7e6e2; }
+body[data-world] #bg-mountains { opacity: 0.9; }
+[data-relic] { cursor: help; }

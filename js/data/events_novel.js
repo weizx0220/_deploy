@@ -2768,5 +2768,3305 @@ var EVENTS_NOVEL = [
   kind: 'fate',
   text: '决战动员的最后一晚，你在基地名册上逐一签字。签到最后一个新生儿时，笔尖顿住了——名字一栏写着"念安"。母亲在旁边轻声说："念着平安，就能平安。"',
   effect: { attr: { spr: 2, int: 1 } }
-}
+},
+
+// ========== 第四轮扩充：门派日常·新副本·商战家族·基地微光（ev_n4_） ==========
+
+// ---- 武侠 ----
+
+{
+  id: 'ev_n4_wx_biaoju_tour',
+  age: [16, 20],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '镇远镖局门口贴出告示招趟子手，总镖头坐在太师椅上打量每一个来人。你往人堆里一站，他冲你抬了抬下巴。',
+  choices: [
+    { text: '上前耍趟拳应聘', cond: { attr: { str: { gte: 4 } } },
+      effect: { attr: { str: 1 }, setFlags: ['n4_wx_biao1'] },
+      result: '总镖头点点头："明儿跟车。"你成了吃镖行饭的人。', kind: 'good' },
+    { text: '摇摇头离开',
+      effect: { attr: { spr: 1 } },
+      result: '镖行的水太深，你觉得还是自由身快活。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_biaoju_first',
+  age: [18, 32],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  cond: { flags: ['n4_wx_biao1'] },
+  text: '你第一次跟镖，夜宿荒村，三更时分林子里亮起十几点火把，镖旗在风里猎猎作响。',
+  choices: [
+    { text: '敲响铜锣结阵稳守', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { str: 1 }, setFlags: ['n4_wx_biao2'] },
+      result: '劫匪见你们阵脚不乱，骂骂咧咧退了，老镖头对你刮目相看。', kind: 'good' },
+    { text: '抄起单刀先冲出去',
+      effect: { attr: { str: 2, spr: -1 }, setFlags: ['n4_wx_biao2'] },
+      result: '你砍翻两人挂了彩，镖银保住了，老镖头直摇头说你莽。' },
+    { text: '提议谈判花钱消灾', cond: { attr: { chr: { gte: 5 } } },
+      effect: { attr: { chr: 1 }, coin: -30, setFlags: ['n4_wx_biao2'] },
+      result: '对方要了三成买路钱，镖头脸黑了一路，但人货两全。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_biaoju_master',
+  age: [24, 40],
+  pool: 'novel_wuxia',
+  weight: 5,
+  once: true,
+  big: true,
+  cond: { flags: ['n4_wx_biao2'] },
+  text: '老镖头把你叫到堂前，把总镖头的铜印往桌上一放："我老了，这口印，你接不接？"',
+  choices: [
+    { text: '接印', 
+      effect: { attr: { mny: 2, chr: 1 } },
+      result: '你成了总镖头，镖旗所到之处，黑白两道都给三分薄面。', kind: 'good', big: true },
+    { text: '推辞，只想走镖',
+      effect: { attr: { spr: 2 } },
+      result: '你这辈子就想听镖铃响，不想管账。老镖头笑骂你没出息。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_siguo_punish',
+  age: [16, 25],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '你失手打碎了掌门心爱的琉璃盏，被发落上思过崖面壁三日。崖上风大，云雾就在脚底下翻。',
+  choices: [
+    { text: '老实面壁',
+      effect: { attr: { spr: -1, int: 1 }, setFlags: ['n4_wx_sg1'] },
+      result: '对着崖壁三天，你竟觉得心静了不少。' },
+    { text: '偷偷练剑解闷',
+      effect: { attr: { str: 1 } },
+      result: '反正没人看见，你在崖顶把剑法耍了个遍。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_siguo_wall',
+  age: [17, 30],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wx_sg1'] },
+  text: '面壁到第二日，你发现崖壁上有一道极深的剑痕，走势凌厉，绝非本门路数，旁边还刻着几个模糊小字。',
+  choices: [
+    { text: '依着剑痕比划领悟', cond: { attr: { str: { gte: 5 } } },
+      effect: { attr: { str: 1, int: 1 }, setFlags: ['n4_wx_sg2'] },
+      result: '比划了上百遍，你隐约摸到一点前人留下的剑路。', kind: 'good' },
+    { text: '抄下那几个小字',
+      effect: { attr: { int: 1 }, setFlags: ['n4_wx_sg2'] },
+      result: '字迹被风雨磨得只剩一半："恨……未能……"', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_siguo_truth',
+  age: [20, 36],
+  pool: 'novel_wuxia',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['n4_wx_sg2'] },
+  text: '多年后你重上思过崖，撬开剑痕下松动的石片，里面藏着一封油布书信——百年前一位前辈被逐出师门的真相，字字泣血。',
+  effect: { attr: { spr: 1, int: 1 }, setFlags: ['n4_wx_sg3'] }
+},
+
+{
+  id: 'ev_n4_wx_zhaoqin_drum',
+  age: [18, 30],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '城东绸缎庄搭起高台比武招亲，小姐在珠帘后若隐若现，台下挤满了提刀挎剑的汉子。鼓声一响，血都热了。',
+  choices: [
+    { text: '跳上擂台', cond: { attr: { str: { gte: 5 } } },
+      effect: { attr: { str: 1 }, setFlags: ['n4_wx_zq1'] },
+      result: '你连赢三场，台下喝彩声震得瓦片嗡嗡响。', kind: 'good' },
+    { text: '在台下押注',
+      effect: { coin: 50 },
+      result: '你押中了最后赢的那个黑脸汉子，小赚一笔。' },
+    { text: '看完就走',
+      effect: { attr: { spr: 1 } },
+      result: '热闹看饱，你啃着烧饼回了家。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_zhaoqin_fight',
+  age: [18, 32],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wx_zq1'] },
+  text: '你夺了魁，洞房花烛夜挑开盖头，新娘子却低声说："公子，我是替嫁的丫环，真小姐早跟心上人跑了。"',
+  choices: [
+    { text: '去绸缎庄讨说法',
+      effect: { attr: { spr: -1 }, coin: 80, setFlags: ['n4_wx_zq2'] },
+      result: '庄主赔了一大笔银子息事宁人，你成了全城笑谈。' },
+    { text: '将错就错',
+      effect: { attr: { spr: 2 } },
+      result: '丫环姑娘手巧心热，日子竟过得有滋有味。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_zhaoqin_end',
+  age: [20, 36],
+  pool: 'novel_wuxia',
+  weight: 5,
+  once: true,
+  cond: { flags: ['n4_wx_zq2'] },
+  text: '半年后，一位蒙面女子深夜叩窗——正是逃婚的真小姐。她塞给你一封信："那晚替我拜堂的人，可还好？"',
+  choices: [
+    { text: '如实相告',
+      effect: { attr: { chr: 1 }, coin: 60 },
+      result: '她听完笑了，说你们都是实在人，留下一支金钗作谢。', kind: 'good' },
+    { text: '劝她回家',
+      effect: { attr: { spr: -1 } },
+      result: '她沉默良久，把信烧了，转身没入夜色，从此再没人见过她。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_bang_rise',
+  age: [18, 35],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '城里新近冒出个"断水帮"，半年吞了三个小堂口。帮主亲自登门，开出三倍月钱挖你过去。',
+  choices: [
+    { text: '入伙',
+      effect: { attr: { mny: 1 }, coin: 50, setFlags: ['n4_wx_bg1'] },
+      result: '新帮规矩大、银子足，你穿上了绣着断水纹的号衣。' },
+    { text: '婉拒',
+      effect: { attr: { chr: 1 } },
+      result: '你托词家中老母需奉养，帮主也不恼，留了坛酒走了。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_bang_split',
+  age: [20, 40],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wx_bg1'] },
+  text: '断水帮老帮主暴毙，大当家与少帮主当场翻脸，两边人马在总舵对峙，都派人来拉你站队。',
+  choices: [
+    { text: '站少帮主',
+      effect: { attr: { chr: 1 }, setFlags: ['n4_wx_bg2'] },
+      result: '少帮主年轻气盛，但肯为弟兄挡刀，你赌他赢。', kind: 'fate' },
+    { text: '站大当家',
+      effect: { attr: { str: 1 } },
+      result: '大当家根基深，你随他清算了几个摇摆不定的堂主。' },
+    { text: '连夜卷铺盖走人',
+      effect: { attr: { spr: 1 } },
+      result: '神仙打架凡人遭殃，你揣着攒下的银子跑了。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_bang_end',
+  age: [24, 44],
+  pool: 'novel_wuxia',
+  weight: 5,
+  once: true,
+  big: true,
+  cond: { flags: ['n4_wx_bg2'] },
+  text: '火并定在七月十五。当夜总舵火光冲天，你护着少帮主杀到正厅，大当家横刀立马等着你们。',
+  choices: [
+    { text: '抢先出手', cond: { attr: { str: { gte: 6 } } },
+      effect: { attr: { str: 1 } },
+      result: '三合之内你挑飞了他的刀，断水帮从此只有一个帮主。', kind: 'good', big: true },
+    { text: '喝止双方罢手', cond: { attr: { chr: { gte: 6 } } },
+      effect: { attr: { int: 1, chr: 1 } },
+      result: '你一句"别让外人看笑话"，竟真让两边收了刀，你成了帮中和事佬。', kind: 'good' },
+    { text: '替少帮主挡刀',
+      effect: { attr: { spr: -1, str: -1 }, coin: 100 },
+      result: '那一刀砍在你背上。少帮主赢了，你躺了三个月，得了块"义"字金牌。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_save_villain',
+  age: [18, 44],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '江边芦苇荡里躺着一个重伤的男人，腰间令牌刻着魔教的火焰纹。追兵的呼喝声已经不远了。',
+  choices: [
+    { text: '把他拖进自家船舱',
+      effect: { attr: { spr: 1 } },
+      result: '他醒来只说了一句"魔教也知恩"，留下一枚黑铁牌。十年后，它救了你一命。', kind: 'good' },
+    { text: '喊来追兵领赏',
+      effect: { coin: 60, attr: { spr: -1 } },
+      result: '赏银到手，可你总梦见那双失血过多的眼睛。', kind: 'bad' },
+    { text: '当没看见',
+      effect: { attr: { int: 1 } },
+      result: '芦苇荡第二天只剩一摊血，谁也不知道你路过了。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_righteous_dirty',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  text: '你无意撞见名门长老深夜埋尸——死的是揭发他私吞赈灾款的弟子。长老回头看见了你，笑得很和蔼。',
+  choices: [
+    { text: '假装梦游离开', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { spr: -1 } },
+      result: '你哼着小调晃走了，背后冷汗湿了三层衣。', kind: 'fate' },
+    { text: '留下证据上报盟主',
+      effect: { attr: { chr: -1, int: 1 } },
+      result: '盟主夸你正直，长老被调去"清修"。从此你天天检查自己的饭食。' },
+    { text: '敲他一笔封口费',
+      effect: { coin: 100, attr: { spr: -1 } },
+      result: '封口费很厚，但从此你听见他的笑声就胃疼。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_demon_kindness',
+  age: [16, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '雪灾封山，给村里送粮的竟是魔教的分舵。教众背着粮袋深一脚浅一脚，为首的还蹲下来帮孩子焐手。',
+  choices: [
+    { text: '搭把手一起送粮',
+      effect: { attr: { spr: 2 } },
+      result: '老人往你手里塞煮鸡蛋："管他什么教，雪中送炭的就是好人。"', kind: 'good' },
+    { text: '悄悄报官',
+      effect: { coin: 50, attr: { spr: -2 } },
+      result: '官兵冲进去时，那锅给孩子的粥还热着。你攥着赏银，手心发烫。', kind: 'bad' },
+    { text: '远远看着',
+      effect: { attr: { int: 1 } },
+      result: '你在雪地里站了很久，"正邪"两个字忽然有点模糊。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_tournament_prep',
+  age: [20, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '十年一届的武林大会轮到你所在的地界筹办，各派为擂台朝向、座次排位吵得房顶都快掀了。',
+  choices: [
+    { text: '出力调停座次', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { chr: 1 }, coin: -30 },
+      result: '你定的座次连宿敌两派都挑不出错，盟主记了你的名。', kind: 'good' },
+    { text: '趁机卖茶水板凳',
+      effect: { coin: 80 },
+      result: '大会三天，你数钱数到手抽筋。武学？不认识。' },
+    { text: '躲远点',
+      effect: { attr: { spr: 1 } },
+      result: '神仙吵架，你找了个向阳的墙根睡大觉。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_ring_challenge',
+  age: [18, 36],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '武林大会擂台上，连胜七人的刀客点名要"那位缩在后面的朋友"上台，全场目光唰地聚到你身上。',
+  choices: [
+    { text: '上台应战', cond: { attr: { str: { gte: 6 } } },
+      effect: { attr: { str: 1, chr: 1 } },
+      result: '三十招后你险胜半招，刀客抱拳："够胆。"', kind: 'good' },
+    { text: '拱手认怂',
+      effect: { attr: { chr: -1, spr: -1 } },
+      result: '哄笑声里你坐回板凳，那口茶怎么喝都是苦的。', kind: 'bad' },
+    { text: '推荐旁边的胖子', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { int: 1 } },
+      result: '胖子上台三招放翻了刀客——你早就看出他不简单。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_morning_class',
+  age: [16, 24],
+  pool: 'novel_wuxia',
+  weight: 10,
+  text: '五更早课，钟声催人，你被窝暖和得像神仙洞府，窗外执事师兄的脚步声越来越近。',
+  choices: [
+    { text: '鲤鱼打挺冲出去',
+      effect: { attr: { str: 1 } },
+      result: '你踩着钟声的尾巴到位，师兄狐疑地看了你一眼。' },
+    { text: '装病',
+      effect: { attr: { int: 1, spr: 1 } },
+      result: '你咳得惊天动地，换来一碗热汤和一上午懒觉。' },
+    { text: '被逮个正着',
+      effect: { attr: { spr: -1 } },
+      result: '罚扫一个月演武场，你成了全门起得最早的人。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_kitchen',
+  age: [16, 30],
+  pool: 'novel_wuxia',
+  weight: 10,
+  text: '伙房今夜炖全羊，香气顺着窗缝往鼻子里钻。大师傅出去解手了，灶上那锅羊汤没人看着。',
+  choices: [
+    { text: '先舀一碗再说',
+      effect: { attr: { spr: 1 } },
+      result: '汤鲜得你差点咬到舌头。喝完你把锅边擦得干干净净。' },
+    { text: '替大师傅看着火',
+      effect: { attr: { chr: 1 } },
+      result: '大师傅回来见你守着灶，撕了条羊腿塞给你。', kind: 'good' },
+    { text: '往里加一把盐',
+      effect: { attr: { spr: 1 } },
+      result: '第二天全门齁得直灌水，只有你在角落里偷笑。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_mountain_patrol',
+  age: [16, 36],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '轮到你巡山，走到黑风口，听见草丛里有动静——像是人，还不止一个。',
+  choices: [
+    { text: '悄悄摸回去报信',
+      effect: { attr: { int: 1 } },
+      result: '果然是一伙踩点的山贼，掌门夸你有勇有谋。', kind: 'good' },
+    { text: '大喝一声冲过去', cond: { attr: { str: { gte: 5 } } },
+      effect: { attr: { str: 1, spr: -1 } },
+      result: '三个蟊贼被你唬得跪地求饶——你的腿其实抖得像筛糠。' },
+    { text: '假装没听见',
+      effect: { attr: { spr: -1 } },
+      result: '当夜库房失窃，你攥着拳头什么都没说。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_scammed',
+  age: [16, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  kind: 'bad',
+  text: '游方郎中拍胸脯说他的"金刚丸"一粒增十年功力。你掏空钱袋买了三粒，当晚跑了八趟茅房。',
+  choices: [
+    { text: '堵到他要钱', cond: { attr: { str: { gte: 5 } } },
+      effect: { coin: 30 },
+      result: '你把他按在墙上要回半数药钱，还附赠一句"再让我看见你"。' },
+    { text: '自认倒霉',
+      effect: { attr: { spr: -1 } },
+      result: '茅房的夜里你悟了：江湖第一课，叫学费。' },
+    { text: '把剩下的卖给仇家',
+      effect: { coin: 20, attr: { chr: -1 } },
+      result: '仇家跑了十趟茅房。你良心有点痛，但不后悔。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_frame',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  kind: 'bad',
+  text: '同门丢了的玉佩从你枕下被搜了出来，人证物证俱全。你知道是有人栽赃，可百口莫辩。',
+  choices: [
+    { text: '据理力争', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { chr: 1 } },
+      result: '你指出玉佩上抹的胶还没干透，真凶的马脚当场露了。', kind: 'good' },
+    { text: '咬牙认罚',
+      effect: { attr: { spr: -2 } },
+      result: '二十棍打完，那个栽赃你的人笑得最响。你记住了他。', kind: 'bad' },
+    { text: '求掌门彻查',
+      effect: { attr: { int: 1 } },
+      result: '掌门盯着众人看了半晌，把玉佩摔了："我这门里，容不下脏东西。"', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_injury',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'bad',
+  text: '切磋时对方没收住手，一记重掌拍在你胸口。你当场呕了血，三个月提不起重物。',
+  choices: [
+    { text: '安心养伤',
+      effect: { attr: { str: -1, spr: 1 } },
+      result: '伤好后你重新打熬筋骨，反而比从前更稳。' },
+    { text: '带伤偷练', cond: { attr: { luk: { gte: 6 } } },
+      effect: { attr: { str: 1 } },
+      result: '你赌赢了，经脉在极限处拓宽了一线。' },
+    { text: '让对方赔到底',
+      effect: { coin: 40 },
+      result: '医药钱一分没少，对方从此见你就绕道。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_street_kid',
+  age: [16, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'fate',
+  text: '集市上一个小乞儿抢了馒头被摊主追打。他跑得飞快，怀里还护着半个——大概是要留给谁的。',
+  choices: [
+    { text: '替他付钱',
+      effect: { coin: -10, attr: { spr: 1 } },
+      result: '小乞儿愣住，把护着的半个馒头分了你一口。', kind: 'good' },
+    { text: '一把抓住他',
+      effect: { attr: { chr: -1 } },
+      result: '摊主夸你仗义，小乞儿看你的眼神像看一条狗。', kind: 'bad' },
+    { text: '跟着看看',
+      effect: { attr: { int: 1 } },
+      result: '破庙里躺着个病丫头，那半个馒头还是热的。你鼻子忽然一酸。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_gambler_den',
+  age: [18, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  text: '赌坊里你连赢七把，庄家额头冒汗。第八把开盅前，你分明看见他小指在盅底一勾。',
+  choices: [
+    { text: '当场掀桌',
+      effect: { attr: { str: 1 }, coin: -50 },
+      result: '打手围上来之前你掀桌夺路，赢的钱撒了一路。' },
+    { text: '记下他的手法', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { int: 1 }, coin: 40 },
+      result: '你用他的手法赢了他的钱，他看你的眼神像见了鬼。' },
+    { text: '找坊主告状',
+      effect: { attr: { chr: 1 } },
+      result: '坊主剁了庄家一根手指，请你喝了顿酒，从此你去赌钱免费。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_fire_watch',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '你守夜时发现柴房起火，硬是在风势起来前把火扑灭了，保住了半个庄子。',
+  effect: { attr: { chr: 1, spr: 1 }, coin: 30 }
+},
+
+{
+  id: 'ev_n4_wx_rain_shelter',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '暴雨夜你躲进破庙，神像后蜷着个老丐，你们分着吃了半块干粮。天亮雨停，老丐不见了，草堆里多了半页拳谱。',
+  effect: { attr: { str: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_old_debt',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'bad',
+  text: '结义兄弟欠下赌债跑路，债主拿着你画押的保书找上门。白纸黑字，赖都赖不掉。',
+  effect: { coin: -80, attr: { spr: -2 } }
+},
+
+{
+  id: 'ev_n4_wx_herb_gift',
+  age: [16, 36],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'good',
+  text: '你在山里救了个摔断腿的药农，他执意送你一包祖传伤药，说行走江湖总用得上。',
+  effect: { attr: { spr: 1 }, coin: 20 }
+},
+
+{
+  id: 'ev_n4_wx_wine_fight',
+  age: [18, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  kind: 'bad',
+  text: '酒楼里两桌人一言不合动了手，你上前劝架——两边倒是停手了，合伙把你揍了一顿。',
+  effect: { attr: { str: -1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wx_night_watch',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'good',
+  text: '你夜里巡更，撞见飞贼翻墙，追出三条街把人按住了。失主是个寡妇，哭着要给你磕头。',
+  effect: { attr: { chr: 2 }, coin: 20 }
+},
+
+{
+  id: 'ev_n4_wx_beggar_test',
+  age: [16, 40],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '老丐拦路讨酒，你给了他半壶。他喝完拿竹枝在地上划了个歪歪扭扭的"侠"字："心不歪，路就歪不了。"',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_lantern',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 10,
+  kind: 'good',
+  text: '上元夜满城花灯如昼，猜灯谜的、卖糖画的、走百病的挤作一团。你在桥头看了半宿，觉得人间值得。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_boat',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '渡船上艄公一篙一点，讲他年轻时见过的江上水战，唾沫横飞。靠岸时你多给了两个铜板。',
+  effect: { attr: { int: 1 }, coin: -5 }
+},
+
+{
+  id: 'ev_n4_wx_lore_stele',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'fate',
+  text: '荒郊半截断碑，字被雷火劈去大半，只认得"侠之大者"四个字。你拂去青苔，站了一会儿。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_tea',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '清明前的龙井，茶博士手腕一翻凤凰三点头，茶汤碧绿。你不懂茶，但这一口下去，懂了什么叫春天。',
+  effect: { attr: { spr: 1 }, coin: -5 }
+},
+
+{
+  id: 'ev_n4_wx_lore_horse_fair',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '骡马市上牲口打响鼻，牙行在袖子里捏价码。你看了半天没敢伸手——袖里乾坤，比掌法还难练。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_snow',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '塞北的雪能把天地下成一张白纸，马蹄落上去，一个坑一个字。你呵着白气想：好大的江湖。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_bridge',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '扬州二十四桥，月夜箫声从水面飘过来。你数了数其实只有一座桥，但不妨碍它好听。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_smith',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '城南铁匠铺，师傅赤膊抡锤，火星子溅在砧子上像打铁花。他说好刀不斩无名之辈，也不卖无义之人。',
+  effect: { attr: { str: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_pawn',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '当铺柜台高得要仰视，朝奉眼皮都不抬："破剑一把，五钱。"那剑鞘上分明镶着七颗宝石。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_bath',
+  age: [18, 46],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '澡堂子里雾气蒸腾，隔壁池子两个镖师吹嘘走镖见闻，一条真三条假。你泡着澡，听了一部江湖史。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_river',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '江边浣衣的妇人唱着梆子，棒槌起落都是节拍。调子太悲，你听了会儿，默默帮她拧了两床被单。',
+  effect: { attr: { chr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_chess',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '街头棋摊的残局摆了三十年没人解得开。你蹲了一下午，输了五文钱，赢了一肚子棋理。',
+  effect: { attr: { int: 1 }, coin: -5 }
+},
+
+{
+  id: 'ev_n4_wx_lore_shadow',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '皮影戏演的是穆桂英挂帅，灯影子里刀枪翻飞。散场后老艺人教你挑了三下签子——手比脑子快。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_medicine',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '药铺坐堂的老大夫三根手指搭脉，眼皮一垂就知道你昨夜熬了夜、前日贪了杯。你吓得连声是是。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_kite',
+  age: [16, 30],
+  pool: 'novel_wuxia',
+  weight: 9,
+  kind: 'good',
+  text: '春风一起满城纸鸢，你的沙燕放得最高。线断了，它摇摇晃晃飞过城墙，像去投奔了谁。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_grave',
+  age: [18, 46],
+  pool: 'novel_wuxia',
+  weight: 6,
+  kind: 'fate',
+  text: '赶夜路误走乱葬岗，磷火飘飘。你壮着胆子给无主坟头各洒了半杯酒，后半夜睡得格外安稳。',
+  effect: { attr: { spr: 1, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_fortune',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'fate',
+  text: '测字先生让你写个字，你随手写了个"走"。他端详半晌："足下近期有远行，走为上。"你愣住——你还什么都没说。',
+  effect: { attr: { int: 1 }, coin: -5 }
+},
+
+{
+  id: 'ev_n4_wx_lore_wine',
+  age: [18, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  kind: 'good',
+  text: '埋了十八年的女儿红开坛，酒香能勾人魂。嫁女儿的人家请你沾喜气，你喝了一碗，脸红到脖子根。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_monk',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 7,
+  text: '行脚僧一步一叩往五台山去，膝盖早磨穿了。你递了水，他说："路远，慢慢走，总会到。"',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lore_map',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '舆图铺里，你盯着大周疆域图看了半个时辰。原来江湖之外，还有那么大的地方没去过。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_cook_master',
+  age: [16, 30],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '伙房大师傅看你顺眼，教你颠勺的手劲："腕子活，剑才活。"半年后你腕力大涨，厨艺竟也小成。',
+  effect: { attr: { str: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_early_bell',
+  age: [16, 24],
+  pool: 'novel_wuxia',
+  weight: 10,
+  text: '冬日凌晨的钟声撞开浓雾，你哈着白气站桩，忽然觉得这一身懒骨头里，有根筋悄悄直了。',
+  effect: { attr: { str: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_fist_manual',
+  age: [16, 36],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '旧书摊角落躺着本虫蛀的拳谱，摊主当废纸卖你三文钱。翻开一看，招式野得很。',
+  choices: [
+    { text: '照着练', cond: { attr: { str: { gte: 4 } } },
+      effect: { attr: { str: 1 } },
+      result: '招式虽野，胜在实用，你的拳脚多了几分狠辣。', kind: 'good' },
+    { text: '转卖给武馆',
+      effect: { coin: 40 },
+      result: '武馆教头如获至宝。你三文钱进，一贯钱出。' },
+    { text: '拿去垫桌脚',
+      effect: { attr: { spr: 1 } },
+      result: '桌子从此不晃了，也算物尽其用。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_lost_dog',
+  age: [16, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  kind: 'good',
+  text: '你帮粮店老板娘找回走失的黄狗，她非塞给你一包酱牛肉。黄狗冲你摇尾巴，像认了半个主。',
+  effect: { attr: { spr: 1 }, coin: 10 }
+},
+
+{
+  id: 'ev_n4_wx_night_rain',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '夜雨敲窗，你挑灯擦剑，剑身映出你的眉眼——比出门那年沉稳多了。江湖催人老，也催人长大。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_gym_challenge',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '一个独臂汉子来武馆踢馆，连挫三个教头。馆主急得团团转，重金悬赏能留住招牌的人。',
+  choices: [
+    { text: '上台应战', cond: { attr: { str: { gte: 6 } } },
+      effect: { attr: { str: 1 }, coin: 60 },
+      result: '你赢在年轻气足。独臂汉子走前说："比我当年差远了。"你竟然服气。', kind: 'good' },
+    { text: '牵线请外援',
+      effect: { attr: { int: 1 }, coin: 30 },
+      result: '你请来名宿压阵，馆主分你一成谢礼。' },
+    { text: '围观到底',
+      effect: { attr: { spr: 1 } },
+      result: '你白看了一场好拳脚，值回站票的力气。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_spring_plow',
+  age: [16, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  kind: 'good',
+  text: '春耕时节你帮老乡扶了三天犁，换来一身泥、两手茧和一顿韭菜盒子。庄稼人的谢意，最沉。',
+  effect: { attr: { str: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wx_lantern_riddle',
+  age: [16, 40],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '灯市上悬着一盏走马灯，谜面是"一口咬掉牛尾巴"。掌柜说猜中送灯。',
+  choices: [
+    { text: '答"告"', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { int: 1, spr: 1 } },
+      result: '掌柜抚掌大笑，走马灯归了你，转出一路光影。', kind: 'good' },
+    { text: '蒙一个"午"',
+      effect: { attr: { spr: -1 }, coin: -10 },
+      result: '掌柜摇头，周围小孩笑作一团，你讪讪买了盏灯挽回颜面。', kind: 'bad' },
+    { text: '拉掌柜喝酒套答案',
+      effect: { attr: { chr: 1 } },
+      result: '三两黄酒下肚，答案到手，还多了个朋友。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_poison_wine',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  text: '酒过三巡，你瞥见主人给你续杯时，拇指在壶柄上按了一下——这壶有机关，是阴阳壶。',
+  choices: [
+    { text: '佯醉泼酒',
+      effect: { attr: { int: 1 } },
+      result: '你手一抖酒洒衣襟，主人脸色微变又掩了过去。这顿饭，你记下了。', kind: 'fate' },
+    { text: '借敬酒换杯盏', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { chr: 1 } },
+      result: '半个时辰后，主人自己趴下了。', kind: 'good' },
+    { text: '一饮而尽',
+      effect: { attr: { str: -2 }, coin: -50 },
+      result: '你赌他不敢——赌输了。醒来时躺在乱葬岗边上，钱袋空了，命还在。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wx_dice_oath',
+  age: [16, 36],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '同乡三人意气相投，挑了个月圆之夜在城外土地庙摆香案，要与你结为异姓兄弟。',
+  choices: [
+    { text: '磕头结拜',
+      effect: { attr: { chr: 1, spr: 1 } },
+      result: '"不愿同年同月同日生"念出口，你从此多了三个过命的家人。', kind: 'good' },
+    { text: '婉拒',
+      effect: { attr: { spr: 1 } },
+      result: '你说独来独往惯了，三人也不恼，拉你喝完那坛酒。' },
+    { text: '提议歃血改成拼酒',
+      effect: { attr: { spr: 2 } },
+      result: '四人喝到月亮偏西，拜没拜成，感情倒比血还浓。' }
+  ]
+},
+
+// ---- 无限流 ----
+
+{
+  id: 'ev_n4_wxn_metro_rules',
+  age: [18, 26],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '深夜十一点五十九分，你踏上末班地铁。车厢里贴着一张《乘车须知》，一共七条，第一条是"本线路没有终点站"，最后一条被人用指甲抠掉了。',
+  choices: [
+    { text: '逐条背熟规则', effect: { attr: { int: 1, spr: -1 }, setFlags: ['n4_wxn_metro_exit'] }, result: '你在每一站都严格照章办事，凌晨四点被广播礼貌地"请"下了车。活着，兜里还多了一张没有日期的车票。', kind: 'good' },
+    { text: '假装睡觉', effect: { attr: { str: -1, spr: -2 } }, result: '你闭眼的第三分钟，广播开始念你的名字。你一路装睡装到声带发抖，天亮才被吐出来，掉了半条命。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_metro_driver',
+  age: [20, 34],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wxn_metro_exit'] },
+  text: '又是那趟末班地铁。这次驾驶室的门虚掩着，司机的背影瘦得像一根电线杆，广播里忽然说：欢迎老朋友乘车。',
+  choices: [
+    { text: '上前搭话', effect: { attr: { int: 1, luk: 1 }, setFlags: ['n4_wxn_metro_veteran'] }, result: '司机说他也曾是乘客，开了三十年车，只差一张"下车的票"。他把时刻表塞进你手里，上面有一站叫"出口"。', kind: 'good' },
+    { text: '按规则无视他', effect: { attr: { spr: -1 } }, result: '须知第十二条：不要与司机交谈。你守住了规矩，也永远错过了某些东西。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_metro_terminal',
+  age: [24, 40],
+  pool: 'novel_wuxian',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['n4_wxn_metro_veteran'] },
+  text: '某个深夜，末班地铁破例为你一人停靠。司机朝你点头：终点站到了——不是它的，是你的。你走出车厢，身后轨道尽头透出一线真正的天光。',
+  effect: { attr: { spr: 2, luk: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_puzzle_diary',
+  age: [18, 30],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '解密副本：一座停摆二十年的疗养院，所有谜题的答案都指向同一间院长室。暗格里没有通关道具，只有一本卷边的日记，扉页写着"第八赛季留念"。',
+  effect: { attr: { int: 1 }, setFlags: ['n4_wxn_old_diary'] }
+},
+
+{
+  id: 'ev_n4_wxn_last_season',
+  age: [22, 40],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  cond: { flags: ['n4_wxn_old_diary'] },
+  text: '休息区的老烟枪瞥见你背包里露出的日记角，烟头当场掉在裤子上。他压低声音："这本子……是上一个赛季的人留下的。那赛季怎么结束的，公告里一个字都没写。"',
+  choices: [
+    { text: '请他喝酒套话', effect: { attr: { mny: -1, int: 1 }, setFlags: ['n4_wxn_last_season'] }, result: '三杯酒下肚，他说那个赛季最后只有十七个人回来，名单第二天就刷新了，像什么都没发生过。', kind: 'fate' },
+    { text: '听完就当八卦', effect: { attr: { spr: -1 } }, result: '你把日记塞回包底。有些真相的运费太贵，你暂时付不起。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_space_crack',
+  age: [26, 46],
+  pool: 'novel_wuxian',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['n4_wxn_last_season'] },
+  text: '循着日记里的暗示，你在空间最旧的走廊尽头找到一面会"呼吸"的墙。指尖贴上去的瞬间，你听见墙那边传来声音——像是很多人在一起倒数。',
+  effect: { attr: { int: 1, luk: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_temp_alliance',
+  age: [18, 32],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '生存副本开局，一个笑起来很真诚的轮回者向你伸出手："结盟吧，两个人怎么也比一个人活得久。"你看着他的眼睛，判断不出这句话有几成保质期。',
+  choices: [
+    { text: '握手结盟', effect: { attr: { chr: 1 }, setFlags: ['n4_wxn_ally'] }, result: '你们约定暗号、分配守夜，那晚你睡了进本以来第一个整觉。', kind: 'good' },
+    { text: '婉拒独行', effect: { attr: { int: 1, spr: -1 } }, result: '你独自活过了这个副本，只是从此看谁都像潜在的内鬼。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_ally_betrayal',
+  age: [20, 38],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'bad',
+  cond: { flags: ['n4_wxn_ally'] },
+  text: '结算前最后一夜，你的盟友把你的坐标卖给了追杀者，换了一张直通终点的门票。被围攻时你看见他站在远处，朝你比了个"对不起"的口型。',
+  choices: [
+    { text: '杀出重围再算账', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { str: -1, spr: -1 }, setFlags: ['n4_wxn_betrayed'] }, result: '你浑身挂彩地活了下来，把他的名字刻在了匕首柄上。', kind: 'bad' },
+    { text: '咽下这口气', effect: { attr: { spr: -2 }, setFlags: ['n4_wxn_betrayed'] }, result: '你躲进下水道熬过结算。仇恨这玩意儿不顶饱，但很提神。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_betrayal_reunion',
+  age: [24, 44],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wxn_betrayed'] },
+  text: '三年后的副本大厅，你又见到了那个卖你的人。他老了很多，左腿换成了义肢，看见你的瞬间，他站住了，没有跑。',
+  choices: [
+    { text: '把酒泼他脸上，两清', effect: { attr: { spr: 2, chr: 1 } }, result: '酒液顺着他的下巴滴落，谁都没再提当年。有些账，泼出去就算结清了。', kind: 'good' },
+    { text: '擦肩而过', effect: { attr: { int: 1 } }, result: '你们像两个陌生人一样错身而过。你发现自己早就不恨了，只是还记得。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_glitch_window',
+  age: [18, 30],
+  pool: 'novel_wuxian',
+  weight: 5,
+  once: true,
+  kind: 'fate',
+  text: '副本结算界面卡住了一秒。就这一秒里，你看见光幕后面闪过一行乱码，乱码末尾缀着一个词：DEBUG。全空间好像只有你没眨眼。',
+  effect: { attr: { int: 1 }, setFlags: ['n4_wxn_glitch_seen'] }
+},
+
+{
+  id: 'ev_n4_wxn_glitch_loot',
+  age: [20, 36],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  cond: { flags: ['n4_wxn_glitch_seen'] },
+  text: '你摸清了规律：每逢整点维护，结算系统会"打嗝"半秒，手快的话能多点一次领取。这和抢银行唯一的区别是，银行不知道自己在被抢。',
+  choices: [
+    { text: '薅！薅秃为止', effect: { attr: { mny: 2, spr: 1 }, setFlags: ['n4_wxn_glitch_used'] }, result: '你连薅七次，积分翻倍。第八次，界面弹出一行小字："别太过分哦。"你收手了。', kind: 'good' },
+    { text: '立刻上报', effect: { attr: { int: 1, chr: 1 } }, result: '系统奖励你一笔"诚实积分"，附赠评语：本赛季第4个上报者。你很好奇前三个现在在哪。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_glitch_origin',
+  age: [24, 46],
+  pool: 'novel_wuxian',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['n4_wxn_glitch_used'] },
+  text: '那行"别太过分哦"之后，你的个人面板角落多了一个永远关不掉的小窗口，缓慢滚动着看不懂的日志。你只认出一行：建造批次003，回收状态：延期。',
+  effect: { attr: { int: 2, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_night_diner',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '规则怪谈副本：一家只在凌晨营业的食堂。守则第一条"不要点菜单上没有的菜"，第二条"厨师没有影子"，第三条墨迹未干："别信前两条"。',
+  choices: [
+    { text: '点一碗阳春面', effect: { attr: { spr: 1, str: 1 } }, result: '面很普通，普通得令人感动。收碗时你瞟了一眼——厨师有影子，但影子戴着厨师帽，他本人没有。', kind: 'good' },
+    { text: '点菜单上没有的菜', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2, spr: -1 } }, result: '你点了一份"昨天的晚饭"。厨师盯着你看了十秒，笑了，给你免单，附赠一张写着"合格"的餐巾纸。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_empty_block',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '规则怪谈副本：一座入住率为零的小区。半夜两点，你所在单元楼的声控灯从一楼开始一层层往上亮，而你全程没有发出任何声音。',
+  choices: [
+    { text: '对着楼道喊一嗓子', effect: { attr: { int: 1, spr: -1 } }, result: '灯全灭了。对讲机里随即传来物业的声音："六楼业主请小声一点。"可这栋楼根本没有六楼。', kind: 'fate' },
+    { text: '屏住呼吸等它上来', cond: { attr: { str: { gte: 5 } } }, effect: { attr: { str: 1, spr: -1 } }, result: '灯亮到你这层，停了。你和一个"不存在的人"隔着一扇门站了一整夜，谁都没敲门。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_late_store',
+  age: [18, 34],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '规则怪谈副本：24小时便利店，守则只有一条——"凌晨三点到三点零一分之间，不要抬头看监控"。你没忍住。监控里没有店，只有你，和站在你身后的你自己。',
+  effect: { attr: { spr: -2, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_pool_rules',
+  age: [18, 34],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '规则怪谈副本：深夜游泳馆，深水区的泳道线每天都会多一根。救生员守则写着："若听见水下传来掌声，请鼓掌回应。"',
+  choices: [
+    { text: '鼓掌回应', effect: { attr: { chr: 1, spr: 1 } }, result: '你鼓了三下掌，水面安静下来。第二天你被评为"本月最受欢迎顾客"，奖状是从水里浮上来的。', kind: 'good' },
+    { text: '装没听见', effect: { attr: { spr: -1 } }, result: '掌声停了。你总觉得有什么东西对你很失望。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_old_inn',
+  age: [20, 38],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '老式旅馆副本，前台永远背对客人。你在登记簿上看见自己未来七天的入住记录，字迹和你一模一样，而最后一页写着四个字：退房失败。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_seven_keys',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '解密副本：七扇门，七把钥匙，墙上提示"每一把钥匙都是对的"。队友已经开始撞门，你盯着锁孔，意识到真正的谜面是——为什么要给七扇门配七把都能用的钥匙。',
+  choices: [
+    { text: '按提示逐扇开门', effect: { attr: { int: 2 } }, result: '第七扇门后就是出口。原来这关考的不是开锁，是忍住不抄近路。', kind: 'good' },
+    { text: '跟着撞门', effect: { attr: { str: -1 } }, result: '你们撞开一扇假门，触发了加时惩罚。暴力破解在解密本里约等于挂科。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_clock_tower',
+  age: [20, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '解密副本：一座走快十分钟的钟楼，全镇时间都以它为准。谜题是"让钟楼说出真话"，而钟楼每扇窗后都站着一个不同年龄的守钟人。',
+  choices: [
+    { text: '把全镇的钟都调快', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2, spr: 1 } }, result: '当所有钟比钟楼还快，它就成了唯一"慢"的那个——相对意义上，它说了真话。通关音响起时你觉得自己帅呆了。', kind: 'good' },
+    { text: '砸了它', effect: { attr: { str: 1, mny: -1 } }, result: '物理说服也是说服。钟楼倒下的瞬间全镇时间恢复正常，但维修费从你的积分里扣。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_loop_gallery',
+  age: [20, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '解密副本：一间每转一圈就少一幅画的画廊。你走了十四圈终于发现，消失的画全画着你刚走过的路——画里的你，正一幅一幅替你"通关"。',
+  effect: { attr: { int: 1, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_sudoku_o2',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '解密副本：一面墙大的数独，规则简单——错一格，全室氧气少一成。学霸队友白着嘴唇填到第七行，而你在最后一格看出了两个都成立的答案。',
+  choices: [
+    { text: '指出另一解', cond: { attr: { int: { gte: 7 } } }, effect: { attr: { int: 2 } }, result: '双解即无解，无解即答案。你擦掉那一格，铁门应声而开，学霸抱着你哭得像个孩子。', kind: 'good' },
+    { text: '让学霸继续', effect: { attr: { str: -1 } }, result: '你们赌错了那口气。好在惩罚只到缺氧眩晕为止，出来时全员的嘴唇都是口红色号。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_cipher_wall',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '解密副本的尾声，你在出口旁的墙上发现一层盖一层的刻痕，全是历届轮回者留下的草稿。最新一行刻得很深："答案不重要，把墙带出去。"',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_snowfield',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '生存副本：零下四十度的雪原，补给箱在三十公里外，队友正发着高烧。广播提示：负重每多十公斤，体温流失快一倍。',
+  choices: [
+    { text: '背着他走', effect: { attr: { str: -2, spr: 2 } }, result: '你背着他走了三十公里，到达时两人都快冻成路标。通关评分S，评语只有四个字：值得依靠。', kind: 'good', big: true },
+    { text: '独自去搬补给', effect: { attr: { str: -1, mny: 1 } }, result: '你活着带回补给，但他看你的眼神比雪原还冷。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_desert_week',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '生存副本：荒漠七日，每人每天限量一壶水。第三天，商队幻影出现在地平线上，报价：一壶水换一件你最珍贵的东西。',
+  choices: [
+    { text: '换', effect: { attr: { mny: -1, spr: -1, str: 1 } }, result: '你交出母亲留下的护身符，换了七天活命。幻影消失前朝你鞠了一躬，像在致意一笔公平的交易。', kind: 'fate' },
+    { text: '不换', effect: { attr: { str: -1, luk: 1 } }, result: '你靠舔石头上的晨露熬到最后一天。通关时幻影商队全体向你挥手，像欢送一位老对手。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_plague_town',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '生存副本：被隔离的瘟疫小镇，你是唯一没症状的人，也因此成了全镇的"活药引"。你逃出镇界那一刻，身后有人轻声说了句谢谢。你至今没敢回头想这句话的意思。',
+  effect: { attr: { spr: -2, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_flood_roof',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '生存副本：洪水漫城，屋顶的位置只够七个人，而你们是八个。浪头打来的前一分钟，所有人都在看你——你手里攥着唯一一根绳。',
+  choices: [
+    { text: '把绳让给别人', effect: { attr: { str: -1, chr: 2 } }, result: '你被浪卷下去又爬了上来，浑身泥浆。那晚之后，七个人轮流替你守了半个月夜。', kind: 'good' },
+    { text: '先绑住自己', effect: { attr: { spr: -2 } }, result: '你活了下来。名单上少了一个人，你的名字从此在队伍频道里变得很轻。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_polar_night',
+  age: [22, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '生存副本：极夜小镇，太阳六十天不会升起，"睡着"的人会忘掉一条自己的规则。你在手臂上刻满字才撑到日出，最后一条刻痕是：你是你。',
+  effect: { attr: { str: -1, int: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_city_rush',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '竞速副本：横穿整座城市，第一名独享双倍积分，最后一名随机没收一项强化。你暂列第三，前面那位正踩着你的影子加速。',
+  choices: [
+    { text: '走屋顶直线', effect: { attr: { str: 1, spr: 1 } }, result: '你飞檐走壁抄了十七条近路，压线夺冠。市政厅的维修账单随后寄到，你假装没收到。', kind: 'good' },
+    { text: '稳扎稳打', effect: { attr: { int: 1 } }, result: '你第四名完赛，不上不下。但你是全场唯一没踩中任何陷阱的人，解说称你为"人形雷达"。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_conveyor_maze',
+  age: [20, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '竞速副本：整个迷宫建在传送带上，走错一步就被退回起点。你跑了十一遍终于发现，最快的路线是——在起点原地等迷宫自己转到出口那一格。',
+  effect: { attr: { int: 2, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_shadow_race',
+  age: [18, 36],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '竞速副本：和你的影子赛跑，规则是"影子先过线就算你输"。问题是太阳正在下山，你的影子越拉越长，跑得比你还快。',
+  choices: [
+    { text: '躲进隧道', effect: { attr: { int: 1 } }, result: '没有光就没有影子。你在隧道里等到天黑，裁判宣布：平局，双冠军。影子气得在原地跺脚。', kind: 'good' },
+    { text: '和它硬拼', effect: { attr: { str: 1, spr: -1 } }, result: '你以半个脚掌惜败。影子冲线时回头看了你一眼，那表情很像你小学体育老师。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_photo_finish',
+  age: [20, 38],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'good',
+  text: '竞速副本决赛，你和对手同时压线。高速摄像机回放了三十遍也分不出先后，判定并列第一。你们对视一眼，同时说出同一句话："再来一局。"',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_barter',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  text: '交易广场上，一个蒙面人拦住你："三张S级副本内部情报，换你那颗没什么用的黑色玻璃珠。"他说"没什么用"的时候，喉结动了一下。',
+  choices: [
+    { text: '换', effect: { attr: { mny: 2 } }, result: '情报全是真的，你赚翻了。但蒙面人走远的背影，快乐得像刚抢完银行。', kind: 'fate' },
+    { text: '不换', effect: { attr: { int: 1 } }, result: '你查了三个月才知道那珠子是某个隐藏副本的钥匙。无所谓，钥匙在你手里，急的是他。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_contract',
+  age: [18, 38],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '你在公证处签了份长期组队契约，条款第七条写着"任何情况下不先松开队友的手"。签完你才发现，对方把这一条用红笔描了三遍。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_loot_split',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 9,
+  text: '战利品分配现场，队友坚持"出力多者多拿"，可他所谓的出力，是全程站在后面喊加油。气氛僵到连副本boss都想出来打圆场。',
+  choices: [
+    { text: '按贡献重算', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { chr: 1, mny: 1 } }, result: '你拉出伤害统计和承伤曲线，数据糊脸。喊加油那位默默把多拿的放了回去。', kind: 'good' },
+    { text: '懒得争', effect: { attr: { mny: -1, spr: -1 } }, result: '你拿了最小的一份，回去路上安慰自己：和气生财。然后越想越气。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_coward_mate',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: 'boss狂暴的瞬间，你队主坦连句台词都没留就捏碎了回城符。你硬吃了三巴掌才等到支援，事后他在群里发了六个磕头表情。',
+  effect: { attr: { str: -1, spr: -2 } }
+},
+
+{
+  id: 'ev_n4_wxn_keeper',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '即将进高难副本的轮回者把一枚戒指塞给你："替我保管，十天后没回来就归你。"他说得轻描淡写，可你认得那戒指——他的全部身家。',
+  choices: [
+    { text: '妥善保管', effect: { attr: { chr: 1, spr: 1 } }, result: '第十一天他回来了，瘦了一圈，开口第一句是"戒指还在吧"。你把戒指抛给他，附赠一句"利息一顿火锅"。', kind: 'good' },
+    { text: '劝他自己带着', effect: { attr: { spr: 1, luk: 1 } }, result: '他想了想，把戒指戴回手上。那个副本他活着出来了——戒指替他挡了致命一击。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_mentor',
+  age: [18, 34],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '积分榜前十的大佬忽然私聊你："看你骨骼清奇，要不要拜我为师？学费是你下个副本三成收益。"你盯着"骨骼清奇"四个字，怀疑他群发了两百遍。',
+  choices: [
+    { text: '拜师', effect: { attr: { mny: -1, int: 2 } }, result: '学费很贵，但干货是真的。三个月后你再看新人犯蠢，眼神已经和师父一模一样。', kind: 'good' },
+    { text: '婉拒', effect: { attr: { spr: 1 } }, result: '你回了个"我考虑考虑"，随即被移出大佬朋友圈。也好，清净。' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_debt',
+  age: [18, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '昔日队友深夜来电，说强化差最后一千积分，求你江湖救急，下本连本带利还。你看了看存款——那是你攒了四个月的命。',
+  choices: [
+    { text: '借', effect: { attr: { mny: -2, chr: 1 } }, result: '他下本活着回来，连本带利还了钱，附赠一张手写"生死之交"奖状。字很丑，你看完笑出了声。', kind: 'good' },
+    { text: '不借', effect: { attr: { spr: -1 } }, result: '你编了个理由推掉。后来他活着回来请你喝酒，谁都没提那通电话，但你知道有些东西变薄了。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_wxn_rival',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '积分榜上，有个人连续七个副本排名都恰好压你一头。你们从没说过话，但每次进本前，都会下意识在名单里先找对方的名字。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_maintenance',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'fate',
+  text: '凌晨四点，全空间广播："系统例行维护，期间请勿死亡，复活服务暂停。"你躺在宿舍里琢磨：这句话的意思是，平时死得起？',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_graffiti',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'fate',
+  text: '宿舍床板背面刻着一行褪色的字："第七赛季，老三到此一游。"你问系统，系统回复：当前为第九赛季，第八赛季资料不存在。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_number_rule',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '你发现自己的轮回者编号前两位是"00"，而其他所有人都是随机四位。问遍全空间没人见过同款，只有一个老头嘀咕："00开头……那是试运行的号段。"',
+  effect: { attr: { luk: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_points_truth',
+  age: [20, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '老玩家喝多了漏了句嘴："积分不是钱，是锚。你在这儿花得越多，就越不记得自己原来住哪个世界。"第二天他矢口否认，但你发现他账户余额常年为零。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_revived_gap',
+  age: [20, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'bad',
+  text: '复活归来的队友说他记得死前的每一秒，唯独想不起死的那一瞬间看见了什么。他说这话时在笑，但手一直在抖。',
+  effect: { attr: { spr: -1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_customer_service',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '你试着对光幕说了句"转人工"。沉默三秒后，光幕弹出一行字："您好，工号9527为您服务。"你吓得当场退出登录，从此再没敢皮过。',
+  effect: { attr: { spr: -1, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_old_broadcast',
+  age: [22, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '观战厅录像库里，你翻到一段没有编号的录像：画质很旧，一群人站在空间里开联欢会，横幅写着"庆祝通关，欢迎回家"。发布日期比空间"上线"还早三年。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_fake_ceiling',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'fate',
+  text: '失眠的夜里你盯着天花板，忽然意识到：这个空间的天，从来没有一片云是被风吹动的。它们更像一张裱糊得很好、但裱糊了太久的画。',
+  effect: { attr: { spr: -1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_clean_day',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 11,
+  kind: 'good',
+  text: '公会发起"空间大扫除日"，你负责擦公告栏。擦掉三层灰之后，你在栏板角落发现前任会长刻的小字："扫完记得吃饭。"',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_kitchen',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 11,
+  kind: 'good',
+  text: '公共厨房里，四川轮回者和广东轮回者正为"火锅能不能涮白切鸡"展开第N次论战。你默默涮了一片毛肚，觉得这才是人间正道。',
+  effect: { attr: { spr: 1, str: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_fake_stars',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '宿舍区顶楼有一片人造星空，每晚准时亮起。你躺着看了半小时，认出其中三颗"星星"其实是其他轮回者晾在天花板的荧光袜子。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_chess_room',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '棋牌室里，两个老头用积分为注下了三天象棋。输家赖账的方式是当场报名下一个S级副本，赢家愣了半天也报了名："你死了谁还我钱。"',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_bathhouse',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '空间澡堂的池子据说是某位大佬兑换的"温泉副本残留"。泡着泡着，你听见隔壁隔间两个轮回者在交流情报——水声很大，秘密很小。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_roommate',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '新室友睡觉说梦话，全是各副本的规则条文。你听了半宿默默记了两页笔记——第二天他自己根本不记得，你白嫖了一份攻略。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_insomnia',
+  age: [20, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'bad',
+  text: '凌晨三点你没睡着，刷到论坛热帖《你还记得现实里住几楼吗》。你想了很久，发现只记得门牌号，不记得回家的路。你关掉帖子，假装没刷到过。',
+  effect: { attr: { spr: -2 } }
+},
+
+{
+  id: 'ev_n4_wxn_space_cat',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '空间里不知哪来的橘猫，谁的罐头都吃，谁的床都睡，唯独不进任何副本。有人说它是系统漏洞，有人说它是上代玩家变的。它对此不予置评，因为它在睡觉。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_wxn_dungeon_birthday',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'good',
+  text: '生日那天你正好在副本里。零点整，队友们用三根照明棒当蜡烛、罐头当蛋糕，boss在门外很有耐心地等你们唱完生日歌才破门。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_no_number_door',
+  age: [22, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '副本大厅最深处有一扇没有编号的门，门锁崭新，门轴却锈了。保安说那儿从来是面墙，保洁说她每天都擦那扇门。你站在门口，第一次觉得"忘了"是一种功能。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_wxn_bench_oldman',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 10,
+  kind: 'good',
+  text: '广场长椅上常年坐着个晒太阳的老人，没人记得他进过副本。他告诉你："我年轻时候也急，后来发现，活得久本身就是一种通关。"说完他掏出保温杯，枸杞泡得正红。',
+  effect: { attr: { spr: 1, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_retire_wall',
+  age: [24, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '休息区有一面"退役墙"，贴满金盆洗手者的留言。出现频率最高的一句是："积分换不回的东西，就别再拿命去换了。"落款日期横跨八年。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_dream_home',
+  age: [20, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '你梦见自己回到现实世界的家，妈妈在厨房喊你吃饭，一切都和离开前一模一样。醒来时枕头湿了一角，而系统提示音照常响起：今日副本已排期。',
+  effect: { attr: { spr: -1, str: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_nameless_statue',
+  age: [18, 48],
+  pool: 'novel_wuxian',
+  weight: 9,
+  kind: 'fate',
+  text: '交易广场中央立着一尊无名雕像，底座刻着"献给所有没回来的人"。每逢新赛季开启，雕像前总会莫名多出几罐可乐——没人组织，但人人都知道该放一罐。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_wxn_npc_mercy',
+  age: [20, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  once: true,
+  text: '生存副本的尾声，负责追杀你们的NPC猎手在最后一刻收了刀。他盯着你看了很久，说："你挣扎的样子，很像当年的我。"然后转身走进了雾里。',
+  choices: [
+    { text: '追问他的来历', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 1, spr: -1 } }, result: '他没回头，只留下一句："NPC这行，干久了会想起一些不该想起的事。"', kind: 'fate' },
+    { text: '默默记下这份情', effect: { attr: { spr: 1 } }, result: '通关结算时，你的评语栏多了一行小字：猎手的敬意。积分没加，但你开心了一整天。', kind: 'good' }
+  ]
+},
+
+// ---- 霸总 ----
+
+{
+  id: 'ev_n4_bz_pricewar_start',
+  age: [24, 30],
+  pool: 'novel_bazong',
+  weight: 10,
+  once: true,
+  big: true,
+  text: '顾氏传媒旗下的新消费品牌突然全线降价三成，摆明了要烧钱拖垮厉氏的新零售业务。厉承烨盯着报表一夜没睡，天亮时问你：这仗，打不打？',
+  choices: [
+    { text: '陪他打，砸钱跟到底', cond: { attr: { mny: { gte: 6 } } },
+      effect: { attr: { mny: -3, spr: 2 }, setFlags: ['n4_bz_pricewar'] },
+      result: '你把自己的私房钱都拍在桌上。厉承烨看了你很久，只说了两个字：值得。', kind: 'good', big: true },
+    { text: '献上一计：不打价格，打体验',
+      effect: { attr: { int: 2, mny: -1 }, setFlags: ['n4_bz_pricewar'] },
+      result: '你提出的会员体验方案被全票通过，顾氏的降价像一拳打进了棉花里。', kind: 'good' },
+    { text: '劝他及时止损',
+      effect: { attr: { spr: -1, mny: 1 } },
+      result: '厉承烨沉默了很久，说了句再议。那晚他一个人在书房坐到天亮。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_pricewar_mid',
+  age: [31, 37],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  cond: { flags: ['n4_bz_pricewar'] },
+  text: '价格战打到第三年，顾氏现金流见底，开始在渠道上玩阴的：买断货架、挖走店长。厉氏季度会上气氛凝重，所有人都看向你这个当初的主战派。',
+  choices: [
+    { text: '亲自下一线稳渠道', cond: { attr: { chr: { gte: 6 } } },
+      effect: { attr: { chr: 1, str: -1 }, setFlags: ['n4_bz_pr_won'] },
+      result: '你一家家店跑下来，店长们被诚意打动，八成渠道稳住了。顾氏的攻势就此瓦解。', kind: 'good', big: true },
+    { text: '釜底抽薪，收购对方上游',
+      effect: { attr: { mny: -2, int: 1 }, setFlags: ['n4_bz_pr_won'] },
+      result: '厉氏悄悄吃下了顾氏的供货工厂。对手第二天就悄悄把价格调了回去。', kind: 'good' },
+    { text: '撑不住，建议求和',
+      effect: { attr: { spr: -2 } },
+      result: '停战协议签了，但厉氏丢掉了两个省的货架。会议室里没人说话。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_pricewar_end',
+  age: [38, 45],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  cond: { flags: ['n4_bz_pr_won'] },
+  text: '价格战尘埃落定，厉氏新零售成为行业第一。庆功宴上，当年被你稳住的店长们联名送来一面锦旗，上书八个字：价格会输，人心不会。',
+  effect: { attr: { mny: 3, spr: 2, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_patent_sue',
+  age: [25, 32],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  text: '叶氏科技突然发难，起诉厉氏新投产线的核心专利侵权，索赔金额后面跟着一串零。法务部连夜开会，你发现对方引用的专利文件里有一处日期对不上。',
+  choices: [
+    { text: '抓住日期漏洞反诉', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, spr: 1 }, setFlags: ['n4_bz_patent'] },
+      result: '对方的专利申请日晚于厉氏的实验记录。法庭外，叶氏的律师脸色铁青。', kind: 'good' },
+    { text: '走和解，花钱买平安',
+      effect: { attr: { mny: -2 }, setFlags: ['n4_bz_patent'] },
+      result: '和解费贵得肉疼，但产线没停。厉承烨说：能用钱解决的，都不算事。' },
+    { text: '慌了神，交给法务全权处理',
+      effect: { attr: { spr: -1, mny: -1 } },
+      result: '案子拖了半年，产线错过最佳窗口期。你懊悔当初没有多看那几页文件。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_patent_turn',
+  age: [33, 40],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  cond: { flags: ['n4_bz_patent'] },
+  text: '专利官司的后续来了：你主张布局的防御性专利池派上了用场，叶氏的新品反而踩进了厉氏的专利雷区。攻守之势，异也。',
+  choices: [
+    { text: '交叉授权，化敌为友',
+      effect: { attr: { mny: 2, chr: 1 }, setFlags: ['n4_bz_patent_win'] },
+      result: '两家公司签了交叉授权协议。叶氏掌门人在签字时说：你比厉承烨难对付。', kind: 'good', big: true },
+    { text: '穷追猛打，索赔到底',
+      effect: { attr: { mny: 3, spr: -1 }, setFlags: ['n4_bz_patent_win'] },
+      result: '赔偿金到账那天，财经版头条写着：专利战，厉氏完胜。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_patent_cash',
+  age: [41, 48],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  kind: 'good',
+  cond: { flags: ['n4_bz_patent_win'] },
+  text: '厉氏的专利池开始对外授权，每年躺着收许可费。你路过会议室，听见新来的实习生小声说：原来专利墙真的能当印钞机。',
+  effect: { attr: { mny: 2, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_overseas',
+  age: [28, 38],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  big: true,
+  text: '厉氏计划进军东南亚市场，但当地财团放出话来：厉家的船，进不了他们的港。董事会分成两派，吵得不可开交。',
+  choices: [
+    { text: '借沈家的航运线绕开封锁', cond: { attr: { chr: { gte: 6 } } },
+      effect: { attr: { mny: 2, chr: 1 } },
+      result: '你摆了一桌酒请沈家话事人，三杯下肚，港口的事就成了。', kind: 'good' },
+    { text: '稳扎稳打，先做跨境电商试水',
+      effect: { attr: { int: 1, mny: 1 } },
+      result: '小包件先过去探路，半年后数据漂亮得让反对派闭了嘴。', kind: 'good' },
+    { text: '硬闯，正面刚当地财团',
+      effect: { attr: { mny: -3, spr: -1 } },
+      result: '货柜在港口被扣了四十天，滞港费单比你的人还高。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_supply_negotiate',
+  age: [26, 36],
+  pool: 'novel_bazong',
+  weight: 10,
+  once: true,
+  text: '核心原材料涨价五成，供应商仗着独家货源漫天要价。采购总监急得嘴角起泡，你却注意到对方老板最近迷上了厉氏旗下马场的赛马。',
+  choices: [
+    { text: '组一场马球局，边玩边谈', cond: { attr: { chr: { gte: 5 } } },
+      effect: { attr: { chr: 1, mny: 1 } },
+      result: '三局马球下来，合同上的涨幅从五成变成了半成。生意果然都是玩出来的。', kind: 'good' },
+    { text: '扶持二供，打破垄断',
+      effect: { attr: { int: 1, mny: -1 } },
+      result: '你投了第二供应商一条产线。独家货源从此不再独家，报价单变得眉清目秀。', kind: 'good' },
+    { text: '咬牙接受涨价',
+      effect: { attr: { mny: -2, spr: -1 } },
+      result: '成本转嫁到终端，销量应声下滑。你在复盘会上把这笔账记在了自己头上。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_newbiz',
+  age: [30, 42],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '你提议厉氏试水银发经济，把闲置的商业物业改造成康养社区。三年后，第一批入住的老人们在院子里下棋，入住率百分之九十八，还顺手上了央视新闻。',
+  effect: { attr: { mny: 2, spr: 2 } }
+},
+
+{
+  id: 'ev_n4_bz_chip',
+  age: [27, 35],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '叶氏科技的新一代芯片流片失败，股价大跌。厉承烨看着收购窗口，问你的意见：抄，还是不抄？',
+  choices: [
+    { text: '趁低吸筹，小步建仓', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { mny: 3, int: 1 } },
+      result: '半年后叶氏二次流片成功，股价翻倍。你的建仓记录被投研部当成了教学案例。', kind: 'good', big: true },
+    { text: '隔行如隔山，按兵不动',
+      effect: { attr: { spr: 1 } },
+      result: '你没赚到大钱，也没踩进坑里。稳健有时候就是最好的进攻。' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_logistics',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '圈子里都说沈家的航运生意是祖上传下来的，从漕运做到远洋，家里吃饭的规矩都是按船期排的。你在沈家的码头看见一句话：风浪越大，船费越贵。',
+  effect: { attr: { luk: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_media_gu',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '顾氏传媒掌握着全城一半的杂志和热搜位。圈内的生存法则是：宁得罪厉家，别得罪顾家——厉家要钱，顾家要的是让你社死。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_will_leak',
+  age: [30, 38],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  big: true,
+  text: '厉家老爷子病重，一份疑似遗嘱的文件在家族群里疯传：旁支三房分到的份额，比预想的少了一大截。三叔当晚就带着律师杀到了老宅。',
+  choices: [
+    { text: '出面安抚三叔，稳住局面', cond: { attr: { chr: { gte: 6 } } },
+      effect: { attr: { chr: 1, spr: -1 }, setFlags: ['n4_bz_will'] },
+      result: '你在老宅客厅坐到凌晨三点，三叔摔门而去，但律师函暂时没有寄出。' },
+    { text: '建议老爷子公开遗嘱',
+      effect: { attr: { int: 1 }, setFlags: ['n4_bz_will'] },
+      result: '病床上的老爷子看了你一眼：全家上下，就你敢跟我提这个。', kind: 'good' },
+    { text: '事不关己，躲远点',
+      effect: { attr: { spr: -1 }, setFlags: ['n4_bz_will'] },
+      result: '你躲得了一时，躲不了家族群里每天九十九加的未读消息。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_will_court',
+  age: [39, 46],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  cond: { flags: ['n4_bz_will'] },
+  text: '老爷子去世后，三叔正式提起诉讼，主张遗嘱无效。开庭前夜，他私下找到你，开出一个价码：只要你交出当年老爷子的就诊记录，厉氏海外的两处物业归你。',
+  choices: [
+    { text: '严词拒绝，法庭见',
+      effect: { attr: { spr: 2, int: 1 }, setFlags: ['n4_bz_will_side'] },
+      result: '你摔了茶杯。三个月后判决下来：遗嘱有效。三叔在法院门口老了很多岁。', kind: 'good', big: true },
+    { text: '心动，但最终没有点头',
+      effect: { attr: { spr: -1, mny: 1 }, setFlags: ['n4_bz_will_side'] },
+      result: '那晚你没睡好。虽然什么也没做，但你始终记得自己犹豫过的那十秒钟。' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_will_peace',
+  age: [47, 52],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  kind: 'good',
+  cond: { flags: ['n4_bz_will_side'] },
+  text: '争产风波过去多年，三叔的儿子创业缺钱，兜兜转转找到了你。你投了他。签约那天他说：我爸让我别来，但我信你。恩怨这一页，总算翻过去了。',
+  effect: { attr: { spr: 2, chr: 1, mny: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_uncle',
+  age: [33, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  big: true,
+  text: '二伯联合了几位老臣，以厉承烨长期旅居海外为由，提议改选集团总裁。投票定在下周，你手里握着的关键一票，成了双方争夺的焦点。',
+  choices: [
+    { text: '提前布局，逐个争取摇摆票', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, spr: -1 } },
+      result: '投票结果九比二。二伯当场拂袖而去，老臣们从此见你都绕着走。', kind: 'good' },
+    { text: '在会上一锤定音，公开表态',
+      effect: { attr: { chr: 2 } },
+      result: '你只说了一句话：业绩在这里，谁行谁上。会议室安静得能听见空调声。', kind: 'good' },
+    { text: '两头不得罪，装病缺席',
+      effect: { attr: { spr: -2, chr: -1 } },
+      result: '虽然最后没改选成功，但你缺席的事被记了很久。信任这东西，碎了就难补。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_cousin',
+  age: [28, 40],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  text: '旁支的一位堂哥打着厉氏旗号在外面高息揽储，暴雷后债主堵到了集团门口。厉承烨只有一句话：处理干净，但别脏了厉家的名声。',
+  effect: { attr: { mny: -2, spr: -1 } },
+  kind: 'bad'
+},
+
+{
+  id: 'ev_n4_bz_family_tree',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '厉家族谱修到了第三十二代，规矩是嫡系用金粉、旁支用墨笔。你翻到自己那一页，名字端端正正写在厉承烨旁边——用的也是金粉。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_old_house_meal',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '老宅每月一次家宴，长桌二十四道菜，上菜顺序按辈分排。你如今的位置离主位又近了两格，有人看在眼里，脸色比桌上的凉拌苦瓜还绿。',
+  effect: { attr: { chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_aunt',
+  age: [34, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '久不联系的姑姑突然登门，拎着两盒燕窝，绕了三个弯终于说明来意：家族基金改选理事，她想让你投她一票。',
+  choices: [
+    { text: '看在燕窝的面子上，投她',
+      effect: { attr: { chr: 1, mny: -1 } },
+      result: '姑姑当选后逢人就夸你懂事。燕窝的味道，你至今记得。' },
+    { text: '婉拒：理事要按章程选',
+      effect: { attr: { int: 1, spr: -1 } },
+      result: '姑姑笑着收了燕窝，转头就在牌桌上说你翅膀硬了。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_grandpa',
+  age: [25, 33],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '老爷子把你叫到书房，什么都不说，只跟你下了一下午的棋。连输三局后，他忽然开口：承烨那小子脾气硬，家里需要一个能输得起的人。你被留下了晚饭。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+{
+  id: 'ev_n4_bz_ex_return',
+  age: [24, 30],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '行业峰会上，有人拍了拍你的肩。回头一看，是你出国前谈了四年的前任，如今是华尔街归来的投行精英，名片上的头衔烫得发光。他笑着说：好久不见，你比以前更好了。',
+  choices: [
+    { text: '大方叙旧，仅此而已',
+      effect: { attr: { chr: 1 }, setFlags: ['n4_bz_ex'] },
+      result: '你们像老同学一样聊了十分钟。不远处，厉承烨端着酒杯，指节微微发白。' },
+    { text: '冷淡点头，转身就走',
+      effect: { attr: { spr: 1 }, setFlags: ['n4_bz_ex'] },
+      result: '你走得干脆利落。当晚厉承烨什么都没问，但给你剥了一整盘虾。', kind: 'good' },
+    { text: '心里咯噔一下，多喝了两杯',
+      effect: { attr: { spr: -2 }, setFlags: ['n4_bz_ex'] },
+      result: '旧情这东西，见光就发酵。你回家路上一直看着窗外没说话。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_ex_truth',
+  age: [31, 38],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  cond: { flags: ['n4_bz_ex'] },
+  text: '前任代表资方参与厉氏一轮融资，谈判桌上他忽然放出消息：当年分手，是因为他收了别人一笔钱离开这座城市。全桌的目光刷地聚到你脸上。',
+  choices: [
+    { text: '当场把事情摊开说清',
+      effect: { attr: { spr: 2, chr: 1 }, setFlags: ['n4_bz_ex_clear'] },
+      result: '你说：当年的事我早知道了，钱是沈家给的，对吧？前任的脸色瞬间煞白。这一局，你赢得干净利落。', kind: 'good', big: true },
+    { text: '不动声色，生意归生意',
+      effect: { attr: { int: 1, mny: 1 }, setFlags: ['n4_bz_ex_clear'] },
+      result: '融资条款谈得异常顺利——他心里有愧，让了三个点。旧账，变成了折扣。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_jealous',
+  age: [24, 40],
+  pool: 'novel_bazong',
+  weight: 10,
+  once: true,
+  text: '厉承烨和新任女副总裁连续加班一周，公司里传得有鼻子有眼。你表面云淡风轻，晚上却把他书房里的合照全都扣着放了。',
+  choices: [
+    { text: '直接问清楚',
+      effect: { attr: { spr: 1, chr: 1 } },
+      result: '他愣了三秒，然后把一整周的会议纪要拍在你面前：自己看，全程二十七个人在场。', kind: 'good' },
+    { text: '阴阳怪气一整天',
+      effect: { attr: { spr: -1, chr: -1 } },
+      result: '他到晚上才反应过来你在吃醋，笑得直不起腰。你更气了。', kind: 'bad' },
+    { text: '暗中观察，自己破案', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1 } },
+      result: '你查清了他们是在筹备给你的惊喜基金。你默默把合照一张张摆了回去。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_misunderstand',
+  age: [26, 42],
+  pool: 'novel_bazong',
+  weight: 10,
+  once: true,
+  kind: 'bad',
+  text: '你在厉承烨的西装口袋里发现一张妇产科的挂号单，名字却不是你的。你攥着那张纸在客厅坐了一整夜，脑子里演完了八十集连续剧。',
+  choices: [
+    { text: '天亮就把挂号单拍在桌上',
+      effect: { attr: { spr: 1 } },
+      result: '他看完沉默了：这是替沈家少奶奶挂的专家号，人家丈夫在国外。你闹了个大红脸。', kind: 'good' },
+    { text: '憋着不说，暗中较劲',
+      effect: { attr: { spr: -2 } },
+      result: '冷战三天后真相大白，他却认真地说：以后有疑问，直接问我。你忽然有点想哭。' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_test',
+  age: [25, 38],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  text: '你们像两只互相试探的猫：他故意在你面前接了别的女人的电话，你故意在朋友圈发了和学长的合影。谁先绷不住谁就输。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_tsundere',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '降温了。厉承烨把一件外套扔给你，附带一句：别误会，是司机买多了。你看了眼吊牌——是你的尺码，定制款，下单日期是上个月。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_bz_umbrella',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  kind: 'good',
+  text: '暴雨夜你被困在公司楼下，叫了半小时的车。忽然一辆熟悉的车停在面前，车窗降下来，厉承烨面无表情：顺路。你查过导航，他家和你完全反方向。',
+  effect: { attr: { spr: 2, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_anniversary2',
+  age: [30, 50],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '结婚纪念日，厉承烨推掉了百亿签约，亲自下厨。成品是一盘焦黑的牛排和一锅糊底的罗宋汤。你们对着灾难现场笑了半小时，最后点了外卖。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_text_msg',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '你发现厉承烨的微信表情包库存惊人：猫猫、狗狗、流泪熊猫头应有尽有。谁能想到谈判桌上杀伐决断的厉总，收藏夹里全是毛茸茸。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_gift_tie',
+  age: [26, 44],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  text: '你送了厉承烨一条领带。第二天董事会，第三天路演，第四天见外宾，他戴的全是那一条。秘书小声说：厉总以前一天换三条。',
+  choices: [
+    { text: '心里偷着乐，再送一条',
+      effect: { attr: { chr: 1, mny: -1 } },
+      result: '从此他的领带轮换名单变成了两条。整个秘书处都学会了看领带识心情。', kind: 'good' },
+    { text: '提醒他该换换了',
+      effect: { attr: { spr: -1 } },
+      result: '他淡淡回了句习惯了。那条领带他戴到了起毛边。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_his_ex',
+  age: [28, 38],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '厉承烨的大学前任成了当红画家，回国办展，画册扉页上印着一行字：献给C.Y.，我永远的灵感。媒体闻风而动，长枪短炮对准了你。',
+  choices: [
+    { text: '高调现身画展，买下全场最贵的一幅', cond: { attr: { mny: { gte: 5 } } },
+      effect: { attr: { mny: -2, chr: 2 } },
+      result: '你站在那幅画前合影，笑容得体。第二天头条是：正宫的格局。', kind: 'good', big: true },
+    { text: '不理会，冷处理',
+      effect: { attr: { spr: 1 } },
+      result: '画展闭幕那天，那幅最贵的画流拍了。有些事，不回应就是最好的回应。' },
+    { text: '憋不住，找厉承烨闹了一场',
+      effect: { attr: { spr: -2, chr: -1 } },
+      result: '他安静地听完，只说：都过去了，信我。你却整晚没睡着。' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_night_talk',
+  age: [32, 52],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  big: true,
+  text: '凌晨两点，你们都没睡着。厉承烨忽然说：其实当年那份契约，我第二天就后悔了——后悔设了期限。窗外天快亮了，谁也没有再说话，但有些东西不一样了。',
+  effect: { attr: { spr: 3 } }
+},
+
+{
+  id: 'ev_n4_bz_product_crisis',
+  age: [27, 40],
+  pool: 'novel_bazong',
+  weight: 10,
+  once: true,
+  big: true,
+  kind: 'bad',
+  text: '厉氏旗下新品被曝出批次质量问题，测评视频播放量破亿，退货潮涌进客服中心。公关部给了两套方案：冷处理等风头过去，或者总裁亲自直播道歉。',
+  choices: [
+    { text: '支持直播道歉，全额召回',
+      effect: { attr: { mny: -3, chr: 2, spr: 1 } },
+      result: '直播间弹幕从谩骂刷到路转粉。三个月后复购率创了新高——危机成了最好的广告。', kind: 'good', big: true },
+    { text: '冷处理，发律师函压热搜',
+      effect: { attr: { mny: -1, chr: -2 } },
+      result: '热搜是压下去了，但测评博主做了续集，标题叫：资本堵不住我的嘴。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_scandal_exec',
+  age: [30, 45],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '跟着厉家二十年的老臣被曝出挪用公款包养情人，金额触目惊心。他是厉承烨的授业恩师，处置重了伤情分，轻了坏规矩。全集团都在看你们怎么办。',
+  choices: [
+    { text: '移交司法，不留情面',
+      effect: { attr: { spr: -1, chr: 1, int: 1 } },
+      result: '厉承烨亲自送他上的警车，回头说了一句：规矩比情分长寿。集团风气为之一肃。', kind: 'good' },
+    { text: '内部处理，让他体面退休',
+      effect: { attr: { spr: -1, mny: -1 } },
+      result: '事情压下来了，但年轻的骨干们陆续递了辞呈——他们看的不是结果，是态度。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_cyberbully',
+  age: [22, 35],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  kind: 'bad',
+  text: '一段掐头去尾的监控视频在网上疯传：画面里你对服务员颐指气使。评论区十万条谩骂，你的照片被做成表情包，连你大学时的微博都被挖了出来。',
+  choices: [
+    { text: '放出完整视频，正面硬刚', cond: { attr: { int: { gte: 5 } } },
+      effect: { attr: { spr: 1, chr: 1 } },
+      result: '完整视频里，你前一秒刚替服务员挡下了醉汉的推搡。风向一夜逆转，造谣账号被封。', kind: 'good' },
+    { text: '关掉评论，等风头过去',
+      effect: { attr: { spr: -2 } },
+      result: '你一个月没敢看手机。厉承烨默默注销了五个带头造谣的大号——用他的方式。' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_hotsearch',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '你发现自己有了热搜体质：穿件外套上热搜，喝杯咖啡上热搜，就连打个喷嚏都有人做成动图转发三万次。娱乐版编辑给你起了个外号：行走的流量包。',
+  effect: { attr: { chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_rumor_stock',
+  age: [28, 45],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '一则厉氏资金链断裂的小道消息在股民群里疯传，股价三天跌了百分之十五。你陪着投研部熬了两个通宵做澄清材料，发布那天手都在抖。',
+  effect: { attr: { mny: -2, str: -1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_livestream',
+  age: [24, 38],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  text: '你第一次试水直播带货，结果把产品名念错了三次，还把价格说低了一百块。弹幕瞬间沸腾，两万人冲进直播间喊着上错价也要买。',
+  choices: [
+    { text: '将错就错，按报错的价格卖',
+      effect: { attr: { mny: -2, chr: 2 } },
+      result: '那晚亏了八十万，却涨粉两百万。商家连夜加签了三年代言——血赚。', kind: 'good', big: true },
+    { text: '紧急下播，发声明道歉',
+      effect: { attr: { chr: -1, spr: -1 } },
+      result: '声明写得很诚恳，但弹幕截图已经传遍了全网：嘴瓢主播，一战成名。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_paparazzi2',
+  age: [25, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '狗仔拍到你和大学师兄在咖啡馆聊了三个小时，标题起得惊悚：豪门婚姻亮红灯？实际上你们在谈一个公益助学项目的赞助。厉承烨把报纸折好，只说了四个字：做得不错。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_pr_team',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '厉氏公关部有个内部守则：坏消息不过夜，好消息要包装，老板的私人新闻一律装死。守则最后一条是手写的：老板娘的新闻，优先级永远最高。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_apology',
+  age: [26, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '三年前被你在会上当众驳了面子的部门经理，如今成了独当一面的总监。年会敬酒时他说：当年那一驳，是我职业生涯最值钱的一课。你们碰了个杯。',
+  effect: { attr: { chr: 1, spr: 1 } }
+},
+{
+  id: 'ev_n4_bz_charity_doubt',
+  age: [28, 42],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'bad',
+  text: '有自媒体发文质疑厉氏慈善基金：捐款数字漂亮，落地项目寥寥，还附了一张对比表格。文章十万加之后，基金会的热线被愤怒的网友打爆了。',
+  choices: [
+    { text: '公开全部账目和项目清单',
+      effect: { attr: { chr: 2, spr: 1 } },
+      result: '四十七页明细挂上网，每一分钱的去向清清楚楚。质疑文章的作者默默删了稿。', kind: 'good', big: true },
+    { text: '起诉造谣，杀鸡儆猴',
+      effect: { attr: { mny: -1, chr: -1 } },
+      result: '官司赢了，口碑输了。网友说你赢了官司，输了人心。', kind: 'bad' },
+    { text: '邀请质疑者实地探访项目',
+      effect: { attr: { chr: 1, mny: -1 } },
+      result: '那位自媒体人走访三所乡村小学后，连发五条道歉视频，成了基金会的义务宣传员。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_charity_audit',
+  age: [32, 46],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '你坚持给慈善基金引入第三方审计，理事们集体反对：自家人查自家人，像什么话。你力排众议签了字。审计结果公布那天，捐赠额不降反升。',
+  effect: { attr: { int: 1, chr: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_project_land',
+  age: [30, 50],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  kind: 'good',
+  text: '你盯了三年的乡村图书馆项目终于落地，第一批二十座同时开馆。开馆仪式上，一个小姑娘拽着你的衣角问：阿姨，这里的书真的能随便看吗？你鼻子一酸。',
+  effect: { attr: { spr: 3 } }
+},
+
+{
+  id: 'ev_n4_bz_charity_lore',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '圈里慈善晚宴的潜规则：捐款数字要好看，通稿要快，合影要站C位。但老人们说，真正的老牌家族比的是另一件事——谁捐的项目，十年后还活着。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_volunteer',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  kind: 'good',
+  text: '基金会志愿者日，你去山区小学当了一天代课老师。孩子们不知道你是谁，只记得这个老师会修投影仪，还会在课间给他们变魔术。',
+  effect: { attr: { spr: 2, str: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_ex_dinner',
+  age: [26, 36],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '合作方组的饭局上，你和前任被安排在了相邻座位。整顿饭你们聊天气、聊菜色、聊行业八卦，礼貌得像两块浮冰。散场时他说：你现在过得很好，挺好。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_ex_gift',
+  age: [25, 34],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '生日这天收到一个没有署名的包裹，里面是你很多年前随口说过想要的那本绝版书。你认得那个包装手法——全城只有一个人会打那样的蝴蝶结。',
+  choices: [
+    { text: '原样退回',
+      effect: { attr: { spr: 1, int: 1 } },
+      result: '包裹退回去的第三天，厉承烨不知从哪淘来同一本书，扉页上写着：我家也有。', kind: 'good' },
+    { text: '收下，束之高阁',
+      effect: { attr: { spr: -1 } },
+      result: '书被塞进书柜最顶层。你以为忘了，搬家的那天却又看到了它。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_ex_partner',
+  age: [29, 40],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  text: '命运弄人，前任所在的投行成了厉氏新项目的联席承销方。签约仪式上你们握手、微笑、交换名片，全套动作标准得像演练过。只有你知道他掌心有汗。',
+  effect: { attr: { mny: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_ex_wedding',
+  age: [30, 45],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '你收到了前任的婚礼请柬，烫金的，很体面。你让助理备了一份厚礼，人没有去。后来听说，新娘在敬酒时专门谢了你那份礼——圈子真小。',
+  effect: { attr: { spr: 1, mny: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_gym',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '厉承烨的私人健身房里挂着一块牌子：运动时不谈工作。你亲测无效——他在跑步机上否决了两个提案，在举铁的间隙批准了一个亿的预算。',
+  effect: { attr: { str: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_coffee',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 10,
+  text: '总裁办的咖啡有严格的鄙视链：手冲看不起挂耳，挂耳看不起速溶。而厉承烨喝速溶，喝得理直气壮：能提神的就是好咖啡。全楼的风气就此扭转。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_driver',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '给厉家开了三十年车的老王是全宅情报最灵通的人：哪家要联姻，哪家要分家，他看接送路线就能猜个八九不离十。他的名言是：车轮子知道的事，比账本多。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_elevator',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  kind: 'good',
+  text: '电梯突发故障，你和厉承烨被困了四十分钟。没有电话，没有文件，你们靠在轿厢里聊了这些年的鸡毛蒜皮。救援到了，两个人都假装不着急出去。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_bz_midnight_snack',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '半夜饿醒，你溜进厨房煮面，发现厉承烨也在。堂堂总裁，穿着睡衣，盯着一锅泡面，表情比看财报还专注。',
+  choices: [
+    { text: '拼桌，加两个蛋',
+      effect: { attr: { spr: 2, str: 1 } },
+      result: '凌晨一点的泡面局，你们分了最后一根火腿肠。比米其林好吃。', kind: 'good' },
+    { text: '笑话他，然后被抢走了半锅面',
+      effect: { attr: { spr: 1 } },
+      result: '他抢面的手法稳准狠，一看就是练过的。总裁的形象碎了一地。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_tailor',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 9,
+  text: '给厉家做了两代西装的老师傅量体不用尺，眼睛一扫就报出一串数字。他说：衣服骗不了人，人站直了，衣服才会服帖。你悄悄挺直了背。',
+  effect: { attr: { chr: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_piano',
+  age: [24, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '老宅琴房多年没人碰的三角钢琴，你一时兴起弹了半首。回头发现厉承烨倚在门边，不知听了多久。他说：继续。你说：忘词了。他说：琴没有词。',
+  choices: [
+    { text: '坐回去，弹完整首', cond: { attr: { chr: { gte: 5 } } },
+      effect: { attr: { chr: 1, spr: 1 } },
+      result: '曲子弹完，掌声只有一个人，但足够响。', kind: 'good' },
+    { text: '落荒而逃',
+      effect: { attr: { spr: -1 } },
+      result: '后来每次路过琴房，那半首曲子都在你脑子里自动续播。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_auction_watch',
+  age: [28, 48],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '拍卖行春拍，你替厉承烨举牌竞一块古董怀表。叫到第三轮，对手是叶家的少东家。你们隔着三排座位互相点头，然后面不改色地继续加价。',
+  effect: { attr: { mny: -2, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_bz_rain_temple',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '出差路过一座古刹，同行的人都在躲雨，只有你进去求了支签。签文写着：假作真时真亦假。你盯着看了很久，想起自己是怎么来到这个世界的。',
+  choices: [
+    { text: '把签文收好',
+      effect: { attr: { spr: 2, luk: 1 } },
+      result: '你把签纸夹进了钱包最里层。真也好，假也好，日子是自己过出来的。', kind: 'good' },
+    { text: '付之一炬',
+      effect: { attr: { spr: -1 } },
+      result: '火光熄灭的瞬间你有点后悔——有些东西烧掉了，反而记得更牢。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_bz_fortune',
+  age: [22, 52],
+  pool: 'novel_bazong',
+  weight: 8,
+  kind: 'fate',
+  text: '巷口算命的老头拉住你，端详半天说了句奇怪的话：姑娘的命数，不像这个户口本上的人。你笑他胡说，走出两条街，后背的汗还没干。',
+  effect: { attr: { luk: 1, spr: -1 } }
+},
+
+{
+  id: 'ev_n4_bz_dream',
+  age: [35, 52],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '你梦见了这本小说的原结局：厉承烨孤独终老，厉氏分崩离析。惊醒时天刚亮，枕边人睡得安稳。你忽然明白，你存在于此，本身就是改写的剧情。',
+  effect: { attr: { spr: 3, luk: 1 } }
+},
+
+// ---- 末世 ----
+
+{
+  id: 'ev_n4_ms_water_scout',
+  age: [22, 38],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  text: '侦察队回报：上游乱石谷发现一处未污染的泉水眼，可邻基地黑岩堡的人也盯上了它，两边哨兵隔着河谷互相举枪。',
+  choices: [
+    { text: '抢先派人驻守泉眼', cond: { attr: { str: { gte: 6 } } },
+      effect: { attr: { str: 1, mny: -1 }, setFlags: ['n4_ms_water'] },
+      result: '你的人连夜在泉边打下木桩，黑岩堡的人骂了几句，终究没敢开枪。', kind: 'good' },
+    { text: '派使者去谈共享',
+      effect: { attr: { chr: 1 }, setFlags: ['n4_ms_water'] },
+      result: '使者带回来一句话：水可以分，但规矩要谈。谈判的门开了一条缝。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_water_talks',
+  age: [23, 40],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  cond: { flags: ['n4_ms_water'] },
+  text: '乱石谷谈判桌上，黑岩堡的代表把弯刀拍在桌面：泉水按人头来分，还是按拳头分？满屋子的火药味。',
+  choices: [
+    { text: '用晶核买下优先取水权',
+      effect: { attr: { mny: -2, chr: 1 }, setFlags: ['n4_ms_water_pact'] },
+      result: '一袋晶核推过去，对方收起弯刀。一纸分水盟约按了手印，两边各退一步。', kind: 'good' },
+    { text: '提出联合护卫、按日轮取', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, spr: 1 }, setFlags: ['n4_ms_water_pact'] },
+      result: '你画出轮值表和共管哨位图，对方盯着看了半晌，点了头。乱世里少见的一纸信义。', kind: 'good', big: true },
+    { text: '拂袖而去，准备武力夺水',
+      effect: { attr: { str: 1, spr: -1 } },
+      result: '谈判破裂。回程的路上谁都知道，下一面就是在泉边的枪口下。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_water_pump',
+  age: [24, 42],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  cond: { flags: ['n4_ms_water_pact'] },
+  text: '老烟鬼用报废消防泵改出一台抽水机，清泉顺着铁皮管第一次流进曙光基地的蓄水池。孩子们排着队，捧着豁口的搪瓷缸接水，笑声比水声还响。',
+  effect: { attr: { spr: 2, mny: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_stranger_gate',
+  age: [20, 45],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  text: '黄昏，一个衣衫褴褛的男人跪在基地大门外，身后拖着一辆板车，车上盖着破帆布。他说自己从铁齿的地牢里逃出来，求一口饭、一面墙。',
+  choices: [
+    { text: '搜身后收入观察区',
+      effect: { attr: { chr: 1 }, setFlags: ['n4_ms_stranger_in'] },
+      result: '帆布下只有半袋发芽的土豆和一把磨亮的短刀。他缩在观察区的角落，眼神却总往基地深处瞟。', kind: 'fate' },
+    { text: '给点干粮，让他离开',
+      effect: { attr: { spr: -1 } },
+      result: '他磕了个头，拖着板车走进暮色。守夜的老王嘟囔：这年月，狠心也是护身符。', kind: 'bad' },
+    { text: '盘问他地牢的情形', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1 }, setFlags: ['n4_ms_stranger_in'] },
+      result: '他说得出铁齿换岗的时辰、牢房的朝向，细节密得不像是编的。你留了个心眼。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_stranger_map',
+  age: [21, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  cond: { flags: ['n4_ms_stranger_in'] },
+  text: '深夜，那个投奔者敲开你的门，从鞋底抠出一张油纸包着的图：铁齿掠夺团的囤粮点和哨位，一笔一划，是他用半年的命换来的。',
+  choices: [
+    { text: '收下地图，许他正式入籍',
+      effect: { attr: { int: 1, chr: 1 }, setFlags: ['n4_ms_stranger_map'] },
+      result: '他捧着那张薄薄的入籍纸，手抖得像风里的枯叶。他说十年了，第一次有人信他。', kind: 'good' },
+    { text: '先验证，派人暗中踩点', cond: { attr: { int: { gte: 7 } } },
+      effect: { attr: { int: 1 }, setFlags: ['n4_ms_stranger_map'] },
+      result: '三天后侦察员回来：图上三处哨位，分毫不差。这个人，值得赌一把。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_stranger_cache',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'good',
+  cond: { flags: ['n4_ms_stranger_map'] },
+  text: '按着那张图，夜袭队摸进铁齿的囤粮点，一枪未放扛回二十袋粮和三箱药品。天亮时那个投奔者站在人群最后，没人看见他偷偷抹了把脸。',
+  effect: { attr: { mny: 3, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_fox_pup',
+  age: [20, 40],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '巡逻队在铁丝网外捡到一只变异的狐崽，通体火红，两条尾巴，呲着乳牙冲人低吼。有人说变异兽养不熟，趁早打死省心。',
+  choices: [
+    { text: '留下它，关进铁笼喂养',
+      effect: { attr: { spr: 1 }, setFlags: ['n4_ms_fox'] },
+      result: '你用肉汤一点点喂，它从撞笼到肯隔着栏杆舔你的手指。驯化变异兽，基地里没人试过。', kind: 'fate' },
+    { text: '放归荒野',
+      effect: { attr: { spr: -1 } },
+      result: '它跑出十几步又回头看了你一眼，红影一闪没入废墟。你心里空落落的。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_fox_bond',
+  age: [21, 42],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  cond: { flags: ['n4_ms_fox'] },
+  text: '双尾狐长到半人高，开始跟着狩猎队出墙。它能在三里外嗅出潜伏的变异体，喉间一声低鸣就是警报。老王给它起了个名，叫火苗。',
+  choices: [
+    { text: '给火苗登记成正式哨兽',
+      effect: { attr: { spr: 1, str: 1 }, setFlags: ['n4_ms_fox_bond'] },
+      result: '名册上多了一行特殊的名字。狩猎季的伤亡，比往年少了一半。', kind: 'good', big: true },
+    { text: '继续散养，不立名目',
+      effect: { attr: { spr: 1 }, setFlags: ['n4_ms_fox_bond'] },
+      result: '火苗白天睡在哨塔阴影里，夜里绕着围墙巡逻，比谁都尽职。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_fox_howl',
+  age: [23, 45],
+  pool: 'novel_moshi',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['n4_ms_fox_bond'] },
+  text: '尸群夜袭那晚，是火苗先撞响了警钟。它独守缺口，一身红毛被血浸得发黑，愣是没让一只变异体翻墙。天亮时它瘸着腿走回哨塔，全基地的人自发挥手向它致意。',
+  effect: { attr: { spr: 2, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_route_open',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  text: '南方种植园基地捎话来：想打通两地商路，用粮种换我们的铁器。中间隔着八十里废城和三伙流窜的掠夺者，需要有人押着第一趟货蹚出路来。',
+  choices: [
+    { text: '亲自押队开路', cond: { attr: { str: { gte: 6 } } },
+      effect: { attr: { str: 1, mny: 1 }, setFlags: ['n4_ms_route'] },
+      result: '七天六夜，车队碾过废城，你砍翻了两拨拦路的，车轮后扬起一条活路的尘烟。', kind: 'good' },
+    { text: '出资雇佣兵护送',
+      effect: { attr: { mny: -1 }, setFlags: ['n4_ms_route'] },
+      result: '晶核撒出去，佣兵把货护到了地头。商路通了，就是过路费肉疼。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_route_ambush',
+  age: [25, 46],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  cond: { flags: ['n4_ms_route'] },
+  text: '商路中段的黑松林出了事：一伙蒙面人劫了半车铁器，还在路面钉了倒刺。看手法，像是铁齿探子摸清了班次。',
+  choices: [
+    { text: '设伏反打一锅端', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, str: 1 }, setFlags: ['n4_ms_route_clear'] },
+      result: '你让车队照常上路，暗桩伏在林子里。蒙面人扑出来那一刻，罗网正好收口。', kind: 'good' },
+    { text: '绕道百里，暂避锋芒',
+      effect: { attr: { mny: -1, spr: -1 }, setFlags: ['n4_ms_route_clear'] },
+      result: '新路多走两天，鞋底磨穿了，好歹再没遭劫。稳妥，就是憋屈。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_route_convoy',
+  age: [26, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  cond: { flags: ['n4_ms_route_clear'] },
+  text: '商路畅通后的第一个满月，五辆改装卡车对向而行，车斗里装着南方的稻种、北地的铁器，还有一封封两地幸存者互相捎的信。有人管这条路叫活脉。',
+  effect: { attr: { mny: 2, chr: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_ration_reform',
+  age: [25, 45],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '配给所门口贴了张新榜：出工记工分，工分换细粮。老弱病残的保底口粮不变，多出力的能多吃一口。榜下吵成了一锅粥。',
+  choices: [
+    { text: '力挺新制，亲自解释',
+      effect: { attr: { chr: 1, spr: -1 } },
+      result: '你在粮站前站了三天，嘴皮子磨破。上工的人渐渐多了，仓库消耗也快了。', kind: 'fate' },
+    { text: '维持大锅饭旧制',
+      effect: { attr: { spr: 1, int: -1 } },
+      result: '人群松了口气，可田里偷懒的身影也多了。公平和效率，乱世里难两全。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_traitor_wire',
+  age: [23, 42],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  kind: 'bad',
+  text: '检修线路时在围墙根挖出一截新埋的铜线，另一头通向墙外——有人在给铁齿传基地的布防。排查到最后，嫌疑落在跟你同桌吃过三年饭的老巡逻身上。',
+  choices: [
+    { text: '当众公审，以儆效尤',
+      effect: { attr: { spr: -1, str: 1 } },
+      result: '他跪在场院中央，说女儿在铁齿手里。法办了，可整个基地安静了好几天。', kind: 'bad' },
+    { text: '将计就计，喂假情报', cond: { attr: { int: { gte: 7 } } },
+      effect: { attr: { int: 2 } },
+      result: '铜线照旧传信，只是内容成了你写的。下一次铁齿扑空损兵，老巡逻望着墙外，老泪纵横。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_celeb_survivor',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '新来的难民里有个戴口罩的中年人，摘了口罩有人失声喊出来——旧世界拿过大奖的电影明星。他苦笑着摆摆手：现在会杀丧尸，比会演戏值钱。',
+  choices: [
+    { text: '请他给大伙演一场戏',
+      effect: { attr: { spr: 2, chr: 1 } },
+      result: '场院搭起破布戏台，他演了一出旧世喜剧。笑声冲出围墙，惊起一片夜鸟。有人笑着笑着就哭了。', kind: 'good' },
+    { text: '一视同仁，编入劳作队',
+      effect: { attr: { spr: -1, str: 1 } },
+      result: '他扛麻袋的样子笨得可爱，手上磨出血泡也不吭声。名人不名人的，末世只认汗水。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_child_secret',
+  age: [22, 44],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '拾荒队带回来一个七八岁的孩子，不哭不闹，怀里死死抱着一只铁盒。医生说孩子后颈有一块淡青的斑——和轻度变异体化的征兆一模一样。',
+  choices: [
+    { text: '留下孩子，秘密观察', cond: { attr: { spr: { gte: 5 } } },
+      effect: { attr: { spr: 1 }, setFlags: ['n4_ms_child'] },
+      result: '铁盒里是半块化掉的糖，他掰了一半给你。那块斑三个月没变化，孩子倒是先学会了笑。', kind: 'good' },
+    { text: '送去隔离区',
+      effect: { attr: { spr: -2 } },
+      result: '隔着栅栏，孩子把铁盒贴在胸口看你。那眼神让你好几个夜里睡不踏实。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_new_mutant',
+  age: [24, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'bad',
+  text: '城外出现新型变异体，昼伏夜出，循声而动，壳硬得步枪都打不穿。狩猎队折了两个人，只拖回来半截断肢供研究。',
+  choices: [
+    { text: '带队蹲守，摸清习性', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, str: 1 } },
+      result: '三个寒夜换来关键发现：它们畏惧高频哨音。老烟鬼连夜赶制了一批驱兽哨。', kind: 'good', big: true },
+    { text: '收缩防线，避开其领地',
+      effect: { attr: { mny: -1, spr: -1 } },
+      result: '猎场小了一圈，粮仓紧了一分。活下来是活下来了，就是窝囊。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_mine_dispute',
+  age: [25, 45],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '西山废弃铜矿能采了，可黑岩堡的矿工也上了山。两边在山口各扎营垒，矿道里黑黢黢的，谁先动手谁理亏。',
+  choices: [
+    { text: '提议分巷道共采',
+      effect: { attr: { chr: 1, mny: 1 } },
+      result: '一纸巷道划分图，两班人马错时进洞。矿灯在山腹里次第亮起，像一条地下的星河。', kind: 'good' },
+    { text: '夜里偷采，先下手为强',
+      effect: { attr: { mny: 2, spr: -2 } },
+      result: '矿是采回来了，可黑岩堡在山口贴出悬赏，要采贼的耳朵。梁子结下了。', kind: 'bad' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_power_restore',
+  age: [26, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '老烟鬼带着电工班修了整整一个秋天，柴油发电机终于带动主变压器。合闸那晚，基地主干道十二盏路灯齐刷刷亮了——末世以来，第一次有人造的光照亮夜路。',
+  choices: [
+    { text: '每晚限时供电两小时',
+      effect: { attr: { spr: 2, int: 1 } },
+      result: '灯亮时孩子们在灯下背书，大人们补衣裳。有人仰着头看灯，像看星星落了地。', kind: 'good' },
+    { text: '电力优先供给工坊和医院',
+      effect: { attr: { mny: 2, spr: 1 } },
+      result: '机床轰鸣到深夜，手术室的灯再没灭过。路灯黑着，可人心亮着。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_first_bus',
+  age: [27, 50],
+  pool: 'novel_moshi',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '一辆焊满钢板的旧校车改装完毕，开始沿安全路线接送外围哨点的孩子来基地上学。第一天发车，孩子们扒着窗栏杆，把脸挤在铁条中间，一路唱跑了调的歌。',
+  choices: [
+    { text: '跟车护送第一班',
+      effect: { attr: { spr: 2, chr: 1 } },
+      result: '你坐在最后一排，听了一路跑调的童谣。司机师傅说，这是他开过最金贵的一车货。', kind: 'good' },
+    { text: '留在基地安排护卫岗哨',
+      effect: { attr: { int: 1, spr: 1 } },
+      result: '沿线增设四个瞭望哨。校车准点进出，汽笛声成了基地最安心的报时。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_sacrifice_bridge',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'bad',
+  text: '尸群追兵将至，吊桥这头还有一支没走完的运输队，桥那头是炸桥的导火索。按下，桥断队亡；不按，墙危人亡。所有人的目光都落在你手上。',
+  choices: [
+    { text: '炸桥',
+      effect: { attr: { spr: -3, str: 1 } },
+      result: '巨响过后，河面漂着碎木。你活了下来，基地活了下来，可那几个名字，你再没勇气念出口。', kind: 'bad' },
+    { text: '带人死守桥头，赌运输队过完',
+      cond: { attr: { str: { gte: 7 } } },
+      effect: { attr: { str: 2, spr: -1 } },
+      result: '最后一辆板车过桥时，你的刀已经卷了刃。桥头横尸一片，你拄着断刀笑出了声——赌赢了。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_night_market',
+  age: [20, 45],
+  pool: 'novel_moshi',
+  weight: 9,
+  kind: 'good',
+  text: '每月十五，粮仓后巷自发聚起夜市：弹壳换的麦芽糖、旧零件拼的手电、用晶核标价的手工皮具。巡逻队睁一只眼闭一只眼，只要不卖违禁品。',
+  choices: [
+    { text: '逛摊，淘点小物件',
+      effect: { attr: { spr: 1, mny: -1 } },
+      result: '你用两枚晶核换了只木雕小鸟，摊主是个缺了条胳膊的老兵，刻鸟的手稳得出奇。', kind: 'good' },
+    { text: '摆个摊试试手艺',
+      effect: { attr: { mny: 1, chr: 1 } },
+      result: '你的修表摊前排起了队。末世里，还有人愿意为知道时间付钱。', kind: 'good' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_workshop_accident',
+  age: [22, 42],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '工坊里一台老车床崩了刀，铁屑削掉了学徒小六两根手指。他攥着血淋淋的手，第一句话是：师傅，活儿还没干完。',
+  choices: [
+    { text: '掏钱送他去板房医院',
+      effect: { attr: { mny: -1, chr: 1 } },
+      result: '手保住了三根指头。小六吊着绷带回了工坊，用左手慢慢学着重新握锉刀。', kind: 'good' },
+    { text: '责令工坊整改安全规程',
+      effect: { attr: { int: 1, spr: -1 } },
+      result: '新规程贴满墙，防护罩连夜焊上。小六的绷带和规章，都是血的学费。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_funeral_new',
+  age: [25, 50],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '老巡逻队长没了，按他的遗嘱不烧不埋，骨灰拌进城墙根的花泥里。来年开春，那段墙根开满了向日葵，巡逻的人路过都要放慢脚步。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_clean_land',
+  age: [28, 50],
+  pool: 'novel_moshi',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '农艺组试了三年，用菌肥和深翻轮作，基地东南角那片泛白的污染地终于测出了活土。第一茬萝卜出土那天，老农把萝卜供在场院中央，像供着一块玉。',
+  choices: [
+    { text: '把净化法誊抄送往各基地',
+      effect: { attr: { chr: 2, spr: 1 } },
+      result: '三个月后，邻基地捎来回信：他们的地也活了一角。信的末尾画了一棵笨拙的萝卜。', kind: 'good', big: true },
+    { text: '列为机密，闷声扩耕',
+      effect: { attr: { mny: 2, chr: -1 } },
+      result: '粮仓眼见着鼓起来，可有人问起那片地的门道，你只能含糊带过。富足里掺了点不安。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_air_route',
+  age: [30, 50],
+  pool: 'novel_moshi',
+  weight: 5,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '北方军垦基地放出风声：他们修复了一架轻型运输机，愿开辟空中商线，运费用晶核结算。第一次试航，他们问曙光基地要不要搭一股。',
+  choices: [
+    { text: '入股试航，搭上头班货',
+      effect: { attr: { mny: -2, chr: 1 }, setFlags: ['n4_ms_airline'] },
+      result: '飞机掠过基地上空那天，全基地的人都仰着头。三天后，第一批北货落地：盐、药、一卷崭新的帆布。', kind: 'good' },
+    { text: '观望，天上飞的不踏实',
+      effect: { attr: { spr: -1 } },
+      result: '你站在人群里看那个黑点飞过云层。心里一半是怕，一半是藏不住的痒。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_lore_rain_clear',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 10,
+  text: '连下半月的酸雨终于停了。云缝漏下一道斜阳，正落在围墙的了望旗上。没人说话，岗哨上的人站得笔直，像在接受检阅。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_hopscotch',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 10,
+  text: '场院的水泥地上，孩子们用粉笔画了跳房子的格子，最末一格写着天堂。一只变异鼠窜过，孩子们哄笑着追打，格子被踩花了，明天再画。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_beehive',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '农艺组在废楼阳台上养起三箱蜜蜂。取蜜那天，养蜂人掀起面纱，笑得满脸褶子：甜的。真是甜的。末世七年，基地第一次有了蜜。',
+  effect: { attr: { spr: 1, mny: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_old_clock',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '老烟鬼修好了一口旧世界的座钟，挂在食堂梁上。整点钟声一响，满食堂的人齐齐抬头。有人轻声说：听听，日子还在走呢。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_balcony_scallion',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 10,
+  text: '家家户户的窗台摆上了盆盆罐罐，小葱、蒜苗、辣椒秧，绿得参差不齐。评比最美窗台成了基地最新的风尚，奖品是半斤猪油。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_book_corner',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '拾荒队背回一麻袋泡过水的旧书，晒干后在食堂角落搭了个图书角。最抢手的是一本卷边的菜谱，扉页有前人留的字：好好吃饭。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_crow',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'bad',
+  text: '哨兵发现规律：变异乌鸦群起之日，十里内必有尸群移动。从此瞭望塔多了一项差事——数乌鸦。人们管那群黑压压的家伙叫丧信使，又恨又离不开。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_glow_fish',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '护城河入夜泛起幽幽蓝光，是变异的鱼群在游。孩子们趴在护栏上看，说像把银河倒进了水里。没人敢吃，看看也好。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_photo_studio',
+  age: [24, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '有人盘下废街一间照相馆，修好了老式相机，开张给幸存者拍全家福。第一张相纸显影时，一家三代挤在镜头前，背后墙上弹孔都没来得及遮。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_windmill',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '铁匠铺屋顶架起一架木板风车，吱呀吱呀地转，带动一台小砂轮。风大时全基地都听得见那声响，像一头温顺的老牲口在嚼夜。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_mid_autumn',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  text: '中秋夜，伙房用土豆粉压了一簸箕月饼，馅是野枣泥。全基地分食，每人一小角。月亮悬在断楼上方，圆得不像话，像旧世界忘了收回去的一盏灯。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_letterbox',
+  age: [22, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '基地大门内挂了一只绿漆邮筒，各哨点、各棚区的人都能往里投信，每日有人取送。信里多是琐事：腌菜成了，娃会走了，勿念。勿念二字出现得最多。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_spore_night',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '入夜起了白雾，是变异孢子。全基地闭门封窗，口罩勒出深痕。雾里隐约有影子游走，孩子的哭声被大人捂在掌心。熬到天亮，雾散，人人如退潮后的礁石。',
+  effect: { attr: { spr: -1, str: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_antenna_forest',
+  age: [24, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '最高的水塔顶上，天线一年年多起来，像一片铁的长草。守电台的小子说，每根天线都对着一个方向，对着一个可能有人应答的远方。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_chess_stall',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '仓库墙根下，老王摆开一副缺子的象棋，用螺帽充卒，纽扣当炮。杀到兴起，围观者里三层外三层。输家罚唱一支旧世老歌，跑调也算数。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_dogtag',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'fate',
+  text: '翻修菜窖时挖出一枚旧士兵的身份牌，锈得只剩半串编号。没人知道他是谁。基地把它挂上英烈墙最边上的钉子，牌子无字，香火不断。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_rain_catch',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '家家户户屋檐下架起铁皮槽接雨水，沉淀三日才可浣洗。下雨天满基地都是叮咚声，老人们在门廊下闭目听，说这动静像旧世界的檐溜。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_quilt',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '妇女们把各家捐的旧衣碎布拼成一床百衲被，送给基地里最年长的阿婆。被面上百块布，百种花色。阿婆摩挲着说：这一块，像我家囡囡小时候的罩衫。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_dry_riverbed',
+  age: [22, 50],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '枯水期的河床露出大片淤泥，里面嵌着末世第一年逃难者的遗骸，手还挽着手。拾荒队默默绕行。回基地后，没人提这事，饭桌上却都多添了一碗饭。',
+  effect: { attr: { spr: -1 } }
+},
+
+{
+  id: 'ev_n4_ms_lore_cricket',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '夏夜，围墙内的草丛里竟有了蟋蟀叫。老烟鬼用竹篾编了只小笼，捉一只养在窗台。他说这声儿一响，枪声就显得远了。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_apprentice',
+  age: [20, 45],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '老烟鬼放出话要收个关门徒弟，条件是徒手拆装老式步枪快过他。应者云集，全被刷下。他吧嗒着烟袋问你：要不，你试试？',
+  choices: [
+    { text: '蒙眼拆装，放手一搏', cond: { attr: { int: { gte: 6 } } },
+      effect: { attr: { int: 1, str: 1 }, setFlags: ['n4_ms_apprentice'] },
+      result: '咔哒一声，复进簧归位，比老烟鬼的纪录快了两秒。老头别过脸去，烟锅子磕得梆梆响：明儿起早来上工。', kind: 'good' },
+    { text: '婉拒，举荐旁人',
+      effect: { attr: { chr: 1 } },
+      result: '老烟鬼瞪你一眼，终究还是收了那个手最稳的少年。军械铺的灯，往后夜夜亮到三更。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_warehouse_mouse',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '老王揪着你在粮仓角落蹲了半宿，就为指给你看他布的连环捕鼠阵：变异耗子个头赛猫，可到底斗不过人的耐心。凌晨收阵，七只，老王得意得像打了胜仗。',
+  effect: { attr: { int: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_ration_card',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'bad',
+  text: '配给卡丢了。补卡要扣三天口粮作工本。你翻遍了所有口袋，最后在晾衣绳的裤脚里摸到了它——虚惊一场，可那几分钟的冷汗是真的。',
+  effect: { attr: { spr: -1, luk: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_mosquito',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'bad',
+  text: '入夏，变异蚊虫成群，叮一口肿起拳头大的包，还低烧。医疗组熬了大锅艾草水，全基地烟熏火燎三天，人熏得流眼泪，蚊子熏得翻了肚皮。',
+  effect: { attr: { str: -1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_bridge_joint',
+  age: [26, 48],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  text: '与黑岩堡合修的跨河木桥合龙，两岸各出一半木料、一半人工。桥成那日，两边工匠在桥心碰了碰拳头，谁也没提从前互指过的枪口。',
+  effect: { attr: { chr: 1, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_crystal_fever',
+  age: [22, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '晶核打磨作坊接连三人咳血倒下，医生说是晶核粉尘入了肺。老烟鬼连夜给作坊加装水磨防尘罩，嘴里骂骂咧咧：钱是好东西，命更是。',
+  choices: [
+    { text: '出钱给工匠配发滤尘面罩',
+      effect: { attr: { mny: -1, chr: 1 } },
+      result: '面罩发下去那天，老工匠摩挲着橡胶带子，说头一回觉得自己这条命有人当回事。', kind: 'good' },
+    { text: '压缩打磨工序，减产保人',
+      effect: { attr: { mny: -1, spr: 1 } },
+      result: '晶核进项少了一截，作坊里的咳嗽声渐渐稀了。账面上的亏，良心上的赚。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_birthday_noodle',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  kind: 'good',
+  text: '今天是你生日，没人声张。夜里回屋，门把手上挂着一只粗布兜，里面一碗还温着的手擀面，卧着个荷包蛋。不知道是谁放的，全基地都有嫌疑。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_ms_guard_dream',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'fate',
+  text: '轮你守夜，下半夜困极打了个盹，梦见旧世界的清晨：豆浆铺子冒白汽，公交报站声，没有人绷着神经。惊醒时东方既白，你摸了摸怀里的枪，笑了笑，起身查哨。',
+  effect: { attr: { spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_tiechi_parley',
+  age: [25, 46],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  kind: 'bad',
+  text: '一小队铁齿人马举着白布条来到墙下，说他们裂了伙，想拿两车抢来的物资换庇护。为首那人的刀鞘上，挂着曙光基地巡逻队的旧号牌。',
+  choices: [
+    { text: '缴械收编，分开看押',
+      effect: { attr: { mny: 1, spr: -1 } },
+      result: '物资入了库，人编进苦役队。夜里你总想起那块旧号牌——它原来的主人，尸骨无存。', kind: 'bad' },
+    { text: '驱离，永不准近墙',
+      effect: { attr: { str: 1 } },
+      result: '他们在墙外咒骂着远去。有人松了口气，有人望着那两车物资咽了咽唾沫。', kind: 'fate' }
+  ]
+},
+
+{
+  id: 'ev_n4_ms_beast_migration',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'fate',
+  cond: { flags: ['moshi_power'] },
+  text: '变异兽群开始季节性迁徙，黑压压掠过荒原，绕开一切有火光的地方。瞭望塔上的人看了整整一个时辰——原来它们也在逃，在逃一种连兽都怕的东西。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_tannery',
+  age: [24, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '皮革坊开张，变异兽皮硝制后坚韧胜铁。第一件成品是给哨兵做的护臂。老师傅捧着皮子念叨：畜生害人，畜生的皮护人，这账怎么算。',
+  effect: { attr: { str: 1, mny: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_public_bath',
+  age: [22, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '锅炉房扩建出一间公共澡堂，每周开放两日，凭票供应热水。第一天，雾气缭绕里全是舒坦的叹气声。有人搓着搓着，忽然说：这才像个人过的日子。',
+  effect: { attr: { spr: 2 } }
+},
+
+{
+  id: 'ev_n4_ms_storyteller',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '场院的老槐树下来了个说书的瞎子，惊堂木是半块炮弹皮。他讲旧世界的演义，也讲基地自己的仗。讲到斩丧尸王那段，满场喝彩，你坐在人后，没敢认那是自己。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_fire_drill',
+  age: [20, 50],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '基地组织火警演习：粮囤旁草垛一点，钟声大作，各棚区按路线传桶运水。头一回乱了套，第三回七分半钟扑灭火头。老王掐着表，难得咧嘴笑了。',
+  effect: { attr: { int: 1, str: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_star_watch',
+  age: [22, 50],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  cond: { attr: { int: { gte: 6 } } },
+  text: '你用废望远镜架了座土观星台，比对旧历，核出了偏了三天的历法。从此基地的农时、节气重新校准。孩子们管你叫看星星的人。',
+  effect: { attr: { int: 2, spr: 1 } }
+},
+
+{
+  id: 'ev_n4_ms_pigeon_post',
+  age: [26, 50],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  text: '驯鸽人放飞的第一批信鸽，有三只从黑岩堡飞了回来，脚环上系着回信。字条展开只有八个字：鸽已收悉，水边无恙。两个基地之间，从此有了一条会飞的路。',
+  effect: { attr: { chr: 1, spr: 1 } }
+},
 ];

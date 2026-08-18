@@ -185,5 +185,127 @@ var ACHIEVEMENTS = [
       return (a.int || 0) <= 2 && (a.mny || 0) >= 12;
     } },
   { id: 'ac_unlucky', name: '天煞孤星', desc: '气运跌到 -3 以下，出门踩坑都踩得比别人专业。', hidden: true, when: 'life',
-    check: function (L) { return ((L.attr && L.attr.luk) || 0) <= -3; } }
+    check: function (L) { return ((L.attr && L.attr.luk) || 0) <= -3; } },
+
+  /* ============ v2 扩充 · 寿命 ============ */
+  { id: 'ac2_age120', name: '三甲子老人', desc: '以一百二十岁以上高龄谢幕，你出生那年的报纸都成了文物。', hidden: false, when: 'end',
+    check: function (L) { return (L.age || 0) >= 120; } },
+  { id: 'ac2_age180', name: '岁月人瑞', desc: '活过一百八十岁，朝代换了几轮，你还在巷口下棋。', hidden: true, when: 'end',
+    check: function (L) { return (L.age || 0) >= 180; } },
+  { id: 'ac2_maxage300', name: '轮回长河', desc: '某一世曾活到三百岁以上，时间长河里有你的一朵浪花。', hidden: true, when: 'end',
+    check: function (L, save) { return ((save && save.stats && save.stats.maxAge) || 0) >= 300; } },
+
+  /* ============ v2 扩充 · 属性组合（呼应新结局） ============ */
+  { id: 'ac2_all14', name: '六边形战士', desc: '五项属性同时达到 14，人生没有短板，只有长板。', hidden: false, when: 'life',
+    check: function (L) {
+      var a = L.attr || {};
+      return (a.chr || 0) >= 14 && (a.int || 0) >= 14 && (a.str || 0) >= 14 &&
+             (a.mny || 0) >= 14 && (a.spr || 0) >= 14;
+    } },
+  { id: 'ac2_luk25', name: '天命所归', desc: '谢幕时气运达到 25，命运女神见你要递名片。', hidden: true, when: 'end',
+    check: function (L) { return ((L.attr && L.attr.luk) || 0) >= 25; } },
+  { id: 'ac2_spr28', name: '快乐超载', desc: '快乐达到 28，你的笑声需要单独做音量管制。', hidden: false, when: 'life',
+    check: function (L) { return ((L.attr && L.attr.spr) || 0) >= 28; } },
+  { id: 'ac2_beauty_lonely', name: '盛世孤颜', desc: '谢幕时颜值不低于 18 而快乐不超过 3——美则美矣，冷暖自知。', hidden: false, when: 'end',
+    check: function (L) {
+      var a = L.attr || {};
+      return (a.chr || 0) >= 18 && (a.spr || 0) <= 3;
+    } },
+  { id: 'ac2_hanmen', name: '寒门贵子', desc: '谢幕时智力不低于 16 而家境不超过 4，笔杆子硬是杀出了一条路。', hidden: false, when: 'end',
+    check: function (L) {
+      var a = L.attr || {};
+      return (a.int || 0) >= 16 && (a.mny || 0) <= 4 && (L.age || 0) >= 35;
+    } },
+  { id: 'ac2_dumb_happy', name: '无忧散人', desc: '智力不超过 3 而快乐不低于 15，想得少，笑得早，活得好。', hidden: true, when: 'life',
+    check: function (L) {
+      var a = L.attr || {};
+      return (a.int || 0) <= 3 && (a.spr || 0) >= 15 && (L.age || 0) >= 45;
+    } },
+  { id: 'ac2_gold_med', name: '黄金药罐', desc: '财富不低于 18 而体质不超过 3，存折和病历一样厚。', hidden: false, when: 'life',
+    check: function (L) {
+      var a = L.attr || {};
+      return (a.mny || 0) >= 18 && (a.str || 0) <= 3 && (L.age || 0) >= 40;
+    } },
+  { id: 'ac2_unlucky_old', name: '命硬的倒霉蛋', desc: '气运为负仍活到八十岁，阎王爷翻账本都要多看你两眼。', hidden: true, when: 'life',
+    check: function (L) { return ((L.attr && L.attr.luk) || 0) <= -2 && (L.age || 0) >= 80; } },
+
+  /* ============ v2 扩充 · 行为 ============ */
+  { id: 'ac2_study15', name: '学而不倦', desc: '一世之内伏案学习十五次，图书馆的灯为你亮到最晚。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.study) || 0) >= 15; } },
+  { id: 'ac2_gym15', name: '铁人养成', desc: '一世之内健身十五次，杠铃见了你都主动上片。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.gym) || 0) >= 15; } },
+  { id: 'ac2_invest15', name: '理财圣手', desc: '一世之内出手投资十五次，K 线图在你眼里是致富地图。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.invest) || 0) >= 15; } },
+  { id: 'ac2_social15', name: '人脉之王', desc: '一世之内社交应酬十五次，整座城市都是你的熟人。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.social) || 0) >= 15; } },
+  { id: 'ac2_rest15', name: '休息大师', desc: '一世之内安心休整十五次，躺平也是一门需要坚持的功课。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.rest) || 0) >= 15; } },
+  { id: 'ac2_stroll15', name: '街溜子认证', desc: '一世之内漫步街巷十五次，哪家的猫几点开饭你都知道。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.stroll) || 0) >= 15; } },
+  { id: 'ac2_parttime15', name: '打工之魂', desc: '一世之内兼职打工十五次，劳动最光荣，你最光荣。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.parttime) || 0) >= 15; } },
+  { id: 'ac2_beauty8', name: '精致主义者', desc: '一世之内形象管理八次，镜子是你使用频率最高的法器。', hidden: false, when: 'life',
+    check: function (L) { return ((L.actionCounts && L.actionCounts.beauty) || 0) >= 8; } },
+
+  /* ============ v2 扩充 · 战斗与收藏 ============ */
+  { id: 'ac2_wounded_heavy', name: '伤痕累累', desc: '重伤累计需静养六年以上仍未愈，你的绷带能打成一个中国结。', hidden: false, when: 'life',
+    check: function (L) { return (L.wound || 0) >= 6; } },
+  { id: 'ac2_wounded_die', name: '带伤谢幕', desc: '带着未愈的重伤走完一生，倒下时仍是战斗的姿态。', hidden: false, when: 'end',
+    check: function (L) { return (L.wound || 0) > 0; } },
+  { id: 'ac2_collect10', name: '卡牌收藏家', desc: '卡牌收藏达到 10 张，你的卡册开始有了分量。', hidden: false, when: 'life',
+    check: function (L) { return ((L.collection && L.collection.length) || 0) >= 10; } },
+  { id: 'ac2_collect20', name: '卡牌鉴赏大师', desc: '卡牌收藏达到 20 张，每一张背后都有一段出生入死。', hidden: false, when: 'life',
+    check: function (L) { return ((L.collection && L.collection.length) || 0) >= 20; } },
+  { id: 'ac2_collect40', name: '牌库大满贯', desc: '卡牌收藏达到 40 张，幽冥幻境的怪物见你都眼熟。', hidden: true, when: 'end',
+    check: function (L) { return ((L.collection && L.collection.length) || 0) >= 40; } },
+  { id: 'ac2_forge5', name: '强化狂人', desc: '同时拥有 5 件强化过的装备，铁匠铺的炉子为你连轴转。', hidden: false, when: 'life',
+    check: function (L) {
+      var f = L.forge || {}, n = 0;
+      for (var k in f) { if (f[k] >= 1) n++; }
+      return n >= 5;
+    } },
+  { id: 'ac2_forge_max', name: '神兵出世', desc: '将任意一件装备强化至 +5 满级，铁匠敲完最后一锤，给你鞠了一躬。', hidden: false, when: 'life',
+    check: function (L) {
+      var f = L.forge || {};
+      for (var k in f) { if (f[k] >= 5) return true; }
+      return false;
+    } },
+  { id: 'ac2_full_equip', name: '全副武装', desc: '五个装备位全部披挂整齐，走起路来叮当作响，安全感爆棚。', hidden: false, when: 'life',
+    check: function (L) {
+      var e = L.equip || {};
+      return !!(e.weapon && e.armor && e.head && e.trinket && e.charm);
+    } },
+  { id: 'ac2_inventory20', name: '囤积癖', desc: '背包里同时塞着 20 件物品，你管这叫以备不时之需。', hidden: true, when: 'life',
+    check: function (L) { return ((L.inventory && L.inventory.length) || 0) >= 20; } },
+  { id: 'ac2_skills6', name: '十八般武艺', desc: '一世之内习得 6 门技能，技多不压身，压的是对手。', hidden: false, when: 'life',
+    check: function (L) { return ((L.skills && L.skills.length) || 0) >= 6; } },
+
+  /* ============ v2 扩充 · 财富 ============ */
+  { id: 'ac2_coin1000', name: '腰缠万贯', desc: '单世盘缠攒到 1000，钱袋沉得需要两个人抬。', hidden: false, when: 'life',
+    check: function (L) { return (L.coin || 0) >= 1000; } },
+  { id: 'ac2_coin3000', name: '泼天富贵', desc: '谢幕时盘缠不少于 3000，你走后钱庄为你默哀了三秒。', hidden: true, when: 'end',
+    check: function (L) { return (L.coin || 0) >= 3000; } },
+
+  /* ============ v2 扩充 · 世界与奇遇 ============ */
+  { id: 'ac2_rogue_king', name: '幻境征服者', desc: '登顶幽冥幻境十二层，守关魔物的噩梦素材都是你。', hidden: false, when: 'life',
+    check: function (L) { return !!(L.flags && L.flags.rogue_cleared); } },
+  { id: 'ac2_book_passer', name: '书中过客', desc: '进入书中界却未能改写结局，墨香散场，你成了无名配角。', hidden: false, when: 'end',
+    check: function (L) {
+      var f = L.flags || {};
+      var inBook = !!(f.world_wuxia || f.world_wuxian || f.world_bazong || f.world_moshi);
+      var won = !!(f.wuxia_win || f.wuxian_win || f.bazong_win || f.moshi_win);
+      return inBook && !won;
+    } },
+  { id: 'ac2_linggen', name: '朽木可雕', desc: '身负最劣灵根仍活到一百二十岁，倔，也是一种天赋。', hidden: true, when: 'end',
+    check: function (L) { return !!(L.flags && L.flags.linggen_poor) && (L.age || 0) >= 120; } },
+  { id: 'ac2_revived', name: '向天再借', desc: '触发涅槃重生，死神的签收单被你原路退回。', hidden: false, when: 'life',
+    check: function (L) { return !!(L.flags && L.flags.revived); } },
+
+  /* ============ v2 扩充 · 趣味梗 ============ */
+  { id: 'ac2_cat', name: '有猫人士', desc: '捡到一只命中注定的猫，从此家里你排老二。', hidden: false, when: 'life',
+    check: function (L) { return !!(L.flags && L.flags.has_cat); } },
+  { id: 'ac2_hot_search', name: '热搜体质', desc: '上过一次热搜，体验了十五分钟的时代顶流。', hidden: false, when: 'life',
+    check: function (L) { return !!(L.flags && L.flags.hot_search); } },
+  { id: 'ac2_inherit', name: '天降遗产', desc: '收到远房亲戚的巨额遗产，你连对方的名字都是现查的。', hidden: false, when: 'life',
+    check: function (L) { return !!(L.flags && L.flags.sudden_inherit); } }
 ];

@@ -173,7 +173,7 @@ var CardBattle = (function () {
         if (S.firstAtk && hasRelic('r_sword_tassel')) pct += 25;   // 残剑穗
         var mult = pct / 100 * (1 + S.pStr / 100);
         if (S.weakTurns > 0) mult *= 0.75;                          // 我方虚弱
-        if (S.eVulnTurns > 0) mult *= 1.25;                         // 敌方易伤
+        if (S.eVulnTurns > 0) mult *= 1.5;                          // 敌方易伤 +50%
         var crit = Math.random() < S.crit;
         if (crit) { anyCrit = true; mult *= 1.5; }
         var dmg = Math.max(1, Math.round(S.atk * mult));
@@ -191,7 +191,7 @@ var CardBattle = (function () {
       AudioFX.pluck(200 + Math.random() * 120, 0.14);
       if (c.poison) { S.ePoison += c.poison; msg('敌方中毒 ' + S.ePoison + ' 层'); }
       if (c.weak) { S.eWeakTurns = Math.max(S.eWeakTurns, c.weak); msg('敌方陷入虚弱（攻击 -25%，' + S.eWeakTurns + ' 回合）'); }
-      if (c.vuln) { S.eVulnTurns = Math.max(S.eVulnTurns, c.vuln); msg('敌方暴露破绽（受伤 +25%，' + S.eVulnTurns + ' 回合）'); }
+      if (c.vuln) { S.eVulnTurns = Math.max(S.eVulnTurns, c.vuln); msg('敌方暴露破绽（受伤 +50%，' + S.eVulnTurns + ' 回合）'); }
     }
     if (c.block) {
       var bpct = c.block;
@@ -233,7 +233,7 @@ var CardBattle = (function () {
     var it = S.intent, e = S.enemy;
     // 中毒结算（每层 = 敌方最大生命 1.5%，五毒囊 2%）
     if (S.ePoison > 0) {
-      var per = hasRelic('r_poison_vial') ? 0.02 : 0.015;
+      var per = hasRelic('r_poison_vial') ? 0.025 : 0.02;
       var pd = Math.max(1, Math.round(S.eMax * per * S.ePoison));
       S.eHp -= pd;
       msg(e.name + ' 受到 ' + pd + ' 点毒伤');
@@ -244,7 +244,7 @@ var CardBattle = (function () {
       var pct = it.atk;
       if (S.eWeakTurns > 0) pct *= 0.75;                       // 敌方虚弱
       var raw = Math.max(1, Math.round(S.maxhp * pct / 100));
-      if (S.pVulnTurns > 0) raw = Math.round(raw * 1.25);      // 我方易伤
+      if (S.pVulnTurns > 0) raw = Math.round(raw * 1.5);       // 我方易伤 +50%
       var dmg = Math.max(0, raw - S.pBlock);
       S.pBlock = Math.max(0, S.pBlock - raw);
       S.hp -= dmg;
@@ -281,7 +281,7 @@ var CardBattle = (function () {
     if (it.vuln) {
       var vt = hasRelic('r_mirror') ? Math.max(1, it.vuln - 1) : it.vuln;
       S.pVulnTurns = vt;
-      msg(e.name + ' 看穿了你的破绽——你 ' + vt + ' 回合受伤 +25%！');
+      msg(e.name + ' 看穿了你的破绽——你 ' + vt + ' 回合受伤 +50%！');
     }
     // 状态回合数衰减
     if (S.weakTurns > 0) S.weakTurns--;

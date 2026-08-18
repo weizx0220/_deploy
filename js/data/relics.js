@@ -10,7 +10,7 @@ var RELICS = [
   { id: 'r_blood_sack', name: '血玉髓', rarity: 2, desc: '每打出一张牌，回复最大生命 1%（至少 1 点）。' },
   { id: 'r_swift_boots', name: '追风靴', rarity: 2, desc: '每回合多抽 1 张牌。' },
   { id: 'r_energy_stone', name: '聚能石', rarity: 2, desc: '每场战斗第一回合能量 +1。' },
-  { id: 'r_poison_vial', name: '五毒囊', rarity: 2, desc: '你的中毒伤害每层提高至 2%。' },
+  { id: 'r_poison_vial', name: '五毒囊', rarity: 2, desc: '你的中毒伤害每层提高至 2.5%。' },
   { id: 'r_mirror', name: '照妖镜', rarity: 3, desc: '敌方的强化与弱化效果对你减半。' },
   { id: 'r_phoenix', name: '凤凰翎', rarity: 3, desc: '每趟爬塔一次：受到致命伤害时免死，并回复 20% 生命。' },
   { id: 'r_lucky_coin', name: '招财进宝', rarity: 1, desc: '获得时立即入账 80 铜钱。' }

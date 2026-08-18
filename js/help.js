@@ -72,8 +72,19 @@ var Help = (function () {
     return html;
   }
 
-  /* 全局点击委托（物品 > 天赋 > 词条，优先具体的） */
+  /* 全局点击委托（物品 > 天赋 > 遗物 > 词条，优先具体的） */
   document.addEventListener('click', function (e) {
+    var re = e.target.closest('[data-relic]');
+    if (re && typeof RELICS !== 'undefined') {
+      var rid = re.getAttribute('data-relic');
+      for (var i = 0; i < RELICS.length; i++) {
+        if (RELICS[i].id === rid) {
+          var R = ['凡品', '良品', '上品', '天品'];
+          show(RELICS[i].name, '<p>' + RELICS[i].desc + '</p><p class="help-kv">品质：' + R[RELICS[i].rarity || 0] + ' · 遗物（本趟爬塔生效）</p>');
+          e.stopPropagation(); return;
+        }
+      }
+    }
     var ie = e.target.closest('[data-item]');
     if (ie) {
       var iid = ie.getAttribute('data-item');
