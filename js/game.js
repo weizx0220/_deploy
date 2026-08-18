@@ -584,6 +584,19 @@
     if (/dujie/.test(ev.id)) AudioFX.thunder();
 
     if (ev.choices && ev.choices.length) {
+      // 后期/修仙界：非关键选项自动顺势抉择，只有大事件才弹窗
+      var lateGame = L.pool === 'xiuxian' || L.age >= 100;
+      if (lateGame && !ev.big && Math.random() < 0.8) {
+        var avail = ev.choices.filter(function (c) { return !c.cond || Engine.condPass(c.cond, L); });
+        var pickC = (avail.length ? avail : ev.choices)[Engine.rnd((avail.length ? avail : ev.choices).length)];
+        var cres = Engine.applyEffect(L, pickC.effect);
+        applyEffectRes(L, cres);
+        var ctxt = '<div class="event-card">' + eventText(ev) + '——你顺势选择了「' + pickC.text + '」。' +
+          resultText(pickC.result) + deltaHtml(cres.deltas) + '</div>';
+        addTimeline(ctxt);
+        if (cres.killed) { L.deathText = cres.deathText || resultText(pickC.result); finishLife(); return 'dead'; }
+        return 'ok';
+      }
       addTimeline(cardOpen(ev, 'fate') + eventText(ev) + '</div>');
       presentChoices(ev);
       return 'waiting';
@@ -625,6 +638,23 @@
       return finishLife();
     }
 
+    // 修仙界岁月压缩：偶有数年一晃而过（悟道关键期不跳）
+    var tribulationPending = L.flags['benyuan'] && !L.flags['ascended'] && !L.flags['tribulation_failed'];
+    if (L.pool === 'xiuxian' && !tribulationPending && Math.random() < 0.18) {
+      var skip = 2 + Engine.rnd(3);   // 再跳 2-4 年
+      var FLOW = [
+        '山中无甲子，寒尽不知年。数年光阴，只在一次吐纳之间。',
+        '洞府前的老松又高了数丈。你出关时，山下王朝已换了年号。',
+        '岁月如瀑。闭关这些时日，唯有腰间酒葫芦空了几回。',
+        '白驹过隙。你细数灵石，才惊觉数年已逝。',
+        '云海翻涌了几千个来回，你的道心又沉静了一分。'
+      ];
+      L.age += skip;
+      addTimeline('<div class="age-marker">' + L.age + ' 岁</div>');
+      addTimeline('<div class="event-card fate">' + FLOW[Engine.rnd(FLOW.length)] + '</div>');
+      afterYear();
+      return;
+    }
     var ev = Engine.pickEvent(L);
     if (!ev) {
       var PLAIN = ['平平淡淡的一年，如白水入茶。','波澜不惊的一年，日子像宣纸上的淡墨。','这一年无甚大事，四季照常轮转。','平淡是真。你在柴米油盐里又安稳度过一年。','风调雨顺的一年，连新闻都懒得理你。'];

@@ -86,7 +86,7 @@ var Engine = (function () {
       if (firedAt !== undefined) {
         if (e.once || isKillEvent(e)) continue;      // kill 事件终身只入池一次
         // 可重复事件冷却：凡间 15 年，书中界/修仙界 28 年（池小易重复，lore 听两遍就腻）
-        var cooldown = pool === 'life' ? 22 : 34;
+        var cooldown = pool === 'life' ? 22 : (pool === 'xiuxian' ? 60 : 34);
         if (life.age - firedAt < cooldown) continue;
       }
       if (life.route === 'dead') break;
