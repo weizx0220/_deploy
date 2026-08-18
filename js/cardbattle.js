@@ -57,29 +57,35 @@ var CardBattle = (function () {
       (ICONS[name] || ICONS.slash) + '</svg>';
   }
 
+  function hasRelic(id) { return S && S.relics && S.relics.indexOf(id) >= 0; }
+
   /* ---------- 开始 ---------- */
-  /* opts: { life, enemy, deck, hpState, title, onEnd(win) } */
+  /* opts: { life, enemy, deck, hpState, title, relics, onEnd(win) } */
   function start(opts) {
     var st = Combat.playerStats(opts.life);
     // 卡牌战斗生命独立设置：100 + 体质×2
     var maxhp = 100 + Math.round(opts.life.attr.str * 2);
+    var relics = opts.relics || [];
+    if (relics.indexOf('r_iron_heart') >= 0) maxhp = Math.round(maxhp * 1.15);
     S = {
       life: opts.life,
       title: opts.title || '幻境战斗',
       enemy: opts.enemy,
       eHp: opts.enemy.hp, eMax: opts.enemy.hp, eBlock: 0, eStr: 0, ePoison: 0,
       spec: bodySpec(opts.enemy.name),
+      relics: relics,
       maxhp: maxhp,
       hp: opts.hpState ? Math.min(opts.hpState.hp, maxhp) : maxhp,
       pBlock: 0, pStr: Math.max(0, Math.floor((st.atk - 10) / 4)),   // 力量=攻击伤害+%
-      crit: st.crit,
-      energy: 3,
+      crit: st.crit + (relics.indexOf('r_dice') >= 0 ? 0.15 : 0),
+      energy: relics.indexOf('r_energy_stone') >= 0 ? 4 : 3,
       deck: shuffle((opts.deck || buildDeck(opts.life)).slice()),
       hand: [], discard: [],
       intent: null,
       pattern: PATTERNS[Math.floor(Math.random() * PATTERNS.length)],
       patternIdx: 0,
       weakTurns: 0,
+      firstAtk: true, blockedThisTurn: false,
       turn: 1, busy: false, over: false,
       hpState: opts.hpState || null,
       onEnd: opts.onEnd,
@@ -89,8 +95,15 @@ var CardBattle = (function () {
     $('overlay-cbattle').classList.remove('hidden');
     AudioFX.duck();
     $('cb-title').textContent = S.title;
+    // 开场遗物
+    if (hasRelic('r_armor_shard')) S.pBlock = Math.round(maxhp * 0.1);
+    if (hasRelic('r_thunder_bead')) {
+      var tb = Math.round(S.eMax * 0.06);
+      S.eHp -= tb;
+      setTimeout(function () { msg('引雷珠炸响，开场即劈 ' + tb + ' 点伤害'); }, 300);
+    }
     rollIntent();
-    drawCards(5);
+    drawCards(hasRelic('r_swift_boots') ? 6 : 5);
     renderHand();
     startLoop();
     AudioFX.pluck(160, 0.15);
@@ -98,7 +111,7 @@ var CardBattle = (function () {
 
   /* ---------- 敌人意图（百分比制 + 回合模式轮转） ---------- */
   function intentPct() {
-    return 8 + S.enemy.atk * 0.4 + S.turn * 0.4 + S.eStr;   // %
+    return 8 + S.enemy.atk * 0.25 + S.turn * 0.4 + S.eStr;   // %
   }
   /* 攻击/防御/强化/弱化 交叉轮转，按敌人强度选模式 */
   var PATTERNS = [
@@ -139,6 +152,7 @@ var CardBattle = (function () {
       var hits = c.hits || 1, total = 0, anyCrit = false;
       for (var h = 0; h < hits; h++) {
         var pct = (c.dmg + S.pStr) * (S.weakTurns > 0 ? 0.75 : 1);
+        if (S.firstAtk && hasRelic('r_sword_tassel')) pct += 8;   // 残剑穗
         var crit = Math.random() < S.crit;
         if (crit) { anyCrit = true; pct = Math.round(pct * 1.5); }
         var dmg = Math.max(1, Math.round(S.eMax * pct / 100));
@@ -149,14 +163,17 @@ var CardBattle = (function () {
         S.eHp -= dmg; total += dmg;
         spawnHit(false, crit);
       }
+      S.firstAtk = false;
       msg('「' + c.name + '」造成 ' + total + ' 点伤害' + (anyCrit ? '（暴击）' : ''));
       lunge(false);
       AudioFX.pluck(200 + Math.random() * 120, 0.14);
       if (c.poison) { S.ePoison += c.poison; msg('敌方中毒 ' + S.ePoison + ' 层'); }
     }
     if (c.block) {
-      var bv = Math.round(S.maxhp * c.block / 100);
-      S.pBlock += bv; spawnShield(); msg('获得 ' + bv + ' 点格挡'); AudioFX.tick();
+      var bpct = c.block;
+      if (!S.blockedThisTurn && hasRelic('r_turtle')) bpct += 5;   // 龟息玉佩
+      var bv = Math.round(S.maxhp * bpct / 100);
+      S.pBlock += bv; S.blockedThisTurn = true; spawnShield(); msg('获得 ' + bv + ' 点格挡'); AudioFX.tick();
     }
     if (c.heal) {
       var hv = Math.round(S.maxhp * c.heal / 100);
@@ -164,6 +181,10 @@ var CardBattle = (function () {
     }
     if (c.str) { S.pStr += c.str; msg('力量 +' + c.str + '%（本场攻击提升）'); }
     if (c.draw) { drawCards(c.draw); msg('抽 ' + c.draw + ' 张牌'); }
+    if (hasRelic('r_blood_sack')) {   // 血玉髓
+      var bh = Math.max(1, Math.round(S.maxhp * 0.01));
+      S.hp = Math.min(S.maxhp, S.hp + bh);
+    }
 
     renderHand();
     if (S.eHp <= 0) return setTimeout(function () { finish(true); }, 700);
@@ -180,9 +201,10 @@ var CardBattle = (function () {
 
   function enemyAct() {
     var it = S.intent, e = S.enemy;
-    // 中毒结算（每层 = 敌方最大生命 1.5%）
+    // 中毒结算（每层 = 敌方最大生命 1.5%，五毒囊 2%）
     if (S.ePoison > 0) {
-      var pd = Math.max(1, Math.round(S.eMax * 0.015 * S.ePoison));
+      var per = hasRelic('r_poison_vial') ? 0.02 : 0.015;
+      var pd = Math.max(1, Math.round(S.eMax * per * S.ePoison));
       S.eHp -= pd;
       msg(e.name + ' 受到 ' + pd + ' 点毒伤');
       S.ePoison = Math.max(0, S.ePoison - 1);
@@ -196,16 +218,27 @@ var CardBattle = (function () {
       lunge(true); spawnHit(true, false);
       msg(e.name + ' 攻击，你受到 ' + dmg + ' 点伤害');
       AudioFX.tick(0.08);
-      if (S.hp <= 0) return setTimeout(function () { finish(false); }, 600);
+      if (S.hp <= 0) {
+        // 凤凰翎：免死一次
+        if (hasRelic('r_phoenix') && !(S.hpState && S.hpState.phoenixUsed)) {
+          if (S.hpState) S.hpState.phoenixUsed = true;
+          S.hp = Math.round(S.maxhp * 0.2);
+          spawnHeal();
+          msg('凤凰翎燃起——你于灰烬中站了起来！');
+        } else {
+          return setTimeout(function () { finish(false); }, 600);
+        }
+      }
     } else if (it.type === 'block') {
       var eb = Math.round(S.eMax * it.pct / 100);
       S.eBlock += eb;
       msg(e.name + ' 架起防御（格挡 +' + eb + '）');
     } else if (it.type === 'debuff') {
-      S.weakTurns = it.val;
-      msg(e.name + ' 施以震慑——你接下来 ' + it.val + ' 回合攻击 -25%！');
+      var turns = hasRelic('r_mirror') ? 1 : it.val;   // 照妖镜减半
+      S.weakTurns = turns;
+      msg(e.name + ' 施以震慑——你接下来 ' + turns + ' 回合攻击 -25%！');
     } else {
-      S.eStr += it.val;
+      S.eStr += hasRelic('r_mirror') ? 2 : it.val;   // 照妖镜减半
       msg(e.name + ' 气势暴涨（攻击 +' + it.val + '%）');
     }
     if (S.weakTurns > 0) S.weakTurns--;
@@ -213,9 +246,10 @@ var CardBattle = (function () {
     S.turn++;
     S.pBlock = 0;
     S.energy = 3;
+    S.blockedThisTurn = false;
     S.discard = S.discard.concat(S.hand);
     S.hand = [];
-    drawCards(5);
+    drawCards(hasRelic('r_swift_boots') ? 6 : 5);
     rollIntent();
     S.busy = false;
     renderHand();

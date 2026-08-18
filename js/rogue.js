@@ -26,19 +26,50 @@ var Rogue = (function () {
 
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+  /* 遗物 */
+  function relicById(id) { for (var i = 0; i < RELICS.length; i++) if (RELICS[i].id === id) return RELICS[i]; return null; }
+  function rollRelicId() {
+    var W = [0, 60, 30, 10];   // 品质权重（r1/r2/r3）
+    var pool = RELICS.filter(function (r) { return R.relics.indexOf(r.id) < 0; });
+    if (!pool.length) return null;
+    var total = 0, i;
+    for (i = 0; i < pool.length; i++) total += W[pool[i].rarity] || 20;
+    var roll = Math.random() * total;
+    for (i = 0; i < pool.length; i++) { roll -= W[pool[i].rarity] || 20; if (roll <= 0) return pool[i].id; }
+    return pool[pool.length - 1].id;
+  }
+  function gainRelic(rid) {
+    if (!rid) { var c = Math.round(60 * pixiuMult()); Game.addCoin(c); logLine('你已有全部遗物，幻影化作 ' + c + ' ' + Game.coinName() + '。'); return; }
+    R.relics.push(rid);
+    var rl = relicById(rid);
+    logLine('获得遗物「' + rl.name + '」——' + rl.desc);
+    Game.toast('遗物 · ' + rl.name);
+    if (rid === 'r_lucky_coin') Game.addCoin(Math.round(80 * pixiuMult()));
+    bar();
+  }
+  function pixiuMult() { return R.relics.indexOf('r_pixiu') >= 0 ? 1.4 : 1; }
+  function gainCoin(n) { Game.addCoin(Math.round(n * pixiuMult())); }
+
   function scaled(base, mult) {
     var f = R.floor;
     return {
       name: base.name, intro: base.intro,
-      hp: Math.round(base.hp * (1 + (f - 1) * 0.18) * mult),
-      atk: Math.round(base.atk * (1 + (f - 1) * 0.12) * mult),
+      hp: Math.round(base.hp * (1 + (f - 1) * 0.15) * mult),
+      atk: Math.round(base.atk * (1 + (f - 1) * 0.06) * mult),
       def: Math.round(base.def * (1 + (f - 1) * 0.1) * mult),
       skills: base.skills
     };
   }
+  /* 塔主：血量与压迫感远超精英 */
+  function bossScaled() {
+    var b = scaled(pick(data().bosses), 1);
+    b.hp = Math.round(b.hp * 1.8);
+    b.atk = Math.round(b.atk * 1.3);
+    return b;
+  }
 
   function start(life, onEnd) {
-    R = { life: life, floor: 1, hpState: { hp: 9999, max: 0 }, onEnd: onEnd, usedEvent: {}, deck: CardBattle.buildDeck(life) };
+    R = { life: life, floor: 1, hpState: { hp: 9999, max: 0 }, onEnd: onEnd, usedEvent: {}, deck: CardBattle.buildDeck(life), relics: [] };
     // 用玩家满血开战
     var st = Combat.playerStats(life);
     R.hpState.hp = st.maxhp;
@@ -83,6 +114,16 @@ var Rogue = (function () {
     if (!R) return;
     $('rg-hp').textContent = '生命 ' + Math.max(0, Math.round(R.hpState.hp)) + '/' + R.hpState.max;
     $('rg-hp-bar').style.width = Math.max(0, R.hpState.hp / R.hpState.max * 100) + '%';
+    // 遗物栏
+    var rw = $('rg-relics');
+    if (rw) {
+      var rh = '';
+      R.relics.forEach(function (rid) {
+        var rl = relicById(rid);
+        if (rl) rh += '<span class="chip r' + rl.rarity + '" title="' + rl.desc + '">' + rl.name + '</span>';
+      });
+      rw.innerHTML = rh;
+    }
   }
 
   function logLine(t) {
@@ -96,8 +137,8 @@ var Rogue = (function () {
   function enterNode(type) {
     if (!R || R.busy) return;   // 切换中（如战败结算）禁止重复点击
     if (type === 'fight') return fight(scaled(pick(data().mobs), 1), 1);
-    if (type === 'elite') return fight(scaled(pick(data().elites), 1.5), 2);
-    if (type === 'boss') return fight(pick(data().bosses), 3, true);
+    if (type === 'elite') return fight(scaled(pick(data().elites), 1.35), 0, false, true);
+    if (type === 'boss') return fight(bossScaled(), 0, true);
     if (type === 'rest') {
       var h = Math.round(R.hpState.max * 0.3);
       R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + h);
@@ -105,9 +146,12 @@ var Rogue = (function () {
       return nextFloor();
     }
     if (type === 'treasure') {
-      if (Math.random() < 0.5) {
+      var roll = Math.random();
+      if (roll < 0.3) {
+        gainRelic(rollRelicId());
+      } else if (roll < 0.65) {
         var c = 40 + R.floor * 20;
-        Game.addCoin(c);
+        gainCoin(c);
         logLine('宝箱里是 ' + c + ' ' + Game.coinName() + '。');
       } else {
         var it = Game.randomItem();
@@ -143,7 +187,7 @@ var Rogue = (function () {
     });
   }
 
-  function fight(enemy, rewardPicks, isBoss) {
+  function fight(enemy, rewardPicks, isBoss, isElite) {
     if (!R) return;
     R.busy = true;
     $('rg-nodes').innerHTML = '';   // 清空节点，防止战斗中残留可点
@@ -154,6 +198,7 @@ var Rogue = (function () {
       enemy: enemy,
       deck: R.deck,
       hpState: R.hpState,
+      relics: R.relics,
       onEnd: function (win) {
         if (!R) return;
         R.busy = false;
@@ -170,8 +215,62 @@ var Rogue = (function () {
           Game.onRogueClear();
           return setTimeout(function () { offerEndDraft(function () { close(true); }); }, 1200);
         }
+        if (isElite) return eliteReward();
         offerRewards(rewardPicks);
       }
+    });
+  }
+
+  /* ---------- 精英战利品：必掉遗物 + 回血/抓牌抉择（高稀有概率） ---------- */
+  function eliteReward() {
+    gainRelic(rollRelicId());
+    var wrap = $('rg-nodes');
+    wrap.innerHTML = '';
+    logLine('精英陨落。雾中浮现两个选择：');
+    var b1 = document.createElement('button');
+    b1.className = 'rg-node rg-rest';
+    b1.innerHTML = '<b>安心休整</b><small>回复 40% 生命，不拿牌</small>';
+    b1.onclick = function () {
+      R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.4));
+      nextFloor();
+    };
+    wrap.appendChild(b1);
+    var b2 = document.createElement('button');
+    b2.className = 'rg-node rg-reward';
+    b2.innerHTML = '<b>乘胜追击</b><small>回复 15% 生命，并抓一张牌（良品以上概率大增）</small>';
+    b2.onclick = function () {
+      R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.15));
+      eliteDraft();
+    };
+    wrap.appendChild(b2);
+  }
+
+  /* 精英抓牌：高稀有概率（凡10 良35 上35 天20） */
+  function eliteDraft() {
+    var wrap = $('rg-nodes');
+    wrap.innerHTML = '';
+    logLine('精英的遗产闪着光，择一而取：');
+    var pool = CARDS.filter(function (c) { return ['c_strike', 'c_guard', 'c_focus', 'c_spark'].indexOf(c.id) < 0; });
+    var W = [10, 35, 35, 20];
+    var opts = [];
+    while (opts.length < 3 && pool.length) {
+      var total = 0, i;
+      for (i = 0; i < pool.length; i++) total += W[pool[i].rarity];
+      var roll = Math.random() * total, pc = pool[0];
+      for (i = 0; i < pool.length; i++) { roll -= W[pool[i].rarity]; if (roll <= 0) { pc = pool[i]; break; } }
+      pool.splice(pool.indexOf(pc), 1);
+      opts.push(pc);
+    }
+    opts.forEach(function (c) {
+      var b = document.createElement('button');
+      b.className = 'rg-node rg-reward rg-card';
+      b.innerHTML = '<b>' + c.name + '</b><small>' + c.desc + '</small>';
+      b.onclick = function () {
+        Game.collectCard(c.id);
+        logLine('「' + c.name + '」已收入牌册。');
+        nextFloor();
+      };
+      wrap.appendChild(b);
     });
   }
 
@@ -189,7 +288,7 @@ var Rogue = (function () {
         if (R.spoilStr <= 3) R.life.attr.str += 1;
       } },
       { label: '<b>财货</b><small>拾取 ' + (18 + R.floor * 8) + ' ' + Game.coinName() + '</small>', apply: function () {
-        Game.addCoin(18 + R.floor * 8);
+        gainCoin(18 + R.floor * 8);
       } }
     ];
     opts.forEach(function (o) {

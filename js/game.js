@@ -591,7 +591,13 @@
 
     var res = Engine.applyEffect(L, ev.effect);
     applyEffectRes(L, res);
-    addTimeline(cardOpen(ev, ev.kind) + eventText(ev) + deltaHtml(res.deltas) + '</div>');
+    var witness = '';
+    if (ev.cond && ev.cond.attr) {
+      var wp = [];
+      for (var wk in ev.cond.attr) wp.push(Engine.ATTR_NAMES[wk] || wk);
+      witness = '<div class="ev-witness">属性见证 · ' + wp.join('、') + '发挥了作用</div>';
+    }
+    addTimeline(cardOpen(ev, ev.kind) + eventText(ev) + witness + deltaHtml(res.deltas) + '</div>');
     floatDeltas(res.deltas);
     if (ev.big) L.moments.push({ age: L.age, text: eventText(ev) });
     AudioFX.pluck(300 + Math.random() * 300, 0.06);
@@ -651,9 +657,10 @@
       var btn = document.createElement('button');
       btn.className = 'choice-opt';
       btn.textContent = ch.text;
-      if (ch.cond && !Engine.condPass(ch.cond, L)) {
-        btn.disabled = true;
-        btn.textContent += '（' + condHint(ch.cond) + '）';
+      if (ch.cond) {
+        var pass = Engine.condPass(ch.cond, L);
+        btn.textContent += '（' + condHint(ch.cond, L) + '）';
+        if (!pass) btn.disabled = true;
       }
       btn.onclick = function () {
         box.classList.add('hidden');
@@ -715,17 +722,20 @@
     }
     AudioFX.stamp();
   }
-  /* 把 cond 翻成玩家可读的需求文字 */
-  function condHint(cond) {
+  /* 把 cond 翻成玩家可读的需求文字（带达成状态） */
+  function condHint(cond, life) {
     var parts = [];
     if (cond.attr) {
       for (var k in cond.attr) {
         var c = cond.attr[k];
         var nm = Engine.ATTR_NAMES[k] || k;
-        if (c.gte !== undefined) parts.push('需' + nm + '≥' + c.gte);
-        else if (c.gt !== undefined) parts.push('需' + nm + '>' + c.gt);
-        else if (c.lte !== undefined) parts.push('需' + nm + '≤' + c.lte);
-        else if (c.lt !== undefined) parts.push('需' + nm + '<' + c.lt);
+        var v = life ? (life.attr[k] || 0) : null;
+        var need = null, met = true;
+        if (c.gte !== undefined) { need = nm + '≥' + c.gte; met = v !== null && v >= c.gte; }
+        else if (c.gt !== undefined) { need = nm + '>' + c.gt; met = v !== null && v > c.gt; }
+        else if (c.lte !== undefined) { need = nm + '≤' + c.lte; met = v !== null && v <= c.lte; }
+        else if (c.lt !== undefined) { need = nm + '<' + c.lt; met = v !== null && v < c.lt; }
+        if (need) parts.push('需' + need + (v !== null ? (met ? '✓' : '✗') : ''));
       }
     }
     if (cond.flags && cond.flags.length) parts.push('需特定机缘');

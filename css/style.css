@@ -952,3 +952,10 @@ html, body {
   color: var(--cinnabar); border: 1px solid var(--cinnabar); border-radius: 4px;
   padding: 3px 8px; animation: suddenPulse 1.6s ease infinite;
 }
+
+/* ---------- 属性见证 / 遗物栏 ---------- */
+.ev-witness {
+  font-size: 12px; color: var(--gold); letter-spacing: 1px; margin-top: 4px;
+  border-top: 1px dashed rgba(184,134,47,0.35); padding-top: 4px;
+}
+.rg-relics { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; min-height: 8px; margin-bottom: 4px; }
