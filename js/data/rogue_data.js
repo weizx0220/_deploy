@@ -6,47 +6,47 @@
  *   塔主   hp 380-500 / atk 28-38 / def 10-16（双技能）
  */
 var ROGUE_MOBS = [
-  { id: 'rgm_fear', name: '恐惧化身', hp: 88, atk: 12, def: 3, skills: ['sk_dark'],
+  { id: 'rgm_fear', name: '恐惧化身', hp: 106, atk: 14, def: 3, skills: ['sk_dark'],
     intro: '你心里最怕的那件事，在这里长出了手脚。' },
-  { id: 'rgm_sloth', name: '懒惰软泥', hp: 110, atk: 9, def: 5, skills: ['sk_bite'],
+  { id: 'rgm_sloth', name: '懒惰软泥', hp: 133, atk: 11, def: 5, skills: ['sk_bite'],
     intro: '它懒得追你，只是在地上摊成一片，等你主动躺进来。' },
-  { id: 'rgm_neihao', name: '内耗小鬼', hp: 76, atk: 13, def: 2, skills: ['sk_bite'],
+  { id: 'rgm_neihao', name: '内耗小鬼', hp: 91, atk: 16, def: 2, skills: ['sk_bite'],
     intro: '"要不算了吧"——它趴在你左肩说。"必须做完"——它在你右肩说。' },
-  { id: 'rgm_emo', name: 'emo幽灵', hp: 70, atk: 11, def: 2, skills: ['sk_dark'],
+  { id: 'rgm_emo', name: 'emo幽灵', hp: 85, atk: 13, def: 2, skills: ['sk_dark'],
     intro: '凌晨三点没发出去的朋友圈，在这里成精了。' },
-  { id: 'rgm_anxiety', name: '焦虑蜂群', hp: 72, atk: 14, def: 2, skills: ['sk_thunder'],
+  { id: 'rgm_anxiety', name: '焦虑蜂群', hp: 86, atk: 17, def: 2, skills: ['sk_thunder'],
     intro: '嗡嗡声仔细一听，全是你明天要交的东西。' },
-  { id: 'rgm_shekong', name: '社恐面具', hp: 82, atk: 10, def: 3, skills: ['sk_bite'],
+  { id: 'rgm_shekong', name: '社恐面具', hp: 99, atk: 12, def: 3, skills: ['sk_bite'],
     intro: '它替你参加过一百场不想去的聚会，现在它说轮到你了。' },
-  { id: 'rgm_rust', name: '拖延锈怪', hp: 105, atk: 11, def: 5, skills: ['sk_smash'],
+  { id: 'rgm_rust', name: '拖延锈怪', hp: 126, atk: 13, def: 5, skills: ['sk_smash'],
     intro: '"再玩五分钟"，它说这句话的时候，已经在原地锈了三十年。' },
-  { id: 'rgm_compare', name: '攀比精', hp: 84, atk: 12, def: 3, skills: ['sk_dark'],
+  { id: 'rgm_compare', name: '攀比精', hp: 101, atk: 14, def: 3, skills: ['sk_dark'],
     intro: '它每吞掉一个"别人家的孩子"，就长高一分。它现在很高。' },
-  { id: 'rgm_insomnia', name: '失眠守夜人', hp: 92, atk: 13, def: 4, skills: ['sk_thunder'],
+  { id: 'rgm_insomnia', name: '失眠守夜人', hp: 110, atk: 16, def: 4, skills: ['sk_thunder'],
     intro: '数羊数到第九万只时，羊开始数它。' },
-  { id: 'rgm_quit', name: '退堂鼓乐师', hp: 80, atk: 10, def: 3, skills: ['sk_smash'],
+  { id: 'rgm_quit', name: '退堂鼓乐师', hp: 96, atk: 12, def: 3, skills: ['sk_smash'],
     intro: '鼓声一响，你的决心就矮了三分。' }
 ];
 var ROGUE_ELITES = [
-  { id: 'rge_regret', name: '遗憾骑士', hp: 200, atk: 20, def: 7, skills: ['sk_smash', 'sk_dark'],
+  { id: 'rge_regret', name: '遗憾骑士', hp: 241, atk: 24, def: 7, skills: ['sk_smash', 'sk_dark'],
     intro: '铠甲里没有骑士，只有一句反复擦拭的"当初要是"。' },
-  { id: 'rge_perfect', name: '完美主义典狱长', hp: 185, atk: 22, def: 8, skills: ['sk_thunder', 'sk_smash'],
+  { id: 'rge_perfect', name: '完美主义典狱长', hp: 222, atk: 26, def: 8, skills: ['sk_thunder', 'sk_smash'],
     intro: '它把你所有"还不够好"的瞬间铸成了牢房，狱卒也是你。' },
-  { id: 'rge_desire', name: '欲望司秤人', hp: 175, atk: 19, def: 6, skills: ['sk_dark', 'sk_fire'],
+  { id: 'rge_desire', name: '欲望司秤人', hp: 211, atk: 23, def: 6, skills: ['sk_dark', 'sk_fire'],
     intro: '它称量你的贪念，精确到克，然后按克收费。' },
-  { id: 'rge_mirror', name: '比较之镜魔', hp: 165, atk: 24, def: 5, skills: ['sk_dark', 'sk_thunder'],
+  { id: 'rge_mirror', name: '比较之镜魔', hp: 198, atk: 29, def: 5, skills: ['sk_dark', 'sk_thunder'],
     intro: '镜子里的人过得都比你好。它专门负责让你相信这一点。' },
-  { id: 'rge_foodie', name: '深夜放毒主播', hp: 215, atk: 18, def: 9, skills: ['sk_poison', 'sk_fire'],
+  { id: 'rge_foodie', name: '深夜放毒主播', hp: 312, atk: 22, def: 9, skills: ['sk_poison', 'sk_fire'],
     intro: '它在凌晨十二点点开烧烤直播，观看人数：你一个。惩罚：也是你。' }
 ];
 var ROGUE_BOSSES = [
-  { id: 'rgb_void', name: '虚无之主', hp: 420, atk: 32, def: 12, skills: ['sk_dark', 'sk_smash'],
+  { id: 'rgb_void', name: '虚无之主', hp: 546, atk: 38, def: 12, skills: ['sk_dark', 'sk_smash'],
     intro: '雾王座上坐着一片空白。它什么都不在乎，包括赢你——这才是最可怕的。' },
-  { id: 'rgb_obsession', name: '执念之母', hp: 500, atk: 28, def: 16, skills: ['sk_dark', 'sk_poison'],
+  { id: 'rgb_obsession', name: '执念之母', hp: 650, atk: 34, def: 16, skills: ['sk_dark', 'sk_poison'],
     intro: '她把每一个"放不下"都抱在怀里，轻轻哄着，哄了它们一辈子。' },
-  { id: 'rgb_id', name: '本我饕餮', hp: 390, atk: 38, def: 10, skills: ['sk_bite', 'sk_fire'],
+  { id: 'rgb_id', name: '本我饕餮', hp: 507, atk: 46, def: 10, skills: ['sk_bite', 'sk_fire'],
     intro: '它先吃掉了"节制"，又吃掉了"以后再说"，现在正在吃菜单。' },
-  { id: 'rgb_self', name: '心魔·另一个你', hp: 450, atk: 34, def: 13, skills: ['sk_thunder', 'sk_dark'],
+  { id: 'rgb_self', name: '心魔·另一个你', hp: 585, atk: 41, def: 13, skills: ['sk_thunder', 'sk_dark'],
     intro: '塔顶的镜子先眨了眼。然后，镜子里的你走了出来。' }
 ];
 var ROGUE_EVENTS = [

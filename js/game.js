@@ -395,6 +395,7 @@
       shopStock: null,
       restYear: -99,
       actionCd: {},
+      actionCounts: {},
       history: [],
       moments: [],
       dead: false,
@@ -972,6 +973,14 @@
     apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
     collectCard: collectCard,
     applyWound: applyWound,
+    /* 行动计数：达到里程碑时立 flag，供联动事件触发 */
+    countAction: function (id) {
+      var L = G.life;
+      L.actionCounts[id] = (L.actionCounts[id] || 0) + 1;
+      [3, 8, 15].forEach(function (n) {
+        if (L.actionCounts[id] === n) L.flags['act_' + id + '_' + n] = true;
+      });
+    },
     forgeMult: function (iid) {
       var lv = (G.life && G.life.forge || {})[iid] || 0;
       return 1 + 0.25 * lv;

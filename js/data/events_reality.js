@@ -2284,4 +2284,45 @@ var EVENTS_REALITY = [
   text: '夜里睡不着，你让人推你看星星。银河还是那条银河。小时候你替爷爷数过，现在，轮到重孙替你数了。',
   effect: { attr: { spr: 2 } } }
 
+
+/* ========== 行动联动里程碑事件（行动计数触发） ========== */
+,{ id: 'ev_link_study3', age: [7, 80], once: true, big: true, kind: 'fate',
+  cond: { flags: ['act_study_3'] },
+  text: '这些年你雷打不动地学习充电，知识开始滚雪球。某天你忽然发现，曾经觉得艰深的东西，如今读来竟毫不费力。',
+  choices: [
+    { text: '继续深造（需智力≥10）', cond: { attr: { int: { gte: 10 } } }, effect: { attr: { int: 2 } }, result: '你沉下心再进一步，学问这东西，越嚼越有味。', kind: 'good' },
+    { text: '知识变现', effect: { coin: 80 }, result: '你把学到的东西整理成课挂到网上，第一笔睡后收入到账。', kind: 'good' }
+  ] },
+{ id: 'ev_link_gym3', age: [12, 75], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_gym_3'] },
+  text: '坚持健身的这些日子，镜子不会骗人：肩线出来了，上楼不喘了，同事追着问你报了哪个教练。',
+  effect: { attr: { str: 2, chr: 1 } } },
+{ id: 'ev_link_social3', age: [16, 75], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_social_3'] },
+  text: '你的人脉网悄悄织成了。一个酒局上加过联系方式的朋友，今天忽然给你介绍了一个意想不到的机会。',
+  effect: { coin: 60, attr: { spr: 1 } } },
+{ id: 'ev_link_parttime3', age: [16, 60], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_parttime_3'] },
+  text: '打了这么多份零工，你摸清了哪行辛苦哪行赚钱。有人出价让你长期合作——副业这条路，通了。',
+  effect: { coin: 100, attr: { mny: 1 } } },
+{ id: 'ev_link_invest3', age: [20, 75], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_invest_3'] },
+  text: '几轮涨跌下来，你终于有了自己的投资纪律。不贪、不慌、不梭哈，收益曲线开始稳稳向上。',
+  effect: { attr: { mny: 2 } } },
+{ id: 'ev_link_study8', age: [10, 85], once: true, big: true, kind: 'fate',
+  cond: { flags: ['act_study_8'] },
+  text: '八年如一日。你已经成了别人口中的"学霸"——有人慕名来请教，有媒体想采访你的学习方法。',
+  effect: { attr: { int: 2 }, coin: 50 } },
+{ id: 'ev_link_gym8', age: [14, 80], once: true, big: true, kind: 'fate',
+  cond: { flags: ['act_gym_8'] },
+  text: '健身房把"年度最佳会员"的锦旗颁给了你。八年的汗水，把你锻成了另一个人。',
+  effect: { attr: { str: 2, chr: 1, spr: 1 } } },
+{ id: 'ev_link_stroll5', age: [10, 90], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_stroll_5'] },
+  text: '这座城市的每条巷子你都走过。朋友说你是一本活地图，你说，你只是在认真地和生活约会。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_link_rest5', age: [10, 95], once: true, big: true, kind: 'good',
+  cond: { flags: ['act_rest_5'] },
+  text: '你大概是全天下最会休息的人。别人焦头烂额的时候，你泡着澡哼着歌，把"松弛感"活成了日常。',
+  effect: { attr: { spr: 2, str: 1 } } }
 ];

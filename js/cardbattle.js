@@ -76,15 +76,19 @@ var CardBattle = (function () {
       relics: relics,
       maxhp: maxhp,
       hp: opts.hpState ? Math.min(opts.hpState.hp, maxhp) : maxhp,
-      pBlock: 0, pStr: Math.max(0, Math.floor((st.atk - 10) / 4)),   // 力量=攻击伤害+%
+      atk: st.atk,                    // 自身攻击力（卡牌伤害的基准）
+      pBlock: 0, pStr: 0,             // pStr = 攻击伤害+%
       crit: st.crit + (relics.indexOf('r_dice') >= 0 ? 0.15 : 0),
       energy: relics.indexOf('r_energy_stone') >= 0 ? 4 : 3,
       deck: shuffle((opts.deck || buildDeck(opts.life)).slice()),
       hand: [], discard: [],
       intent: null,
-      pattern: PATTERNS[Math.floor(Math.random() * PATTERNS.length)],
+      pattern: (PATTERNS[opts.tier || 'mob'])[Math.floor(Math.random() * PATTERNS[opts.tier || 'mob'].length)],
       patternIdx: 0,
-      weakTurns: 0,
+      weakTurns: 0,                   // 玩家被虚弱（攻击-25%）
+      pVulnTurns: 0,                  // 玩家被易伤（受伤+25%）
+      eWeakTurns: 0,                  // 敌方虚弱（其攻击-25%）
+      eVulnTurns: 0,                  // 敌方易伤（其受伤+25%）
       firstAtk: true, blockedThisTurn: false,
       turn: 1, busy: false, over: false,
       hpState: opts.hpState || null,
@@ -109,23 +113,35 @@ var CardBattle = (function () {
     AudioFX.pluck(160, 0.15);
   }
 
-  /* ---------- 敌人意图（百分比制 + 回合模式轮转） ---------- */
+  /* ---------- 敌人意图（自身攻击% + 组合意图轮转） ---------- */
   function intentPct() {
-    return 8 + S.enemy.atk * 0.25 + S.turn * 0.4 + S.eStr;   // %
+    return 9 + S.enemy.atk * 0.22 + S.turn * 0.3 + S.eStr;   // 占玩家最大生命 %
   }
-  /* 攻击/防御/强化/弱化 交叉轮转，按敌人强度选模式 */
-  var PATTERNS = [
-    ['atk', 'atk', 'debuff', 'atk', 'block', 'atk', 'buff'],
-    ['atk', 'block', 'atk', 'debuff', 'atk', 'buff', 'atk'],
-    ['atk', 'debuff', 'atk', 'atk', 'buff', 'atk', 'block']
-  ];
+  /* 组合意图：atk 攻击 / block 防御 / buff 强化 / weak 弱化 / vuln 易伤，可同回合叠加 */
+  var PATTERNS = {
+    mob: [
+      [{ atk: 1 }, { atk: 1 }, { atk: 1, weak: 2 }, { atk: 1 }, { block: 1 }, { atk: 1, buff: 2 }],
+      [{ atk: 1 }, { atk: 1 }, { block: 1 }, { atk: 1, vuln: 2 }, { atk: 1 }, { atk: 1, buff: 2 }]
+    ],
+    elite: [
+      [{ atk: 1 }, { atk: 1, weak: 2 }, { atk: 1 }, { buff: 2, block: 1 }, { atk: 1 }, { atk: 1, vuln: 2 }],
+      [{ atk: 1, vuln: 2 }, { atk: 1 }, { atk: 1, weak: 2 }, { atk: 1 }, { block: 1, buff: 2 }, { atk: 1 }]
+    ],
+    boss: [
+      [{ atk: 1 }, { buff: 2, block: 1 }, { atk: 1, weak: 2 }, { atk: 1 }, { atk: 1, vuln: 2 }, { atk: 1.25 }],
+      [{ atk: 1, vuln: 2 }, { atk: 1 }, { atk: 1.25 }, { atk: 1, weak: 2 }, { buff: 2, block: 1 }, { atk: 1 }]
+    ]
+  };
   function rollIntent() {
-    var type = S.pattern[S.patternIdx % S.pattern.length];
+    var it = S.pattern[S.patternIdx % S.pattern.length];
     S.patternIdx++;
-    if (type === 'atk') S.intent = { type: 'atk', pct: intentPct() };
-    else if (type === 'block') S.intent = { type: 'block', pct: 12 + S.turn * 0.5 };
-    else if (type === 'buff') S.intent = { type: 'buff', val: 3 };
-    else S.intent = { type: 'debuff', val: 2 };   // 弱化：你 2 回合攻击 -25%
+    var out = {};
+    if (it.atk) out.atk = intentPct() * it.atk;
+    if (it.block) out.block = 12 + S.turn * 0.5;
+    if (it.buff) out.buff = it.buff * 2;
+    if (it.weak) out.weak = it.weak;
+    if (it.vuln) out.vuln = it.vuln;
+    S.intent = out;
   }
 
   /* ---------- 抽牌 ---------- */
@@ -151,23 +167,30 @@ var CardBattle = (function () {
     if (c.dmg) {
       var hits = c.hits || 1, total = 0, anyCrit = false;
       for (var h = 0; h < hits; h++) {
-        var pct = (c.dmg + S.pStr) * (S.weakTurns > 0 ? 0.75 : 1);
-        if (S.firstAtk && hasRelic('r_sword_tassel')) pct += 8;   // 残剑穗
+        var pct = c.dmg;
+        if (c.execute && S.eVulnTurns > 0) pct *= 2;             // 绝命斩
+        if (S.firstAtk && hasRelic('r_sword_tassel')) pct += 25;   // 残剑穗
+        var mult = pct / 100 * (1 + S.pStr / 100);
+        if (S.weakTurns > 0) mult *= 0.75;                          // 我方虚弱
+        if (S.eVulnTurns > 0) mult *= 1.25;                         // 敌方易伤
         var crit = Math.random() < S.crit;
-        if (crit) { anyCrit = true; pct = Math.round(pct * 1.5); }
-        var dmg = Math.max(1, Math.round(S.eMax * pct / 100));
+        if (crit) { anyCrit = true; mult *= 1.5; }
+        var dmg = Math.max(1, Math.round(S.atk * mult));
         if (!c.pierce) {
           var absorbed = Math.min(S.eBlock, dmg);
           S.eBlock -= absorbed; dmg -= absorbed;
         }
         S.eHp -= dmg; total += dmg;
-        spawnHit(false, crit);
+        spawnHit(false, crit || c.rarity >= 2);
       }
       S.firstAtk = false;
       msg('「' + c.name + '」造成 ' + total + ' 点伤害' + (anyCrit ? '（暴击）' : ''));
       lunge(false);
+      if (c.rarity >= 3) anim.shake = 10;   // 天品牌震屏更猛
       AudioFX.pluck(200 + Math.random() * 120, 0.14);
       if (c.poison) { S.ePoison += c.poison; msg('敌方中毒 ' + S.ePoison + ' 层'); }
+      if (c.weak) { S.eWeakTurns = Math.max(S.eWeakTurns, c.weak); msg('敌方陷入虚弱（攻击 -25%，' + S.eWeakTurns + ' 回合）'); }
+      if (c.vuln) { S.eVulnTurns = Math.max(S.eVulnTurns, c.vuln); msg('敌方暴露破绽（受伤 +25%，' + S.eVulnTurns + ' 回合）'); }
     }
     if (c.block) {
       var bpct = c.block;
@@ -210,8 +233,11 @@ var CardBattle = (function () {
       S.ePoison = Math.max(0, S.ePoison - 1);
       if (S.eHp <= 0) return finish(true);
     }
-    if (it.type === 'atk') {
-      var raw = Math.max(1, Math.round(S.maxhp * it.pct / 100));
+    if (it.atk) {
+      var pct = it.atk;
+      if (S.eWeakTurns > 0) pct *= 0.75;                       // 敌方虚弱
+      var raw = Math.max(1, Math.round(S.maxhp * pct / 100));
+      if (S.pVulnTurns > 0) raw = Math.round(raw * 1.25);      // 我方易伤
       var dmg = Math.max(0, raw - S.pBlock);
       S.pBlock = Math.max(0, S.pBlock - raw);
       S.hp -= dmg;
@@ -229,19 +255,32 @@ var CardBattle = (function () {
           return setTimeout(function () { finish(false); }, 600);
         }
       }
-    } else if (it.type === 'block') {
-      var eb = Math.round(S.eMax * it.pct / 100);
+    }
+    if (it.block) {
+      var eb = Math.round(S.eMax * it.block / 100);
       S.eBlock += eb;
       msg(e.name + ' 架起防御（格挡 +' + eb + '）');
-    } else if (it.type === 'debuff') {
-      var turns = hasRelic('r_mirror') ? 1 : it.val;   // 照妖镜减半
-      S.weakTurns = turns;
-      msg(e.name + ' 施以震慑——你接下来 ' + turns + ' 回合攻击 -25%！');
-    } else {
-      S.eStr += hasRelic('r_mirror') ? 2 : it.val;   // 照妖镜减半
-      msg(e.name + ' 气势暴涨（攻击 +' + it.val + '%）');
     }
+    if (it.buff) {
+      var bv = hasRelic('r_mirror') ? Math.round(it.buff / 2) : it.buff;
+      S.eStr += bv;
+      msg(e.name + ' 气势暴涨（攻击 +' + bv + '%）');
+    }
+    if (it.weak) {
+      var wt = hasRelic('r_mirror') ? Math.max(1, it.weak - 1) : it.weak;
+      S.weakTurns = wt;
+      msg(e.name + ' 施以震慑——你接下来 ' + wt + ' 回合攻击 -25%！');
+    }
+    if (it.vuln) {
+      var vt = hasRelic('r_mirror') ? Math.max(1, it.vuln - 1) : it.vuln;
+      S.pVulnTurns = vt;
+      msg(e.name + ' 看穿了你的破绽——你 ' + vt + ' 回合受伤 +25%！');
+    }
+    // 状态回合数衰减
     if (S.weakTurns > 0) S.weakTurns--;
+    if (S.pVulnTurns > 0) S.pVulnTurns--;
+    if (S.eWeakTurns > 0) S.eWeakTurns--;
+    if (S.eVulnTurns > 0) S.eVulnTurns--;
     // 新回合
     S.turn++;
     S.pBlock = 0;
@@ -264,6 +303,7 @@ var CardBattle = (function () {
     btn.className = 'ink-btn primary';
     btn.textContent = win ? '凯旋' : '撤退';
     btn.onclick = function () {
+      if (!S) return;   // 防连点
       AudioFX.unduck();
       $('overlay-cbattle').classList.add('hidden');
       var cb = S.onEnd; S = null;
@@ -303,24 +343,27 @@ var CardBattle = (function () {
   /* ---------- DOM 信息栏（大字血条与意图） ---------- */
   function renderInfo() {
     if (!S) return;
-    $('cbi-foe-name').textContent = S.enemy.name;
+    $('cbi-foe-name').textContent = S.enemy.name +
+      (S.eWeakTurns > 0 ? '（虚弱）' : '') + (S.eVulnTurns > 0 ? '（易伤）' : '');
     $('cbi-foe-hp').style.width = Math.max(0, S.eHp / S.eMax * 100) + '%';
     $('cbi-foe-hp').textContent = Math.max(0, Math.round(S.eHp)) + ' / ' + S.eMax + (S.eBlock > 0 ? '（盾' + S.eBlock + '）' : '') + (S.ePoison > 0 ? '（毒' + S.ePoison + '）' : '');
-    var it = S.intent, itTxt = '';
+    var it = S.intent, itTxt = [];
     if (it) {
-      if (it.type === 'atk') itTxt = '⚔ 下回合攻击约 ' + Math.max(1, Math.round(S.maxhp * it.pct / 100)) + ' 点';
-      else if (it.type === 'block') itTxt = '🛡 下回合防御';
-      else if (it.type === 'buff') itTxt = '▲ 下回合强化（攻击+' + it.val + '%）';
-      else itTxt = '▼ 下回合弱化你（攻击-25%）';
+      if (it.atk) itTxt.push('⚔ 攻击约 ' + Math.max(1, Math.round(S.maxhp * it.atk / 100)) + ' 点');
+      if (it.block) itTxt.push('🛡 防御');
+      if (it.buff) itTxt.push('▲ 强化+' + it.buff + '%');
+      if (it.weak) itTxt.push('▼ 弱化你');
+      if (it.vuln) itTxt.push('◎ 使你易伤');
     }
-    $('cbi-intent').textContent = itTxt;
-    $('cbi-intent').className = 'cbi-intent ' + (it ? it.type : '');
+    $('cbi-intent').textContent = '下回合：' + itTxt.join(' + ');
+    $('cbi-intent').className = 'cbi-intent ' + (it && it.atk ? 'atk' : (it && it.block ? 'block' : 'buff'));
     $('cbi-me-hp').style.width = Math.max(0, S.hp / S.maxhp * 100) + '%';
     $('cbi-me-hp').textContent = Math.max(0, Math.round(S.hp)) + ' / ' + S.maxhp;
     var st = [];
     if (S.pBlock > 0) st.push('格挡 ' + S.pBlock);
     if (S.pStr > 0) st.push('力量 +' + S.pStr + '%');
     if (S.weakTurns > 0) st.push('虚弱 ' + S.weakTurns + ' 回合');
+    if (S.pVulnTurns > 0) st.push('易伤 ' + S.pVulnTurns + ' 回合');
     $('cbi-me-state').textContent = st.join('　');
   }
 
@@ -332,7 +375,7 @@ var CardBattle = (function () {
     S.hand.forEach(function (cid, i) {
       var c = cardById(cid);
       var el = document.createElement('div');
-      el.className = 'cb-card r' + c.rarity + (c.cost > S.energy || S.busy || S.over ? ' disabled' : '');
+      el.className = 'cb-card ' + c.type + ' r' + c.rarity + (c.cost > S.energy || S.busy || S.over ? ' disabled' : '');
       el.innerHTML =
         '<div class="cb-cost">' + c.cost + '</div>' +
         icon(c.icon, c.type === 'atk' ? '#a5281b' : '#3d6b5e') +

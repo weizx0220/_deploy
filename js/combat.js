@@ -205,6 +205,7 @@ var Combat = (function () {
     btn.className = 'ink-btn primary';
     btn.textContent = win ? '凯旋' : '撤退';
     btn.onclick = function () {
+      if (!S) return;   // 防连点
       AudioFX.unduck();
       $('overlay-battle').classList.add('hidden');
       var cb = S.onEnd, hpState = S.hpState;

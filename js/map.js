@@ -20,11 +20,11 @@ var MapX = (function () {
     life: [
       { id: 'study', name: '学习充电', desc: '智力 +1，速算挑战优异则 +2', cost: 1, minigame: 'math', attr: { int: 1 },
         texts: ['啃完了一整块知识硬骨头。', '图书馆泡了一天，笔记记了半本。', '刷完一套网课，脑子焕然一新。'] },
-      { id: 'gym', name: '健身撸铁', desc: '体质 +1，节奏发力完美则 +2', cost: 1, minigame: 'rhythm', attr: { str: 1 },
+      { id: 'gym', name: '健身撸铁', desc: '体质 +1，音游手感好则 +2', cost: 1, minigame: 'beat', attr: { str: 1 },
         texts: ['深蹲硬拉卧推，一套下来人精神了。', '汗水砸在瑜伽垫上，多巴胺拉满。'] },
       { id: 'parttime', name: '兼职打工', desc: '盘缠 +25~55', cost: 1, coin: [25, 55],
         texts: ['发了三天传单，腿肚子转筋但钱包鼓了。', '咖啡店兼职，拉花技术进步神速。', '接了个私活，熬夜交付，尾款到账。'] },
-      { id: 'social', name: '社交应酬', desc: '快乐 +1，三成概率颜值 +1', cost: 1, attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
+      { id: 'social', name: '社交应酬', desc: '快乐 +1，三成概率颜值 +1（可投壶助兴翻倍）', cost: 1, minigame: 'pot', attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
         texts: ['饭局上推杯换盏，认识了不少人。', '剧本杀局上当了一晚上戏精。', 'livehouse 里蹦到散场。'] },
       { id: 'beauty', name: '形象管理', desc: '颜值 +1（3 年冷却）', cost: 1, cd: 3, attr: { chr: 1 },
         texts: ['换了发型做了皮肤管理，镜中人焕然一新。', '穿搭博主没白关注，衣品肉眼可见地涨。'] },
@@ -37,7 +37,7 @@ var MapX = (function () {
     novel_wuxia: [
       { id: 'train', name: '行侠仗义', desc: '出山历练，或遇敌或遇缘（1 行动点）', cost: 1 },
       { id: 'dungeon', name: '秘境副本', desc: '挑战江湖险地（1 行动点）', cost: 1 },
-      { id: 'meditate', name: '闭关参悟', desc: '智力 +1，三成概率体质再 +1', cost: 1, attr: { int: 1 }, chanceAttr: { attr: 'str', p: 0.3 },
+      { id: 'meditate', name: '闭关参悟', desc: '智力 +1（画符描迹可翻倍），三成概率体质再 +1', cost: 1, minigame: 'fu', attr: { int: 1 }, chanceAttr: { attr: 'str', p: 0.3 },
         texts: ['面壁七日，剑谱上的字忽然都活了。', '气走周天，忽有所悟。'] },
       { id: 'spar', name: '切磋讨教', desc: '体质 +1，一成概率受轻伤', cost: 1, attr: { str: 1 }, special: 'spar',
         texts: ['与名门弟子喂招三百回合，受益良多。', '点到为止，惺惺相惜。'] },
@@ -59,9 +59,9 @@ var MapX = (function () {
     novel_bazong: [
       { id: 'negotiate', name: '商业谈判', desc: '盘缠 +30，速算优异翻倍', cost: 1, minigame: 'math', coinFixed: 30,
         texts: ['谈判桌上寸土不让，条款签得漂亮。', '三句话让对方让了三个点。'] },
-      { id: 'banquet', name: '名流晚宴', desc: '快乐 +1，四成概率颜值 +1', cost: 1, attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.4 },
+      { id: 'banquet', name: '名流晚宴', desc: '快乐 +1，四成概率颜值 +1（投壶助兴可翻倍）', cost: 1, minigame: 'pot', attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.4 },
         texts: ['香槟塔前与名流周旋，长袖善舞。', '晚宴上你的致辞赢得满堂彩。'] },
-      { id: 'coach', name: '私教健身', desc: '体质 +1，节奏发力完美则 +2', cost: 1, minigame: 'rhythm', attr: { str: 1 },
+      { id: 'coach', name: '私教健身', desc: '体质 +1，音游手感好则 +2', cost: 1, minigame: 'beat', attr: { str: 1 },
         texts: ['私教课上得汗流浃背，线条更利落了。'] },
       { id: 'emba', name: '进修学习', desc: '智力 +1，速算优异翻倍', cost: 1, minigame: 'math', attr: { int: 1 },
         texts: ['商学院的案例课，笔记记了满满三页。'] },
@@ -84,7 +84,7 @@ var MapX = (function () {
     xiuxian: [
       { id: 'train', name: '外出历练', desc: '斩妖除魔，历练道心（1 行动点）', cost: 1 },
       { id: 'dungeon', name: '秘境探险', desc: '洞天福地，危机四伏（1 行动点）', cost: 1 },
-      { id: 'biguan', name: '闭关苦修', desc: '体质 +1、智力 +1', cost: 1, attr: { str: 1, int: 1 },
+      { id: 'biguan', name: '闭关苦修', desc: '体质 +1、智力 +1（画符圆满则翻倍）', cost: 1, minigame: 'fu', attr: { str: 1, int: 1 },
         texts: ['闭关数月，灵力又浑厚了几分。', '枯坐蒲团，道心澄明。'] },
       { id: 'alchemy', name: '炼丹制药', desc: '盘缠 +25~50，两成概率得老山参', cost: 1, coin: [25, 50], chanceItem: { id: 'it_ginseng', p: 0.2 },
         texts: ['一炉培元丹出炉，坊市抢着要。', '丹香十里，这一炉成色极佳。'] },
@@ -170,6 +170,7 @@ var MapX = (function () {
     if (L.ap < a.cost) return;
     L.ap--;
     if (a.cd) L.actionCd[a.id] = L.age + a.cd;
+    Game.countAction(a.id);
     persistSafe();
 
     function finish(mult) {
@@ -226,17 +227,9 @@ var MapX = (function () {
       render();
     }
 
-    if (a.minigame === 'math') {
+    if (a.minigame && MiniGame[a.minigame]) {
       $('overlay-map').classList.add('hidden');
-      MiniGame.math(function (mult) {
-        $('overlay-map').classList.remove('hidden');
-        finish(mult);
-      });
-      return;
-    }
-    if (a.minigame === 'rhythm') {
-      $('overlay-map').classList.add('hidden');
-      MiniGame.rhythm(function (mult) {
+      MiniGame[a.minigame](function (mult) {
         $('overlay-map').classList.remove('hidden');
         finish(mult);
       });

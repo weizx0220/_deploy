@@ -64,7 +64,7 @@ var Rogue = (function () {
   function bossScaled() {
     var b = scaled(pick(data().bosses), 1);
     b.hp = Math.round(b.hp * 1.8);
-    b.atk = Math.round(b.atk * 1.3);
+    b.atk = Math.round(b.atk * 1.2);
     return b;
   }
 
@@ -137,7 +137,7 @@ var Rogue = (function () {
   function enterNode(type) {
     if (!R || R.busy) return;   // 切换中（如战败结算）禁止重复点击
     if (type === 'fight') return fight(scaled(pick(data().mobs), 1), 1);
-    if (type === 'elite') return fight(scaled(pick(data().elites), 1.35), 0, false, true);
+    if (type === 'elite') return fight(scaled(pick(data().elites), 1.25), 0, false, true);
     if (type === 'boss') return fight(bossScaled(), 0, true);
     if (type === 'rest') {
       var h = Math.round(R.hpState.max * 0.3);
@@ -199,6 +199,7 @@ var Rogue = (function () {
       deck: R.deck,
       hpState: R.hpState,
       relics: R.relics,
+      tier: isBoss ? 'boss' : (isElite ? 'elite' : 'mob'),
       onEnd: function (win) {
         if (!R) return;
         R.busy = false;

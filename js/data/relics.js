@@ -1,7 +1,7 @@
 /* 遗物数据（幽冥幻境）。效果逻辑在 cardbattle.js / rogue.js 中按 id 实现。 */
 var RELICS = [
   { id: 'r_iron_heart', name: '铁血丹心', rarity: 1, desc: '爬塔期间最大生命 +15%。' },
-  { id: 'r_sword_tassel', name: '残剑穗', rarity: 1, desc: '每场战斗打出的第一张攻击牌，伤害 +8%。' },
+  { id: 'r_sword_tassel', name: '残剑穗', rarity: 1, desc: '每场战斗打出的第一张攻击牌，伤害 +25%。' },
   { id: 'r_turtle', name: '龟息玉佩', rarity: 1, desc: '每回合第一次获得格挡时，额外 +5%。' },
   { id: 'r_pixiu', name: '墨玉貔貅', rarity: 1, desc: '爬塔中获得的铜钱 +40%。' },
   { id: 'r_dice', name: '灌铅骰子', rarity: 1, desc: '暴击率 +15%。' },

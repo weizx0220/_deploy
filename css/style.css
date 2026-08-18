@@ -977,3 +977,25 @@ html, body {
   position: absolute; top: -2px; bottom: -2px; width: 4px; left: 0;
   background: var(--ink); border-radius: 2px;
 }
+
+/* ---------- 卡牌类型配色与稀有度特效 ---------- */
+.cb-card.atk { border-left: 4px solid var(--cinnabar); }
+.cb-card.skill { border-left: 4px solid var(--jade); }
+.cb-card.r2 { box-shadow: 0 0 8px rgba(107,77,143,0.25); }
+.cb-card.r3 {
+  border-color: var(--gold);
+  box-shadow: 0 0 14px rgba(184,134,47,0.5);
+  animation: legendGlow 2s ease-in-out infinite;
+}
+@keyframes legendGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(184,134,47,0.3); }
+  50% { box-shadow: 0 0 20px rgba(184,134,47,0.65); }
+}
+.cb-card.r3:hover:not(.disabled) { transform: translateY(-20px) scale(1.06); }
+
+/* ---------- 速算2.0 计时条 ---------- */
+.mg-timer {
+  height: 8px; border-radius: 4px; background: rgba(42,42,46,0.1);
+  overflow: hidden; margin-bottom: 8px;
+}
+#mg-timer-fill { height: 100%; background: var(--jade); width: 100%; transition: width .1s linear; }
