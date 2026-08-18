@@ -20,7 +20,7 @@ var MapX = (function () {
       { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（3 行动点）', cost: 3 },
       { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）', cost: 0 },
       { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）', cost: 0 },
-      { id: 'rest', name: '休息', desc: '泡个热水澡，体质 +1（1 行动点，每年限一次）', cost: 1 }
+      { id: 'rest', name: '休息', desc: '泡澡搓背加按脚：体质 +2、快乐 +1、重伤静养 3 年（1 行动点，每年限一次）', cost: 1 }
     ];
     var wrap = $('map-actions');
     wrap.innerHTML = '';
@@ -49,11 +49,12 @@ var MapX = (function () {
     if (id === 'rest') {
       L.ap--; L.restYear = L.age;
       if (L.wound > 0) {
-        L.wound = Math.max(0, L.wound - 2);
-        Game.toast(L.wound > 0 ? '卧床静养，伤势大减（还需 ' + L.wound + ' 年）' : '悉心调养，伤势痊愈！');
+        L.wound = Math.max(0, L.wound - 3);
+        L.attr.spr += 1;
+        Game.toast(L.wound > 0 ? '卧床静养，伤势大减（还需 ' + L.wound + ' 年），心情 +1' : '悉心调养，伤势痊愈，心情 +1！');
       } else {
-        L.attr.str += 1;
-        Game.toast('你踏踏实实休息了一阵，体质 +1。');
+        L.attr.str += 2; L.attr.spr += 1;
+        Game.toast('泡澡搓背加按脚，通体舒泰：体质 +2，快乐 +1。');
       }
       Game.refresh();
       return render();
@@ -178,10 +179,10 @@ var MapX = (function () {
     var wrap = $('map-actions');
     wrap.innerHTML = '';
     var stock = L.shopStock;
-    if (!stock || stock.year !== L.age) {
-      // 每年刷 3 件 + 30% 概率一张卡牌
+    if (!stock || L.age >= stock.until) {
+      // 每 3 年上新一次
       var pool = ITEMS.filter(function (it) { return it.price > 0; });
-      stock = { year: L.age, items: [], card: null };
+      stock = { until: L.age + 3, items: [], card: null };
       for (var i = 0; i < 3 && pool.length; i++) {
         var idx = Math.floor(Math.random() * pool.length);
         stock.items.push(pool.splice(idx, 1)[0].id);
@@ -192,6 +193,11 @@ var MapX = (function () {
       }
       L.shopStock = stock;
     }
+    var left = stock.until - L.age;
+    var note = document.createElement('p');
+    note.style.cssText = 'color:var(--ink-faint);font-size:13px;text-align:center;margin-bottom:8px';
+    note.textContent = left > 0 ? '下次上新：' + left + ' 年后' : '新货到店';
+    wrap.appendChild(note);
     stock.items.forEach(function (iid) {
       var it = Game.item(iid);
       if (!it) return;
