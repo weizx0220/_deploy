@@ -27,9 +27,9 @@ var ITEMS = [
   { id: 'it_bell', name: '摄魂铃', slot: 'charm', rarity: 2, desc: '铃音一响，敌胆俱寒。', atk: 6, hp: 40, price: 230 },
   /* 消耗品 */
   { id: 'it_apple', name: '大红苹果', slot: 'use', rarity: 0, desc: '一天一苹果，医生远离我。', price: 15, use: { attr: { str: 1 } } },
-  { id: 'it_ginseng', name: '老山参', slot: 'use', rarity: 1, desc: '大补元气。', price: 60, use: { attr: { str: 2 } } },
+  { id: 'it_ginseng', name: '老山参', slot: 'use', rarity: 1, desc: '大补元气，亦可吊命疗伤。', price: 60, use: { attr: { str: 2 }, wound: 1 } },
   { id: 'it_book', name: '五年高考三年模拟', slot: 'use', rarity: 0, desc: '读完头皮发麻，但确实涨知识。', price: 25, use: { attr: { int: 1 } } },
   { id: 'it_milktea', name: '全糖奶茶', slot: 'use', rarity: 0, desc: '快乐水的含金量。', price: 20, use: { attr: { spr: 2 } } },
-  { id: 'it_elixir', name: '筑基丹', slot: 'use', rarity: 2, desc: '药香扑鼻，可固本培元。', price: 180, use: { attr: { str: 3, int: 1 } } },
+  { id: 'it_elixir', name: '筑基丹', slot: 'use', rarity: 2, desc: '药香扑鼻，可固本培元、活肉生肌。', price: 180, use: { attr: { str: 3, int: 1 }, wound: 2 } },
   { id: 'it_lotto', name: '未知盲盒', slot: 'use', rarity: 1, desc: '开之前，它同时是宝贝和废纸。', price: 50, use: { coin: 80 } }
 ];

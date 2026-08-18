@@ -945,3 +945,10 @@ html, body {
   font-family: var(--font-kai);
 }
 .bag-cats .cat.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* ---------- 重伤标记 ---------- */
+.life-wound {
+  font-size: 13px; letter-spacing: 2px; text-align: center;
+  color: var(--cinnabar); border: 1px solid var(--cinnabar); border-radius: 4px;
+  padding: 3px 8px; animation: suddenPulse 1.6s ease infinite;
+}

@@ -160,7 +160,8 @@ var Rogue = (function () {
         $('overlay-rogue').classList.remove('hidden');
         bar();
         if (!win) {
-          logLine('你不敌倒地，幻境把你吐回了入口。这一趟到此为止。');
+          logLine('你被幻境一口吐出塔外——重伤倒地，但性命无忧。这一趟到此为止。');
+          Game.applyWound(3, { str: -2, spr: -1 });
           $('rg-nodes').innerHTML = '';
           return setTimeout(function () { offerEndDraft(function () { close(false); }); }, 1200);
         }
@@ -183,9 +184,12 @@ var Rogue = (function () {
       { label: '<b>疗伤</b><small>回复 25% 生命</small>', apply: function () {
         R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.25));
       } },
-      { label: '<b>感悟</b><small>体质 +1</small>', apply: function () { R.life.attr.str += 1; } },
-      { label: '<b>财货</b><small>拾取 ' + (30 + R.floor * 15) + ' ' + Game.coinName() + '</small>', apply: function () {
-        Game.addCoin(30 + R.floor * 15);
+      { label: '<b>感悟</b><small>体质 +1' + ((R.spoilStr || 0) >= 3 ? '（本次已顿悟太多，无所得）' : '') + '</small>', apply: function () {
+        R.spoilStr = (R.spoilStr || 0) + 1;
+        if (R.spoilStr <= 3) R.life.attr.str += 1;
+      } },
+      { label: '<b>财货</b><small>拾取 ' + (18 + R.floor * 8) + ' ' + Game.coinName() + '</small>', apply: function () {
+        Game.addCoin(18 + R.floor * 8);
       } }
     ];
     opts.forEach(function (o) {

@@ -383,6 +383,7 @@
       world: w.id,
       coin: tpl ? (tpl.coin || 0) : 30,
       ap: 3,
+      wound: 0,               // 重伤剩余年数
       inventory: [],
       equip: { weapon: null, armor: null, head: null, trinket: null, charm: null },
       forge: {},              // 装备强化等级 {物品id: 等级}
@@ -522,6 +523,13 @@
     $('life-quest').innerHTML = q
       ? '<b>主线·' + q.name + '</b><small>' + q.hint + '</small>'
       : '<b>主线已了</b><small>此界故事，由你续写</small>';
+    var wEl = $('life-wound');
+    if (L.wound > 0) {
+      wEl.classList.remove('hidden');
+      wEl.textContent = '重伤 · 还需静养 ' + L.wound + ' 年';
+    } else {
+      wEl.classList.add('hidden');
+    }
   }
 
   function addTimeline(html) {
@@ -730,6 +738,19 @@
     return null;
   }
 
+  /* 重伤：战斗败北的后果。随年份静养恢复，休息/药物可加速 */
+  function applyWound(years, drops) {
+    var L = G.life;
+    L.wound = (L.wound || 0) + years;
+    var parts = [];
+    if (drops) for (var k in drops) {
+      L.attr[k] = (L.attr[k] || 0) + drops[k];
+      parts.push(Engine.ATTR_NAMES[k] + drops[k]);
+    }
+    UI.sealToast('重伤', '需静养 ' + L.wound + ' 年' + (parts.length ? '，' + parts.join('，') : ''));
+    renderSide();
+  }
+
   function coinName() {
     return worldDef(G.life ? G.life.world : 'life').coinName || '铜钱';
   }
@@ -859,19 +880,26 @@
           changes.push({ name: Engine.ATTR_NAMES[k] || k, value: it.use.attr[k] });
         }
         if (it.use.coin) { L.coin += it.use.coin; changes.push({ name: coinName(), value: it.use.coin }); }
+        if (it.use.wound && L.wound > 0) {
+          var healed = Math.min(L.wound, it.use.wound);
+          L.wound -= healed;
+          changes.push({ name: '伤势 -' + healed + ' 年', value: 0 });
+          if (L.wound === 0) changes.push({ name: '伤势痊愈', value: 0 });
+        }
       }
       L.inventory.splice(idx, 1);
       // 效果弹窗 + 飘字
       var html = '<p>' + it.desc + '</p>';
       if (changes.length) {
         html += '<p class="help-kv">效果：' + changes.map(function (c) {
-          return c.name + ' ' + (c.value > 0 ? '+' : '') + c.value;
+          return c.value ? (c.name + ' ' + (c.value > 0 ? '+' : '') + c.value) : c.name;
         }).join('，') + '</p>';
       } else {
         html += '<p class="help-kv">味道不错。</p>';
       }
       Help.show('使用「' + it.name + '」', html);
       changes.forEach(function (c, i) {
+        if (!c.value) return;
         setTimeout(function () { UI.floatText(c.name + (c.value > 0 ? '+' : '') + c.value, c.value > 0); }, i * 150);
       });
       persistRun();
@@ -893,14 +921,15 @@
     onRogueClear: function () {
       var L = G.life;
       L.flags['rogue_cleared'] = true;
-      L.coin += 200;
-      L.attr.str += 2; L.attr.int += 2;
-      UI.sealToast('幻境登顶', '幽冥幻境八层尽破，' + coinName() + ' +200，体质+2，智力+2');
+      L.coin += 120;
+      L.attr.str += 1; L.attr.int += 1;
+      UI.sealToast('幻境登顶', '幽冥幻境十二层尽破，' + coinName() + ' +120，体质+1，智力+1');
       questCheck();
     },
     questCheck: questCheck,
     apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
     collectCard: collectCard,
+    applyWound: applyWound,
     forgeMult: function (iid) {
       var lv = (G.life && G.life.forge || {})[iid] || 0;
       return 1 + 0.25 * lv;
@@ -935,6 +964,11 @@
         return;
       }
       L.deathText = bodyDeath; return finishLife();
+    }
+    // 重伤静养：每年好转一分
+    if (L.wound > 0) {
+      L.wound--;
+      if (L.wound === 0) UI.miniToast('伤势痊愈，又可以大展拳脚了');
     }
     // 行动点：每 3 年回复 1 点（轮回殿增益可缩至 2 年），上限 3，回满提醒
     var apInterval = hasExtra('ap_plus') ? 2 : 3;

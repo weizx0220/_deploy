@@ -17,7 +17,7 @@ var MapX = (function () {
     var acts = [
       { id: 'train', name: '历练', desc: '出门闯荡，或遇敌或遇缘（1 行动点）', cost: 1 },
       { id: 'dungeon', name: '副本', desc: '挑战秘境险地，赢取装备赏金（1 行动点）', cost: 1 },
-      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌（3 行动点）', cost: 3 },
+      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（3 行动点）', cost: 3 },
       { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）', cost: 0 },
       { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）', cost: 0 },
       { id: 'rest', name: '休息', desc: '泡个热水澡，体质 +1（1 行动点，每年限一次）', cost: 1 }
@@ -48,8 +48,13 @@ var MapX = (function () {
     if (L.ap < 1) return;
     if (id === 'rest') {
       L.ap--; L.restYear = L.age;
-      L.attr.str += 1;
-      Game.toast('你踏踏实实休息了一阵，体质 +1。');
+      if (L.wound > 0) {
+        L.wound = Math.max(0, L.wound - 2);
+        Game.toast(L.wound > 0 ? '卧床静养，伤势大减（还需 ' + L.wound + ' 年）' : '悉心调养，伤势痊愈！');
+      } else {
+        L.attr.str += 1;
+        Game.toast('你踏踏实实休息了一阵，体质 +1。');
+      }
       Game.refresh();
       return render();
     }
@@ -89,8 +94,8 @@ var MapX = (function () {
             Game.addCoin(c);
             Game.toast('历练告捷，缴获 ' + c + ' ' + Game.coinName() + '。');
           } else {
-            L.attr.str = Math.max(-2, L.attr.str - 1);
-            Game.toast('历练受挫，体质 -1。');
+            Game.applyWound(1, { str: -1 });
+            Game.toast('历练受挫，挂了彩。');
           }
           Game.refresh();
           Game.onActionDone('');
@@ -158,8 +163,8 @@ var MapX = (function () {
           L.dungeonCd[d.id] = L.age + (d.cooldown || 5);
           Game.applyReward(d.reward || {}, d.name);
         } else {
-          L.attr.str = Math.max(-2, L.attr.str - 2);
-          Game.toast('你在「' + d.name + '」里栽了跟头，体质 -2。');
+          Game.applyWound(2, { str: -2 });
+          Game.toast('你在「' + d.name + '」里栽了跟头，身受重伤。');
         }
         Game.refresh();
         Game.onActionDone('');
@@ -264,6 +269,7 @@ var MapX = (function () {
     if (it.use) {
       if (it.use.attr) for (var k in it.use.attr) p.push(Engine.ATTR_NAMES[k] + '+' + it.use.attr[k]);
       if (it.use.coin) p.push('盘缠+' + it.use.coin);
+      if (it.use.wound) p.push('疗伤-' + it.use.wound + '年');
     }
     return p.length ? p.join(' ') : '';
   }
