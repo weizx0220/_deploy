@@ -8,20 +8,97 @@ var MapX = (function () {
     $('overlay-map').classList.remove('hidden');
   }
 
+  /* ---------- 各世界专属行动 ---------- */
+  /* attr 属性成长 / coin 盘缠区间 / chanceAttr 概率加属性 / healWound 疗伤 / item 得物 / minigame 小游戏 / cd 冷却年数 */
+  var SHARED = [
+    { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）', cost: 0 },
+    { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）', cost: 0 },
+    { id: 'rest', name: '休息', desc: '泡澡搓背：体质+2、快乐+1、重伤静养3年（1 行动点，每年限一次）', cost: 1 }
+  ];
+  var ROGUE = { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（3 行动点）', cost: 3 };
+  var WORLD_ACTIONS = {
+    life: [
+      { id: 'study', name: '学习充电', desc: '智力 +1，速算挑战优异则 +2', cost: 1, minigame: 'math', attr: { int: 1 },
+        texts: ['啃完了一整块知识硬骨头。', '图书馆泡了一天，笔记记了半本。', '刷完一套网课，脑子焕然一新。'] },
+      { id: 'gym', name: '健身撸铁', desc: '体质 +1，节奏发力完美则 +2', cost: 1, minigame: 'rhythm', attr: { str: 1 },
+        texts: ['深蹲硬拉卧推，一套下来人精神了。', '汗水砸在瑜伽垫上，多巴胺拉满。'] },
+      { id: 'parttime', name: '兼职打工', desc: '盘缠 +25~55', cost: 1, coin: [25, 55],
+        texts: ['发了三天传单，腿肚子转筋但钱包鼓了。', '咖啡店兼职，拉花技术进步神速。', '接了个私活，熬夜交付，尾款到账。'] },
+      { id: 'social', name: '社交应酬', desc: '快乐 +1，三成概率颜值 +1', cost: 1, attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
+        texts: ['饭局上推杯换盏，认识了不少人。', '剧本杀局上当了一晚上戏精。', 'livehouse 里蹦到散场。'] },
+      { id: 'beauty', name: '形象管理', desc: '颜值 +1（3 年冷却）', cost: 1, cd: 3, attr: { chr: 1 },
+        texts: ['换了发型做了皮肤管理，镜中人焕然一新。', '穿搭博主没白关注，衣品肉眼可见地涨。'] },
+      { id: 'invest', name: '投资理财', desc: '家境≥8 稳健获利，否则小赌怡情', cost: 1, special: 'invest',
+        texts: [] },
+      { id: 'stroll', name: '城市漫步', desc: '随机小奇遇（盘缠/心情/小物）', cost: 1, special: 'stroll',
+        texts: [] },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ],
+    novel_wuxia: [
+      { id: 'train', name: '行侠仗义', desc: '出山历练，或遇敌或遇缘（1 行动点）', cost: 1 },
+      { id: 'dungeon', name: '秘境副本', desc: '挑战江湖险地（1 行动点）', cost: 1 },
+      { id: 'meditate', name: '闭关参悟', desc: '智力 +1，三成概率体质再 +1', cost: 1, attr: { int: 1 }, chanceAttr: { attr: 'str', p: 0.3 },
+        texts: ['面壁七日，剑谱上的字忽然都活了。', '气走周天，忽有所悟。'] },
+      { id: 'spar', name: '切磋讨教', desc: '体质 +1，一成概率受轻伤', cost: 1, attr: { str: 1 }, special: 'spar',
+        texts: ['与名门弟子喂招三百回合，受益良多。', '点到为止，惺惺相惜。'] },
+      { id: 'herb', name: '采药换钱', desc: '盘缠 +20~45', cost: 1, coin: [20, 45],
+        texts: ['深山采得几株老药，药铺给了好价钱。', '替镖局押了趟短镖，脚程钱到手。'] },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ],
+    novel_wuxian: [
+      { id: 'train', name: '刷自由副本', desc: '战斗历练（1 行动点）', cost: 1 },
+      { id: 'dungeon', name: '高难度副本', desc: '组队挑战（1 行动点）', cost: 1 },
+      { id: 'training2', name: '强化训练', desc: '体质 +1', cost: 1, attr: { str: 1 },
+        texts: ['重力室里又是充实的一天。', '虚拟实战舱里死了十七次，进步肉眼可见。'] },
+      { id: 'intel', name: '情报分析', desc: '智力 +1，两成概率快乐 +1', cost: 1, attr: { int: 1 }, chanceAttr: { attr: 'spr', p: 0.2 },
+        texts: ['复盘了十个副本录像，拆解出一套攻略。', '在主神论坛发了篇分析帖，被顶上热门。'] },
+      { id: 'stall', name: '广场摆摊', desc: '积分 +20~45', cost: 1, coin: [20, 45],
+        texts: ['倒卖副本特产，小赚一笔。', '摊位前来了个阔绰的资深者。'] },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ],
+    novel_bazong: [
+      { id: 'negotiate', name: '商业谈判', desc: '盘缠 +30，速算优异翻倍', cost: 1, minigame: 'math', coinFixed: 30,
+        texts: ['谈判桌上寸土不让，条款签得漂亮。', '三句话让对方让了三个点。'] },
+      { id: 'banquet', name: '名流晚宴', desc: '快乐 +1，四成概率颜值 +1', cost: 1, attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.4 },
+        texts: ['香槟塔前与名流周旋，长袖善舞。', '晚宴上你的致辞赢得满堂彩。'] },
+      { id: 'coach', name: '私教健身', desc: '体质 +1，节奏发力完美则 +2', cost: 1, minigame: 'rhythm', attr: { str: 1 },
+        texts: ['私教课上得汗流浃背，线条更利落了。'] },
+      { id: 'emba', name: '进修学习', desc: '智力 +1，速算优异翻倍', cost: 1, minigame: 'math', attr: { int: 1 },
+        texts: ['商学院的案例课，笔记记了满满三页。'] },
+      { id: 'beauty', name: '形象管理', desc: '颜值 +1（3 年冷却）', cost: 1, cd: 3, attr: { chr: 1 },
+        texts: ['高定西装上身，气场两米八。'] },
+      { id: 'dungeon', name: '商战风云', desc: '商场如战场（1 行动点）', cost: 1 },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ],
+    novel_moshi: [
+      { id: 'train', name: '外出拾荒', desc: '危险与收获并存（1 行动点）', cost: 1 },
+      { id: 'dungeon', name: '禁区探索', desc: '深入危险区域（1 行动点）', cost: 1 },
+      { id: 'trainbody', name: '体能训练', desc: '体质 +1', cost: 1, attr: { str: 1 },
+        texts: ['扛着沙袋绕围墙跑了二十圈。', '和守卫队对练到脱力。'] },
+      { id: 'research', name: '研究样本', desc: '智力 +1', cost: 1, attr: { int: 1 },
+        texts: ['解剖变异体样本，记录了一份珍贵数据。', '在旧实验室的终端里扒出半份研究日志。'] },
+      { id: 'barter', name: '以物易物', desc: '晶核 +20~40', cost: 1, coin: [20, 40],
+        texts: ['用两罐罐头换了把趁手的扳手和一把晶核。', '集市上倒卖净水片，小赚。'] },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ],
+    xiuxian: [
+      { id: 'train', name: '外出历练', desc: '斩妖除魔，历练道心（1 行动点）', cost: 1 },
+      { id: 'dungeon', name: '秘境探险', desc: '洞天福地，危机四伏（1 行动点）', cost: 1 },
+      { id: 'biguan', name: '闭关苦修', desc: '体质 +1、智力 +1', cost: 1, attr: { str: 1, int: 1 },
+        texts: ['闭关数月，灵力又浑厚了几分。', '枯坐蒲团，道心澄明。'] },
+      { id: 'alchemy', name: '炼丹制药', desc: '盘缠 +25~50，两成概率得老山参', cost: 1, coin: [25, 50], chanceItem: { id: 'it_ginseng', p: 0.2 },
+        texts: ['一炉培元丹出炉，坊市抢着要。', '丹香十里，这一炉成色极佳。'] },
+      SHARED[0], SHARED[1], SHARED[2], ROGUE
+    ]
+  };
+
   function render() {
     var L = Game.life();
     $('map-world').textContent = Game.worldName();
     $('map-ap').textContent = L.ap;
     $('map-ap-note').textContent = '每 ' + Game.apInterval() + ' 年 +1，上限 3';
     $('map-coin').textContent = L.coin + ' ' + Game.coinName();
-    var acts = [
-      { id: 'train', name: '历练', desc: '出门闯荡，或遇敌或遇缘（1 行动点）', cost: 1 },
-      { id: 'dungeon', name: '副本', desc: '挑战秘境险地，赢取装备赏金（1 行动点）', cost: 1 },
-      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（3 行动点）', cost: 3 },
-      { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）', cost: 0 },
-      { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）', cost: 0 },
-      { id: 'rest', name: '休息', desc: '泡澡搓背加按脚：体质 +2、快乐 +1、重伤静养 3 年（1 行动点，每年限一次）', cost: 1 }
-    ];
+    var acts = WORLD_ACTIONS[L.world] || WORLD_ACTIONS.life;
     var wrap = $('map-actions');
     wrap.innerHTML = '';
     acts.forEach(function (a) {
@@ -33,6 +110,10 @@ var MapX = (function () {
       btn.textContent = '前往';
       if (L.ap < a.cost) { btn.disabled = true; btn.textContent = a.cost >= 3 ? '需 3 行动点' : '行动点不足'; }
       if (a.id === 'rest' && L.restYear === L.age) { btn.disabled = true; btn.textContent = '今年已歇过'; }
+      if (a.cd) {
+        var cdLeft = (L.actionCd[a.id] || L.age) - L.age;
+        if (cdLeft > 0) { btn.disabled = true; btn.textContent = cdLeft + ' 年后再来'; }
+      }
       btn.onclick = function () { act(a.id); };
       div.appendChild(btn);
       wrap.appendChild(div);
@@ -72,7 +153,99 @@ var MapX = (function () {
       L.ap--;
       return train();
     }
+    // 通用行动
+    var a = findAction(L.world, id);
+    if (a) return runAction(a);
   }
+
+  function findAction(world, id) {
+    var list = WORLD_ACTIONS[world] || WORLD_ACTIONS.life;
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  /* 通用行动结算 */
+  function runAction(a) {
+    var L = Game.life();
+    if (L.ap < a.cost) return;
+    L.ap--;
+    if (a.cd) L.actionCd[a.id] = L.age + a.cd;
+    persistSafe();
+
+    function finish(mult) {
+      mult = mult || 1;
+      var msgs = [];
+      if (a.attr) for (var k in a.attr) {
+        var v = Math.max(1, Math.round(a.attr[k] * mult));
+        L.attr[k] = (L.attr[k] || 0) + v;
+        msgs.push(Engine.ATTR_NAMES[k] + '+' + v);
+      }
+      if (a.coin) {
+        var c = a.coin[0] + Engine.rnd(a.coin[1] - a.coin[0] + 1);
+        Game.addCoin(c); msgs.push(Game.coinName() + '+' + c);
+      }
+      if (a.coinFixed) {
+        var cf = Math.round(a.coinFixed * mult);
+        Game.addCoin(cf); msgs.push(Game.coinName() + '+' + cf);
+      }
+      if (a.chanceAttr && Math.random() < a.chanceAttr.p * mult) {
+        L.attr[a.chanceAttr.attr] = (L.attr[a.chanceAttr.attr] || 0) + 1;
+        msgs.push(Engine.ATTR_NAMES[a.chanceAttr.attr] + '+1');
+      }
+      if (a.chanceItem && Math.random() < a.chanceItem.p) {
+        Game.gainItem(a.chanceItem.id);
+        msgs.push('意外收获');
+      }
+      if (a.special === 'invest') {
+        if (L.attr.mny >= 8) {
+          var g = 20 + Engine.rnd(30);
+          Game.addCoin(g); msgs.push('稳健获利 ' + g);
+        } else if (Math.random() < 0.5) {
+          var g2 = 10 + Engine.rnd(25);
+          Game.addCoin(g2); msgs.push('小赚 ' + g2);
+        } else {
+          var lose = Math.min(L.coin, 10 + Engine.rnd(20));
+          L.coin -= lose; msgs.push('小亏 ' + lose);
+        }
+      }
+      if (a.special === 'spar' && Math.random() < 0.12) {
+        Game.applyWound(1, {});
+        msgs.push('切磋失手挂了彩');
+      }
+      if (a.special === 'stroll') {
+        var roll = Math.random();
+        if (roll < 0.35) { var sc = 10 + Engine.rnd(25); Game.addCoin(sc); msgs.push(Game.coinName() + '+' + sc); }
+        else if (roll < 0.7) { L.attr.spr += 1; msgs.push('快乐+1'); }
+        else if (roll < 0.85) { L.attr.chr += 1; msgs.push('颜值+1'); }
+        else msgs.push('一无所获但心情舒畅');
+      }
+      var flavor = a.texts && a.texts.length ? a.texts[Engine.rnd(a.texts.length)] : '';
+      Game.toast(flavor + (msgs.length ? '（' + msgs.join('，') + '）' : ''));
+      Game.refresh();
+      persistSafe();
+      render();
+    }
+
+    if (a.minigame === 'math') {
+      $('overlay-map').classList.add('hidden');
+      MiniGame.math(function (mult) {
+        $('overlay-map').classList.remove('hidden');
+        finish(mult);
+      });
+      return;
+    }
+    if (a.minigame === 'rhythm') {
+      $('overlay-map').classList.add('hidden');
+      MiniGame.rhythm(function (mult) {
+        $('overlay-map').classList.remove('hidden');
+        finish(mult);
+      });
+      return;
+    }
+    finish(1);
+  }
+
+  function persistSafe() { if (Game.life()) Game.refresh(); }
 
   /* ---------- 历练 ---------- */
   function train() {

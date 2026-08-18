@@ -959,3 +959,21 @@ html, body {
   border-top: 1px dashed rgba(184,134,47,0.35); padding-top: 4px;
 }
 .rg-relics { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; min-height: 8px; margin-bottom: 4px; }
+
+/* ---------- 小游戏 ---------- */
+.mg-q { font-size: 30px; letter-spacing: 4px; margin: 18px 0 10px; }
+.mg-progress { font-size: 13px; color: var(--ink-faint); margin-bottom: 14px; }
+.mg-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin: 0 auto; }
+.mg-opt { font-size: 18px; }
+.mg-bar {
+  position: relative; height: 26px; border-radius: 13px; overflow: hidden;
+  background: rgba(42,42,46,0.1); margin: 10px 6px 0;
+}
+.mg-zone {
+  position: absolute; left: 42%; width: 16%; top: 0; bottom: 0;
+  background: rgba(61,107,94,0.4); border-left: 1.5px solid var(--jade); border-right: 1.5px solid var(--jade);
+}
+.mg-cursor {
+  position: absolute; top: -2px; bottom: -2px; width: 4px; left: 0;
+  background: var(--ink); border-radius: 2px;
+}

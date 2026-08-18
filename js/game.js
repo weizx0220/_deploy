@@ -394,6 +394,7 @@
       quest: { stage: 0 },
       shopStock: null,
       restYear: -99,
+      actionCd: {},
       history: [],
       moments: [],
       dead: false,
