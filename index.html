@@ -95,23 +95,14 @@
 
   <!-- 人生 -->
   <section id="screen-life" class="screen">
-    <aside id="life-side">
-      <div id="life-name" class="life-name"></div>
-      <div id="life-scene" class="hidden"><img id="life-scene-img" alt=""></div>
-      <div id="life-age-big">0</div>
-      <div class="life-age-label">岁</div>
-      <canvas id="life-radar" width="200" height="200"></canvas>
-      <div id="life-attrs" class="life-attrs"></div>
-      <div id="life-talents" class="life-talents"></div>
-      <div id="life-route" class="life-route"></div>
-      <div class="life-v2">
-        <div class="life-row2" data-help="ap"><span>行动点<i class="qmark">?</i></span><b id="life-ap">0</b></div>
-        <div class="life-row2" data-help="coin"><span id="life-coin-name">铜钱<i class="qmark">?</i></span><b id="life-coin">0</b></div>
-        <div id="life-equips" class="life-equips"></div>
-        <div id="life-quest" class="life-quest" data-help="quest"></div>
-        <div id="life-wound" class="life-wound hidden"></div>
-      </div>
-    </aside>
+    <div id="life-hud">
+      <button id="btn-drawer" class="ink-btn small">☰ 命格</button>
+      <span class="hud-item hud-name" id="hud-name"></span>
+      <span class="hud-item"><b id="hud-age">0</b> 岁</span>
+      <span class="hud-item" data-help="ap">行动点 <b id="hud-ap">0</b></span>
+      <span class="hud-item" data-help="coin"><span id="hud-coin-name">铜钱</span> <b id="hud-coin">0</b></span>
+      <span class="hud-item hud-wound hidden" id="hud-wound"></span>
+    </div>
     <div id="life-main">
       <div id="life-timeline"></div>
       <div id="choice-box" class="hidden">
@@ -131,6 +122,34 @@
       </div>
     </div>
   </section>
+
+  <!-- 命格抽屉（侧栏全部内容移入） -->
+  <div id="drawer-mask" class="hidden"></div>
+  <aside id="side-drawer">
+    <div class="drawer-head">
+      <span>命格</span>
+      <button class="drawer-close" id="btn-drawer-close">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div id="life-name" class="life-name"></div>
+      <div id="life-scene" class="hidden"><img id="life-scene-img" alt=""></div>
+      <div class="drawer-age"><b id="life-age-big">0</b><span>岁</span></div>
+      <canvas id="life-radar" width="200" height="200"></canvas>
+      <div id="life-attrs" class="life-attrs"></div>
+      <div class="drawer-sec">天赋</div>
+      <div id="life-talents" class="life-talents"></div>
+      <div id="life-route" class="life-route"></div>
+      <div class="drawer-sec">行囊概况</div>
+      <div class="life-v2">
+        <div class="life-row2" data-help="ap"><span>行动点<i class="qmark">?</i></span><b id="life-ap">0</b></div>
+        <div class="life-row2" data-help="coin"><span id="life-coin-name">铜钱<i class="qmark">?</i></span><b id="life-coin">0</b></div>
+        <div id="life-equips" class="life-equips"></div>
+      </div>
+      <div class="drawer-sec">主线</div>
+      <div id="life-quest" class="life-quest" data-help="quest"></div>
+      <div id="life-wound" class="life-wound hidden"></div>
+    </div>
+  </aside>
 
   <!-- 总结 -->
   <section id="screen-summary" class="screen">

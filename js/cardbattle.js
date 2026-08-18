@@ -549,7 +549,10 @@ var CardBattle = (function () {
     var mimg = imgOf('mob_' + spec.body + '.png');
     if (mimg) {
       var mh = 120, mw = mh * mimg.width / mimg.height;
+      // multiply 混合：白底融入战场底色
+      ctx.globalCompositeOperation = 'multiply';
       ctx.drawImage(mimg, -mw / 2, -mh, mw, mh);
+      ctx.globalCompositeOperation = 'source-over';
       ctx.restore();
       return;
     }

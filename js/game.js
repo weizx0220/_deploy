@@ -507,6 +507,15 @@
     var L = G.life;
     $('life-name').textContent = L.name + (L.gender === 'M' ? ' · 乾' : ' · 坤');
     $('life-age-big').textContent = Math.max(0, L.age);
+    // HUD 条
+    $('hud-name').textContent = L.name;
+    $('hud-age').textContent = Math.max(0, L.age);
+    $('hud-ap').textContent = L.ap;
+    $('hud-coin').textContent = L.coin;
+    $('hud-coin-name').textContent = coinName();
+    var hw = $('hud-wound');
+    if (L.wound > 0) { hw.classList.remove('hidden'); hw.textContent = '重伤 ' + L.wound + ' 年'; }
+    else hw.classList.add('hidden');
     $('life-route').textContent = ROUTE_NAMES[L.route] || '';
     updateScene();
     UI.drawRadar($('life-radar'), L.attr);
@@ -1259,6 +1268,18 @@
       }
     })();
     $('btn-next').onclick = function () { if (!G.waiting) advanceYear(); };
+    // 命格抽屉
+    $('btn-drawer').onclick = function () {
+      $('side-drawer').classList.add('on');
+      $('drawer-mask').classList.remove('hidden');
+      AudioFX.tick(0.06);
+    };
+    function closeDrawer() {
+      $('side-drawer').classList.remove('on');
+      $('drawer-mask').classList.add('hidden');
+    }
+    $('btn-drawer-close').onclick = closeDrawer;
+    $('drawer-mask').onclick = closeDrawer;
     $('btn-map').onclick = function () {
       if (G.waiting) { UI.miniToast('眼前有未做的抉择，先选择再继续'); return; }
       AudioFX.tick(); MapX.open();
