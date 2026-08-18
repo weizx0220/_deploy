@@ -1254,3 +1254,33 @@ body[data-world="xiuxian"] .event-card.sudden { border-left-color: var(--cinnaba
 .ink-btn:active { transform: scale(0.96); }
 /* 空状态文案统一柔和 */
 .gallery-item.locked .g-name { letter-spacing: 6px; }
+
+/* ---------- 地点制行动面板 ---------- */
+.map-place {
+  border: 1px solid rgba(42,42,46,0.12); border-radius: 10px;
+  background: rgba(255,255,255,0.35); margin-bottom: 12px;
+  overflow: hidden;
+}
+.place-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; font-size: 15px; letter-spacing: 3px;
+  background: rgba(42,42,46,0.05);
+  border-bottom: 1px solid rgba(42,42,46,0.08);
+}
+.place-icon {
+  width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+  background: var(--ink); color: var(--paper);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.place-act {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 10px 14px;
+}
+.place-act + .place-act { border-top: 1px dashed rgba(42,42,46,0.08); }
+.place-act .l-name { font-size: 15px; letter-spacing: 2px; }
+.place-act .l-desc { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.life-career {
+  text-align: center; font-size: 13px; color: var(--gold); letter-spacing: 2px;
+  margin-bottom: 4px;
+}

@@ -346,6 +346,19 @@
     return WORLDS[0];
   }
 
+  /* 职业表（借鉴未来人生：四档晋升） */
+  var CAREERS = [
+    { id: 'job_it', name: '程序员', need: { int: 6 }, salary: [12, 26, 55, 95], titles: ['实习开发', '开发工程师', '高级工程师', '技术总监'] },
+    { id: 'job_star', name: '演员', need: { chr: 7 }, salary: [10, 24, 60, 110], titles: ['群演', '签约艺人', '当红明星', '影帝影后'] },
+    { id: 'job_athlete', name: '运动员', need: { str: 7 }, salary: [8, 20, 45, 85], titles: ['体校学员', '省队队员', '国家队主力', '传奇名将'] },
+    { id: 'job_clerk', name: '公务员', need: { int: 4 }, salary: [10, 18, 32, 55], titles: ['办事员', '科员', '处长', '局长'] },
+    { id: 'job_boss', name: '创业家', need: { mny: 6 }, salary: [0, 30, 80, 160], titles: ['个体户', '工作室主理人', '公司CEO', '商业巨擘'] }
+  ];
+  function careerOf(id) {
+    for (var i = 0; i < CAREERS.length; i++) if (CAREERS[i].id === id) return CAREERS[i];
+    return null;
+  }
+
   function newLife() {
     var w = worldDef(G.world || 'life');
     var tpl = G.template || null;
@@ -406,6 +419,7 @@
       restYear: -99,
       actionCd: {},
       actionCounts: {},
+      career: null,           // 职业 {id, level 0-3}
       history: [],
       moments: [],
       dead: false,
@@ -551,6 +565,15 @@
       wEl.textContent = '重伤 · 还需静养 ' + L.wound + ' 年';
     } else {
       wEl.classList.add('hidden');
+    }
+    // 职业徽记
+    var cEl = $('life-career');
+    if (cEl) {
+      if (L.career) {
+        var cs = careerOf(L.career.id);
+        cEl.textContent = cs ? (cs.name + ' · ' + cs.titles[L.career.level]) : '';
+        cEl.classList.remove('hidden');
+      } else cEl.classList.add('hidden');
     }
   }
 
@@ -993,6 +1016,8 @@
     apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
     collectCard: collectCard,
     applyWound: applyWound,
+    careerOf: careerOf,
+    CAREERS: CAREERS,
     /* 行动计数：达到里程碑时立 flag，供联动事件触发 */
     countAction: function (id) {
       var L = G.life;
@@ -1044,6 +1069,27 @@
     }
     // 家境生财：每年按家境产生盘缠收入
     if (L.attr.mny > 0) L.coin += Math.floor(L.attr.mny / 3);
+    // 职业年薪与晋升
+    if (L.career && L.age >= 18) {
+      var cs = careerOf(L.career.id);
+      if (cs) {
+        if (L.age < 60) {
+          var sal = cs.salary[L.career.level];
+          L.coin += sal;
+          // 晋升检查：主属性达标
+          var mainKey = Object.keys(cs.need)[0];
+          var needLv = cs.need[mainKey] + (L.career.level + 1) * 4;
+          if (L.career.level < 3 && (L.attr[mainKey] || 0) >= needLv) {
+            L.career.level++;
+            UI.sealToast('晋升 · ' + cs.titles[L.career.level], '年薪涨至 ' + cs.salary[L.career.level] + ' ' + coinName());
+            AudioFX.stamp();
+          }
+        } else if (!L.flags['retired_notice']) {
+          L.flags['retired_notice'] = true;
+          addTimeline('<div class="event-card fate">你到了退休的年纪。递上茶杯那天，全部门的人排队和你合影。</div>');
+        }
+      }
+    }
     // 行动点：每 3 年回复 1 点（轮回殿增益可缩至 2 年），上限 3，回满提醒
     var apInterval = hasExtra('ap_plus') ? 2 : 3;
     if (L.age > 0 && L.age % apInterval === 0 && L.ap < 3) {

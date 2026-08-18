@@ -18,6 +18,7 @@ var MapX = (function () {
   var ROGUE = { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（3 行动点）', cost: 3 };
   var WORLD_ACTIONS = {
     life: [
+      { id: 'career', name: '职场打拼', desc: '入职/转行/晋升，年年领薪（不耗行动点）', cost: 0 },
       { id: 'study', name: '学习充电', desc: '智力 +1，速算挑战优异则 +2', cost: 1, minigame: 'math', attr: { int: 1 },
         texts: ['啃完了一整块知识硬骨头。', '图书馆泡了一天，笔记记了半本。', '刷完一套网课，脑子焕然一新。'] },
       { id: 'gym', name: '健身撸铁', desc: '体质 +1，音游手感好则 +2', cost: 1, minigame: 'beat', attr: { str: 1 },
@@ -92,31 +93,104 @@ var MapX = (function () {
     ]
   };
 
+  /* 地点定义：每个世界的行动按场所归组（借鉴未来人生的场景制） */
+  var PLACES = {
+    life: [
+      { name: '学校 · 图书馆', icon: '学', acts: ['study'] },
+      { name: '写字楼', icon: '职', acts: ['career'] },
+      { name: '健身房', icon: '体', acts: ['gym'] },
+      { name: '商业街', icon: '商', acts: ['parttime', 'shop'] },
+      { name: '中央广场', icon: '聚', acts: ['social', 'stroll'] },
+      { name: '美容院', icon: '颜', acts: ['beauty'] },
+      { name: '金融街', icon: '投', acts: ['invest'] },
+      { name: '家中', icon: '宅', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ],
+    novel_wuxia: [
+      { name: '演武场', icon: '武', acts: ['train', 'spar'] },
+      { name: '秘境', icon: '境', acts: ['dungeon'] },
+      { name: '山门静室', icon: '悟', acts: ['meditate'] },
+      { name: '市集', icon: '集', acts: ['herb', 'shop'] },
+      { name: '客栈', icon: '栈', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ],
+    novel_wuxian: [
+      { name: '副本大厅', icon: '本', acts: ['train', 'dungeon'] },
+      { name: '训练舱', icon: '练', acts: ['training2'] },
+      { name: '情报屋', icon: '报', acts: ['intel'] },
+      { name: '自由广场', icon: '摊', acts: ['stall', 'shop'] },
+      { name: '休息舱', icon: '憩', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ],
+    novel_bazong: [
+      { name: '集团总部', icon: '商', acts: ['negotiate', 'dungeon'] },
+      { name: '商学院', icon: '学', acts: ['emba'] },
+      { name: '名流会所', icon: '宴', acts: ['banquet'] },
+      { name: '私教工作室', icon: '练', acts: ['coach'] },
+      { name: '形象中心', icon: '颜', acts: ['beauty'] },
+      { name: '公寓', icon: '宅', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ],
+    novel_moshi: [
+      { name: '废土', icon: '荒', acts: ['train', 'dungeon'] },
+      { name: '训练场', icon: '练', acts: ['trainbody'] },
+      { name: '研究室', icon: '研', acts: ['research'] },
+      { name: '集市', icon: '集', acts: ['barter', 'shop'] },
+      { name: '安全屋', icon: '屋', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ],
+    xiuxian: [
+      { name: '山门之外', icon: '游', acts: ['train'] },
+      { name: '秘境', icon: '境', acts: ['dungeon'] },
+      { name: '洞府', icon: '修', acts: ['biguan'] },
+      { name: '丹房', icon: '丹', acts: ['alchemy'] },
+      { name: '坊市', icon: '坊', acts: ['shop'] },
+      { name: '静室', icon: '憩', acts: ['rest'] },
+      { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
+      { name: '随身', icon: '囊', acts: ['deck'] }
+    ]
+  };
+
   function render() {
     var L = Game.life();
     $('map-world').textContent = Game.worldName();
     $('map-ap').textContent = L.ap;
     $('map-ap-note').textContent = '每 ' + Game.apInterval() + ' 年 +1，上限 3';
     $('map-coin').textContent = L.coin + ' ' + Game.coinName();
-    var acts = WORLD_ACTIONS[L.world] || WORLD_ACTIONS.life;
+    var defs = WORLD_ACTIONS[L.world] || WORLD_ACTIONS.life;
+    var places = PLACES[L.world] || PLACES.life;
     var wrap = $('map-actions');
     wrap.innerHTML = '';
-    acts.forEach(function (a) {
-      var div = document.createElement('div');
-      div.className = 'map-act';
-      div.innerHTML = '<div class="l-name">' + a.name + '</div><div class="l-desc">' + a.desc + '</div>';
-      var btn = document.createElement('button');
-      btn.className = 'ink-btn small';
-      btn.textContent = '前往';
-      if (L.ap < a.cost) { btn.disabled = true; btn.textContent = a.cost >= 3 ? '需 3 行动点' : '行动点不足'; }
-      if (a.id === 'rest' && L.restYear === L.age) { btn.disabled = true; btn.textContent = '今年已歇过'; }
-      if (a.cd) {
-        var cdLeft = (L.actionCd[a.id] || L.age) - L.age;
-        if (cdLeft > 0) { btn.disabled = true; btn.textContent = cdLeft + ' 年后再来'; }
-      }
-      btn.onclick = function () { act(a.id); };
-      div.appendChild(btn);
-      wrap.appendChild(div);
+    places.forEach(function (p) {
+      var block = document.createElement('div');
+      block.className = 'map-place';
+      var head = '<div class="place-head"><span class="place-icon">' + p.icon + '</span>' + p.name + '</div>';
+      var rows = '';
+      p.acts.forEach(function (aid) {
+        var a = null;
+        for (var i = 0; i < defs.length; i++) if (defs[i].id === aid) a = defs[i];
+        if (!a) return;
+        var disabled = '', btnTxt = '前往';
+        if (L.ap < a.cost) { disabled = ' disabled'; btnTxt = a.cost >= 3 ? '需 3 行动点' : '行动点不足'; }
+        if (a.id === 'rest' && L.restYear === L.age) { disabled = ' disabled'; btnTxt = '今年已歇过'; }
+        if (a.cd) {
+          var cdLeft = (L.actionCd[a.id] || L.age) - L.age;
+          if (cdLeft > 0) { disabled = ' disabled'; btnTxt = cdLeft + ' 年后再来'; }
+        }
+        rows += '<div class="place-act">' +
+          '<div><div class="l-name">' + a.name + '</div><div class="l-desc">' + a.desc + '</div></div>' +
+          '<button class="ink-btn small" data-act="' + a.id + '"' + disabled + '>' + btnTxt + '</button></div>';
+      });
+      block.innerHTML = head + rows;
+      wrap.appendChild(block);
+    });
+    wrap.querySelectorAll('[data-act]').forEach(function (b) {
+      b.onclick = function () { act(this.getAttribute('data-act')); };
     });
   }
 
@@ -125,6 +199,7 @@ var MapX = (function () {
     if (id === 'shop') return openShop();
     if (id === 'dungeon') return openDungeons();
     if (id === 'deck') return openDeck();
+    if (id === 'career') return openCareer();
     if (id === 'rogue' && L.ap < 3) return;
     if (L.ap < 1) return;
     if (id === 'rest') {
@@ -453,6 +528,50 @@ var MapX = (function () {
     b.textContent = '← 返回';
     b.onclick = render;
     wrap.appendChild(b);
+  }
+
+  /* ---------- 职业面板 ---------- */
+  function openCareer() {
+    var L = Game.life();
+    var wrap = $('map-actions');
+    wrap.innerHTML = '';
+    if (L.age < 18) {
+      wrap.innerHTML = '<p style="color:var(--ink-faint);text-align:center">你还小，18 岁成年后才能入职。</p>';
+      backBtn();
+      return;
+    }
+    if (L.career) {
+      var cs = Game.careerOf(L.career.id);
+      var cur = document.createElement('div');
+      cur.className = 'map-act';
+      cur.innerHTML = '<div class="l-name">现任：' + cs.name + ' · ' + cs.titles[L.career.level] + '</div>' +
+        '<div class="l-desc">年薪 ' + cs.salary[L.career.level] + ' ' + Game.coinName() +
+        (L.career.level < 3 ? '；晋升下一级需 ' + (cs.need[Object.keys(cs.need)[0]] + (L.career.level + 1) * 4) + ' ' + Object.keys(cs.need).map(function(k){return Engine.ATTR_NAMES[k];})[0] : '；已到职级巅峰') + '</div>';
+      wrap.appendChild(cur);
+    }
+    Game.CAREERS.forEach(function (c) {
+      var key = Object.keys(c.need)[0];
+      var okAttr = (L.attr[key] || 0) >= c.need[key];
+      var div = document.createElement('div');
+      div.className = 'map-act';
+      div.innerHTML = '<div class="l-name">' + c.name + '</div>' +
+        '<div class="l-desc">入职需 ' + Engine.ATTR_NAMES[key] + '≥' + c.need[key] + '（当前 ' + (L.attr[key] || 0) + '） · 年薪 ' + c.salary[0] + ' 起，最高 ' + c.salary[3] + '</div>';
+      var btn = document.createElement('button');
+      btn.className = 'ink-btn small';
+      if (L.career && L.career.id === c.id) { btn.disabled = true; btn.textContent = '在职'; }
+      else if (!okAttr) { btn.disabled = true; btn.textContent = '资历不足'; }
+      else { btn.textContent = L.career ? '转行' : '入职'; }
+      btn.onclick = function () {
+        L.career = { id: c.id, level: 0 };
+        Game.toast('你成为了' + c.name + '（' + c.titles[0] + '），从明年开始领年薪。');
+        AudioFX.stamp();
+        Game.refresh();
+        openCareer();
+      };
+      div.appendChild(btn);
+      wrap.appendChild(div);
+    });
+    backBtn();
   }
 
   /* ---------- 牌组构筑 ---------- */
