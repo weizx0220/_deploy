@@ -1493,3 +1493,37 @@ body[data-world] .menu-item:hover { background: rgba(255,255,255,0.08); color: v
 /* 深色主题下压暗插画背景 */
 body[data-world] .screen-bg.on { opacity: 0.07; }
 body[data-world] #life-scene { border-color: rgba(255,255,255,0.15); }
+
+/* ---------- 深色主题：总结页修正 ---------- */
+body[data-world] .summary-grade { color: var(--ink); }
+body[data-world] .summary-verdict { color: var(--ink-soft); }
+body[data-world] .summary-ending { color: var(--wacc, #c9a35a); border-color: rgba(255,255,255,0.12); }
+body[data-world] .summary-reward { color: var(--wacc, #c9a35a); }
+body[data-world] .summary-moments { color: var(--ink-soft); }
+body[data-world] .summary-moments .moment { border-bottom-color: rgba(255,255,255,0.08); }
+body[data-world] .summary-moments .moment b { color: var(--wacc, #c9a35a); }
+body[data-world] #summary-curve { background: rgba(20,22,30,0.6); border-color: rgba(255,255,255,0.1); }
+body[data-world] .screen-title { color: var(--ink); }
+
+/* ---------- 角色主视觉横幅 ---------- */
+#life-banner {
+  position: relative; height: 120px; border-radius: 10px; overflow: hidden;
+  margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+#life-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#life-banner-text {
+  position: absolute; left: 16px; bottom: 10px;
+  font-size: 18px; letter-spacing: 3px; color: #f3ede0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+#life-banner::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.45), transparent 55%);
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  #life-banner { height: 72px; }
+  #life-banner-text { font-size: 14px; left: 10px; bottom: 6px; }
+}

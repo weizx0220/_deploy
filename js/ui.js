@@ -48,8 +48,10 @@ var UI = (function () {
       var r = R * Math.min(v, maxV) / maxV;
       return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
     }
+    var dark = !!document.body.dataset.world;
+    var wacc = (getComputedStyle(document.body).getPropertyValue('--wacc') || '#c9a35a').trim();
     // 网格
-    ctx.strokeStyle = 'rgba(42,42,46,0.14)';
+    ctx.strokeStyle = dark ? 'rgba(255,255,255,0.14)' : 'rgba(42,42,46,0.14)';
     for (var ring = 1; ring <= 2; ring++) {
       ctx.beginPath();
       for (var i = 0; i <= n; i++) {
@@ -69,13 +71,13 @@ var UI = (function () {
       j === 0 ? ctx.moveTo(pv[0], pv[1]) : ctx.lineTo(pv[0], pv[1]);
     }
     ctx.closePath();
-    ctx.fillStyle = 'rgba(165,40,27,0.18)';
-    ctx.strokeStyle = 'rgba(165,40,27,0.75)';
+    ctx.fillStyle = dark ? wacc + '2e' : 'rgba(165,40,27,0.18)';
+    ctx.strokeStyle = dark ? wacc : 'rgba(165,40,27,0.75)';
     ctx.lineWidth = 1.8;
     ctx.fill(); ctx.stroke();
     ctx.lineWidth = 1;
     // 标签
-    ctx.fillStyle = '#55554f';
+    ctx.fillStyle = dark ? '#b8b4a8' : '#55554f';
     ctx.font = '15px ' + getComputedStyle(document.body).fontFamily;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (var t = 0; t < n; t++) {
@@ -91,6 +93,9 @@ var UI = (function () {
     var W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
     if (!history.length) return;
+    var dark = !!document.body.dataset.world;   // 深色主题配色
+    var axisColor = dark ? 'rgba(232,230,223,0.4)' : 'rgba(42,42,46,0.25)';
+    var labelColor = dark ? '#b8b4a8' : '#8a8778';
     var pad = { l: 36, r: 12, t: 16, b: 26 };
     var iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
     var maxAge = Math.max(history[history.length - 1].age, 10);
@@ -102,11 +107,13 @@ var UI = (function () {
     function X(age) { return pad.l + iw * age / maxAge; }
     function Y(v) { return pad.t + ih * (1 - v / maxV); }
     // 轴
-    ctx.strokeStyle = 'rgba(42,42,46,0.25)';
+    ctx.strokeStyle = axisColor;
     ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ih); ctx.lineTo(pad.l + iw, pad.t + ih); ctx.stroke();
-    ctx.fillStyle = '#8a8778'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = labelColor; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
     for (var ag = 0; ag <= maxAge; ag += 20) ctx.fillText(ag + '岁', X(ag), H - 8);
-    var colors = { chr: '#b8862f', int: '#3d6b5e', str: '#a5281b', mny: '#6b4d8f', spr: '#c2703a' };
+    var colors = dark
+      ? { chr: '#d4a04a', int: '#5ac8b8', str: '#e06a5a', mny: '#9a8fd0', spr: '#e0954a' }
+      : { chr: '#b8862f', int: '#3d6b5e', str: '#a5281b', mny: '#6b4d8f', spr: '#c2703a' };
     ['chr', 'int', 'str', 'mny', 'spr'].forEach(function (k) {
       ctx.strokeStyle = colors[k]; ctx.lineWidth = 1.6;
       ctx.beginPath();

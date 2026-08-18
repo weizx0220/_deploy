@@ -515,6 +515,14 @@
     img.onerror = function () { box.classList.add('hidden'); };
     img.src = u;
     box.classList.remove('hidden');
+    // 主视觉横幅同步
+    var bi = $('life-banner-img');
+    if (bi) {
+      bi.onerror = function () { $('life-banner').classList.add('hidden'); };
+      bi.src = u;
+      $('life-banner').classList.remove('hidden');
+      $('life-banner-text').textContent = G.life.name + ' · ' + (Game.worldName ? Game.worldName() : '');
+    }
   }
   updateScene.current = null;
 
