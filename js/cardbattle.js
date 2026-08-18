@@ -115,7 +115,7 @@ var CardBattle = (function () {
 
   /* ---------- 敌人意图（自身攻击% + 组合意图轮转） ---------- */
   function intentPct() {
-    return 9 + S.enemy.atk * 0.22 + S.turn * 0.3 + S.eStr;   // 占玩家最大生命 %
+    return 9 + S.enemy.atk * 0.22 + S.turn * 0.25 + S.eStr;   // 占玩家最大生命 %
   }
   /* 组合意图：atk 攻击 / block 防御 / buff 强化 / weak 弱化 / vuln 易伤，可同回合叠加 */
   var PATTERNS = {

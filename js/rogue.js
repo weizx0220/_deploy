@@ -138,7 +138,7 @@ var Rogue = (function () {
   function enterNode(type) {
     if (!R || R.busy) return;   // 切换中（如战败结算）禁止重复点击
     if (type === 'fight') return fight(scaled(pick(data().mobs), 1), 1);
-    if (type === 'elite') return fight(scaled(pick(data().elites), 1.25), 0, false, true);
+    if (type === 'elite') return fight(scaled(pick(data().elites), 1.15), 0, false, true);
     if (type === 'boss') return fight(bossScaled(), 0, true);
     if (type === 'rest') {
       var h = Math.round(R.hpState.max * 0.3);
