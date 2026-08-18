@@ -25,6 +25,17 @@ var ITEMS = [
   { id: 'it_headband', name: '束发金冠', slot: 'head', rarity: 1, desc: '束发正冠，气度自生。', def: 3, hp: 35, price: 95 },
   /* 法宝 */
   { id: 'it_bell', name: '摄魂铃', slot: 'charm', rarity: 2, desc: '铃音一响，敌胆俱寒。', atk: 6, hp: 40, price: 230 },
+  /* 百分比神装（atkPct/hpPct/defPct 为战斗百分比加成） */
+  { id: 'it_zhuxian', name: '诛仙古剑', slot: 'weapon', rarity: 3, desc: '剑鸣一声，万邪辟易。攻击提升 25%。', atk: 20, atkPct: 25, price: 900 },
+  { id: 'it_mangpao', name: '不死蟒袍', slot: 'armor', rarity: 3, desc: '蟒纹暗涌，生机不绝。生命提升 25%。', def: 12, hpPct: 25, price: 880 },
+  { id: 'it_shanhe', name: '山河社稷图', slot: 'charm', rarity: 3, desc: '一图藏山河。防御提升 30%。', def: 10, defPct: 30, price: 860 },
+  { id: 'it_tianji', name: '天机筹', slot: 'trinket', rarity: 3, desc: '算无遗策。攻击与生命各提升 12%。', atkPct: 12, hpPct: 12, price: 800 },
+  { id: 'it_wolfhelm', name: '狼首盔', slot: 'head', rarity: 2, desc: '塞北狼王的头颅所制。', def: 6, hp: 60, price: 240 },
+  { id: 'it_phoenix_pin', name: '凤尾簪', slot: 'head', rarity: 2, desc: '凤羽点翠，顾盼生辉。', atk: 4, hp: 40, price: 210 },
+  { id: 'it_gourd', name: '乾坤葫芦', slot: 'charm', rarity: 1, desc: '能装五湖四海，也能挡三灾八难。', def: 5, hp: 35, price: 120 },
+  { id: 'it_dagger', name: '袖里剑', slot: 'weapon', rarity: 1, desc: '藏于袖中，出其不意。', atk: 10, price: 100 },
+  { id: 'it_monkrobe', name: '百衲衣', slot: 'armor', rarity: 1, desc: '千针万线，皆是祝愿。', def: 7, hp: 45, price: 115 },
+  { id: 'it_pearl', name: '东珠耳坠', slot: 'trinket', rarity: 1, desc: '珠光温润，衬得人愈发精神。', hp: 40, price: 85 },
   /* 消耗品 */
   { id: 'it_apple', name: '大红苹果', slot: 'use', rarity: 0, desc: '一天一苹果，医生远离我。', price: 15, use: { attr: { str: 1 } } },
   { id: 'it_ginseng', name: '老山参', slot: 'use', rarity: 1, desc: '大补元气，亦可吊命疗伤。', price: 60, use: { attr: { str: 2 }, wound: 1 } },

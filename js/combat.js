@@ -29,7 +29,7 @@ var Combat = (function () {
   };
 
   function playerStats(life) {
-    var atk = 0, def = 0, hp = 0;
+    var atk = 0, def = 0, hp = 0, pctAtk = 0, pctDef = 0, pctHp = 0;
     var skills = [];
     var seen = {};
     (life.inventory || []).forEach(function (id) {
@@ -41,6 +41,10 @@ var Combat = (function () {
       atk += Math.round((it.atk || 0) * fm);
       def += Math.round((it.def || 0) * fm);
       hp += Math.round((it.hp || 0) * fm);
+      // 百分比加成（不受强化影响）
+      if (it.atkPct) pctAtk += it.atkPct;
+      if (it.defPct) pctDef += it.defPct;
+      if (it.hpPct) pctHp += it.hpPct;
       if (it.skill && !seen[it.skill]) { seen[it.skill] = 1; skills.push(it.skill); }
     });
     (life.skills || []).forEach(function (sid) { if (!seen[sid]) { seen[sid] = 1; skills.push(sid); } });
@@ -52,9 +56,9 @@ var Combat = (function () {
     var tb = talentBonus(life);
     var lb = (typeof Game !== 'undefined' && Game.legacyCombat) ? Game.legacyCombat() : { atk: 0, hp: 0 };
     return {
-      maxhp: Math.round(60 + life.attr.str * 12 + hp + tb.hp + lb.hp),
-      atk: Math.round(6 + life.attr.str * 0.8 + life.attr.int * 0.4 + atk + tb.atk + lb.atk),
-      def: Math.round(2 + life.attr.str * 0.3 + def),
+      maxhp: Math.round((60 + life.attr.str * 12 + hp + tb.hp + lb.hp) * (1 + pctHp / 100)),
+      atk: Math.round((6 + life.attr.str * 0.8 + life.attr.int * 0.4 + atk + tb.atk + lb.atk) * (1 + pctAtk / 100)),
+      def: Math.round((2 + life.attr.str * 0.3 + def) * (1 + pctDef / 100)),
       crit: 0.05 + (life.attr.luk || 0) * 0.012,
       skills: skills.slice(0, 3)   // 普攻之外最多 3 个技能
     };

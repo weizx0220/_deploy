@@ -78,7 +78,8 @@ var MapX = (function () {
   function train() {
     var L = Game.life();
     var roll = Math.random();
-    if (roll < 0.5) {
+    var fightP = (L.attr.chr || 0) >= 10 ? 0.38 : 0.5;
+    if (roll < fightP) {
       // 遭遇战：强度随年龄/世界缩放
       var base = 30 + L.age * 2 + L.attr.str * 2;
       var enemy = {
@@ -209,9 +210,9 @@ var MapX = (function () {
       var btn = document.createElement('button');
       btn.className = 'ink-btn small';
       btn.textContent = '买下';
-      if (L.coin < it.price) { btn.disabled = true; btn.textContent = '钱不够'; }
+      if (L.coin < priceOf(it)) { btn.disabled = true; btn.textContent = '钱不够'; }
       btn.onclick = function () {
-        if (!Game.spendCoin(it.price)) return;
+        if (!Game.spendCoin(priceOf(it))) return;
         Game.gainItem(iid);
         stock.items = stock.items.filter(function (x) { return x !== iid; });
         AudioFX.stamp();
@@ -263,12 +264,22 @@ var MapX = (function () {
   /* ---------- 牌组构筑 ---------- */
   function cardOf(id) { for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === id) return CARDS[i]; return null; }
 
+  /* 颜值折扣：每点颜值 -1%，至多 -15% */
+  function priceOf(it) {
+    var L = Game.life();
+    var disc = Math.min(0.15, (L.attr.chr || 0) * 0.01);
+    return Math.max(1, Math.round(it.price * (1 - disc)));
+  }
+
   /* 物品属性/效果预览（商店、行囊、副本奖励共用） */
   function itemPreview(it) {
     var p = [];
     if (it.atk) p.push('攻+' + it.atk);
     if (it.def) p.push('防+' + it.def);
     if (it.hp) p.push('血+' + it.hp);
+    if (it.atkPct) p.push('攻+' + it.atkPct + '%');
+    if (it.defPct) p.push('防+' + it.defPct + '%');
+    if (it.hpPct) p.push('血+' + it.hpPct + '%');
     if (it.skill) {
       for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === it.skill) { p.push('技·' + SKILLS[i].name); break; }
     }

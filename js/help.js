@@ -2,10 +2,10 @@
    点击（手机为点按）即弹出说明。 */
 var Help = (function () {
   var TOPICS = {
-    attr_chr: { name: '颜值', text: '影响社交、婚恋、娱乐圈路线与部分选项门槛。战斗无直接加成，但倾国倾城也是一种通关方式。' },
+    attr_chr: { name: '颜值', text: '影响社交、婚恋、娱乐圈路线与部分选项门槛。逛街时颜值即通行证：商店每点颜值优惠 1%（至多 15%）；颜值≥10 时历练更容易遇到好事。' },
     attr_int: { name: '智力', text: '影响学业、事业与大量事件的选项门槛；战斗中提供 40% 攻击加成；修仙线的悟道与渡劫「智取」都靠它。' },
     attr_str: { name: '体质', text: '立命之本。战斗生命 = 60 + 体质×12，并提供攻击与防御加成；体质归零会缠绵病榻，持续亏损则一病不起。' },
-    attr_mny: { name: '家境', text: '财富与社会资源。影响事件走向与选项门槛，也决定你在世间的底气。' },
+    attr_mny: { name: '家境', text: '财富与社会资源。影响事件走向与选项门槛；家底会生钱——每年按家境自动进账盘缠（家境÷3）。' },
     attr_spr: { name: '快乐', text: '人生的意义所在。快乐过低可能郁郁而终；修仙渡心魔劫时，快乐必须大于 10 方能守住道心。' },
     attr_luk: { name: '气运', text: '隐藏属性，天注定。影响暴击率（每点 +1.2%）、自然死亡规避与各种随机事件的暗中标价。' },
     ap: { name: '行动点', text: '每三年回复 1 点，上限 3 点，回满时会提醒你。用于地图行动：历练、副本、幽冥幻境、休息。逛商店不消耗。' },
@@ -59,6 +59,9 @@ var Help = (function () {
     if (it.atk) st.push('攻击+' + it.atk);
     if (it.def) st.push('防御+' + it.def);
     if (it.hp) st.push('生命+' + it.hp);
+    if (it.atkPct) st.push('攻击+' + it.atkPct + '%');
+    if (it.defPct) st.push('防御+' + it.defPct + '%');
+    if (it.hpPct) st.push('生命+' + it.hpPct + '%');
     if (st.length) html += '<p class="help-kv">' + st.join('，') + '</p>';
     if (it.skill) {
       for (var i = 0; i < SKILLS.length; i++) {

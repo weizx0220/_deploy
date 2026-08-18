@@ -627,7 +627,8 @@
 
     var ev = Engine.pickEvent(L);
     if (!ev) {
-      addTimeline('<div class="event-card">平平淡淡的一年，如白水入茶。</div>');
+      var PLAIN = ['平平淡淡的一年，如白水入茶。','波澜不惊的一年，日子像宣纸上的淡墨。','这一年无甚大事，四季照常轮转。','平淡是真。你在柴米油盐里又安稳度过一年。','风调雨顺的一年，连新闻都懒得理你。'];
+      addTimeline('<div class="event-card">' + PLAIN[Engine.rnd(PLAIN.length)] + '</div>');
     } else {
       var r = fireEvent(ev);
       if (r !== 'ok') return;   // waiting 或 dead
@@ -980,6 +981,8 @@
       L.wound--;
       if (L.wound === 0) UI.miniToast('伤势痊愈，又可以大展拳脚了');
     }
+    // 家境生财：每年按家境产生盘缠收入
+    if (L.attr.mny > 0) L.coin += Math.floor(L.attr.mny / 3);
     // 行动点：每 3 年回复 1 点（轮回殿增益可缩至 2 年），上限 3，回满提醒
     var apInterval = hasExtra('ap_plus') ? 2 : 3;
     if (L.age > 0 && L.age % apInterval === 0 && L.ap < 3) {
