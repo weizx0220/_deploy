@@ -409,6 +409,7 @@
         (gender === 'M' ? '是个男孩' : '是个女孩') + '，带着 ' + talents.length + ' 道天命落入此界。</div>');
     }
     snapshot();
+    persistRun();      // 开局即建档
   }
 
   var ROUTE_NAMES = {
@@ -599,6 +600,8 @@
 
   function presentChoices(ev) {
     G.waiting = true;
+    G.pendingEv = ev;
+    persistRun();
     var box = $('choice-box');
     $('choice-text').textContent = '你将如何抉择？';
     var wrap = $('choice-options');
@@ -615,6 +618,7 @@
       btn.onclick = function () {
         box.classList.add('hidden');
         G.waiting = false;
+        G.pendingEv = null;
         var res = Engine.applyEffect(L, ch.effect);
         applyEffectRes(L, res);
         var txt = resultText(ch.result);
@@ -637,7 +641,40 @@
     AudioFX.pluck(520, 0.1);
   }
 
-  /* ============ v2：条件提示 / 物品货币 / 主线 ============ */
+  /* ============ 实时存档（当前这一世） ============ */
+  function persistRun() {
+    if (!G.life || G.life.dead || G.phase !== 'life') return;
+    Save.saveRun({
+      life: G.life,
+      tl: $('life-timeline').innerHTML,
+      pending: G.pendingEv ? G.pendingEv.id : null
+    });
+  }
+
+  function resumeRun() {
+    var data = Save.loadRun();
+    if (!data || !data.life) return;
+    G.life = data.life;
+    G.phase = 'life';
+    G.world = G.life.world;
+    UI.showScreen('life');
+    AudioFX.bgm(G.life.pool === 'xiuxian' ? 'xiuxian' : (G.life.pool === 'life' ? 'life' : 'novel'));
+    // 选项框归位，避免被时间轴覆盖清空
+    var cb = $('choice-box');
+    if (cb) { cb.classList.add('hidden'); $('life-main').appendChild(cb); }
+    $('life-timeline').innerHTML = data.tl || '';
+    updateScene.current = null;
+    renderSide();
+    $('life-timeline').scrollTop = $('life-timeline').scrollHeight;
+    addTimeline('<div class="event-card fate">大梦初醒，前缘再续。你的故事仍在继续……</div>');
+    // 有未做的抉择则重新呈现
+    if (data.pending) {
+      var ev = null;
+      for (var i = 0; i < ALL_EVENTS.length; i++) if (ALL_EVENTS[i].id === data.pending) ev = ALL_EVENTS[i];
+      if (ev && ev.choices) presentChoices(ev);
+    }
+    AudioFX.stamp();
+  }
   /* 把 cond 翻成玩家可读的需求文字 */
   function condHint(cond) {
     var parts = [];
@@ -802,6 +839,7 @@
       if (text) addTimeline('<div class="event-card">' + text + '</div>');
       $('overlay-map').classList.add('hidden');
       renderSide();
+      persistRun();
     },
     onRogueClear: function () {
       var L = G.life;
@@ -859,6 +897,7 @@
     renderSide();
     snapshot();
     checkAchievements('life');
+    persistRun();                // 每年落盘，刷新可续
     if (L.age >= 500) {  // 绝对上限，防死循环
       L.deathText = '你已走到此世尽头。';
       return finishLife();
@@ -882,6 +921,7 @@
     var L = G.life;
     L.dead = true;
     stopAuto();
+    Save.clearRun();   // 一世落幕，清除进行档
     AudioFX.doom();
     AudioFX.bgm('summary');
 
@@ -1004,6 +1044,7 @@
   /* ============ 绑定 ============ */
   function bind() {
     $('btn-start').onclick = function () { AudioFX.tick(); startHeroPick(); };
+    $('btn-resume').onclick = function () { AudioFX.tick(); resumeRun(); };
     $('btn-redraw').onclick = function () {
       if (G.redraws <= 0) return;
       G.redraws--; G.picked = [];
@@ -1151,6 +1192,8 @@
   function showTitle() {
     var s = Save.data.stats;
     refreshProfileLabel();
+    // 有进行中的人生则显示「续前缘」
+    $('btn-resume').classList.toggle('hidden', !Save.loadRun());
     $('title-stats').textContent = s.lives > 0
       ? '已历 ' + s.lives + ' 世 · 最长寿 ' + s.maxAge + ' 岁 · 结局 ' + Save.data.endings.length + '/' + ENDINGS.length
       : '前尘未染，此为第一世';

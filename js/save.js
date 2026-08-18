@@ -133,6 +133,20 @@ var Save = (function () {
     spendLegacyPoints: function (n) {
       if (data.legacy.points < n) return false;
       data.legacy.points -= n; save(); return true;
+    },
+
+    /* ---------- 进行中的一世（实时存档，刷新/退出可续） ---------- */
+    saveRun: function (runObj) {
+      try { localStorage.setItem('life_restart_run_' + profiles.current, JSON.stringify(runObj)); } catch (e) { /* 超限则静默 */ }
+    },
+    loadRun: function () {
+      try {
+        var raw = localStorage.getItem('life_restart_run_' + profiles.current);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) { return null; }
+    },
+    clearRun: function () {
+      try { localStorage.removeItem('life_restart_run_' + profiles.current); } catch (e) {}
     }
   };
 })();
