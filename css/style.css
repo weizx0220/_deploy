@@ -1214,3 +1214,43 @@ body[data-world="xiuxian"] .event-card {
 body[data-world="xiuxian"] .ink-btn { border-radius: 14px; }
 body[data-world="xiuxian"] .age-marker { color: #2a6a6a; letter-spacing: 10px; }
 body[data-world="xiuxian"] .event-card.sudden { border-left-color: var(--cinnabar); }
+
+/* ============================================================
+   UI 深度打磨：质感与细节
+   ============================================================ */
+/* 事件卡片入场错落 +  hover 微浮 */
+.event-card { transition: transform .2s ease, box-shadow .2s ease; }
+.event-card:hover { transform: translateX(3px); box-shadow: 0 4px 14px rgba(42,42,46,0.14); }
+/* 印章提示下移，不再遮挡内容 */
+#seal-toast { top: 24%; }
+/* 天赋卡 hover 微倾 */
+.tcard { transition: transform .2s ease; }
+.tcard:hover { transform: translateY(-4px) rotate(-0.6deg); }
+.tcard.selected:hover { transform: translateY(-4px) rotate(0.6deg); }
+/* 世界卡选中态之外的呼吸 */
+.world-card { transition: transform .25s ease, box-shadow .25s ease, filter .25s ease; }
+.world-card:hover { filter: saturate(1.15); }
+/* 选项按钮聚焦/悬停层次 */
+.choice-opt { transition: all .18s ease; position: relative; }
+.choice-opt:hover:not(:disabled) { padding-left: 24px; border-left-width: 3px; }
+.choice-opt:disabled { filter: grayscale(0.6); }
+/* 滚动条统一 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(42,42,46,0.2); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+/* 弹层进入弹性 */
+.overlay-panel { animation: panelIn .28s cubic-bezier(.2,1.2,.35,1); }
+@keyframes panelIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+/* 分配页加减按钮反馈 */
+.alloc-pm:active { transform: scale(0.9); }
+/* 雷达图外圈光晕 */
+#alloc-radar, #life-radar { filter: drop-shadow(0 2px 8px rgba(42,42,46,0.08)); }
+/* HUD 项目分隔 */
+.hud-item + .hud-item { border-left: 1px solid rgba(42,42,46,0.12); padding-left: 14px; }
+@media (max-width: 768px) { .hud-item + .hud-item { padding-left: 8px; } }
+/* 抽屉打开时 HUD 按钮高亮 */
+#side-drawer.on ~ * #btn-drawer { background: var(--ink); color: var(--paper); }
+/* 载入占位：场景图淡入已有，补充按钮按下态 */
+.ink-btn:active { transform: scale(0.96); }
+/* 空状态文案统一柔和 */
+.gallery-item.locked .g-name { letter-spacing: 6px; }
