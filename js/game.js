@@ -1272,18 +1272,32 @@
     $('btn-home').onclick = function () { AudioFX.tick(); showTitle(); };
     $('btn-mute').onclick = function () {
       var m = AudioFX.toggleMute();
-      this.textContent = m ? '✕' : '♪';
+      this.textContent = m ? '音效 ✕' : '音效 ♪';
     };
+    // 汉堡菜单
+    $('btn-menu').onclick = function (e) {
+      e.stopPropagation();
+      $('top-menu').classList.toggle('hidden');
+      AudioFX.tick(0.06);
+    };
+    document.addEventListener('click', function (e) {
+      var m = $('top-menu');
+      if (!m.classList.contains('hidden') && !e.target.closest('.tb-actions')) m.classList.add('hidden');
+    });
+    // 菜单项
     $('btn-gallery').onclick = function () {
+      $('top-menu').classList.add('hidden');
       UI.renderGallery('endings');
       $('overlay-gallery').classList.remove('hidden');
     };
     $('btn-legacy').onclick = function () {
+      $('top-menu').classList.add('hidden');
       UI.renderLegacy();
       $('overlay-legacy').classList.remove('hidden');
     };
     // 轮回者档案
     $('btn-profile').onclick = function () {
+      $('top-menu').classList.add('hidden');
       renderProfiles();
       $('overlay-profile').classList.remove('hidden');
     };
