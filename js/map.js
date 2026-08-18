@@ -506,17 +506,29 @@ var MapX = (function () {
         renderDeck();
       }));
     });
-    var rest = L.collection.filter(function (cid) { return L.deckExtra.indexOf(cid) < 0; });
-    if (!rest.length) coll.innerHTML = '<p style="color:var(--ink-faint);font-size:13px">收藏空空。爬塔结算与商店都能获得新卡。</p>';
-    rest.forEach(function (cid) {
+    // 收藏按卡聚合，显示持有数；同卡构筑最多 2 张
+    var uniq = {}, order = [];
+    L.collection.forEach(function (cid) {
+      if (!uniq[cid]) { uniq[cid] = 0; order.push(cid); }
+      uniq[cid]++;
+    });
+    if (!order.length) coll.innerHTML = '<p style="color:var(--ink-faint);font-size:13px">收藏空空。爬塔抓牌与商店都能获得新卡。</p>';
+    order.forEach(function (cid) {
       var c = cardOf(cid);
       if (!c) return;
-      coll.appendChild(cardChip(c, function () {
+      var owned = uniq[cid];
+      var inDeck = L.deckExtra.filter(function (x) { return x === cid; }).length;
+      var chip = cardChip(c, function () {
         if (L.deckExtra.length >= 10) { Game.toast('构筑已满（10 张），先移除一张'); return; }
+        if (inDeck >= 2) { Game.toast('同一张牌至多带 2 张'); return; }
+        if (inDeck >= owned) return;
         L.deckExtra.push(cid);
         AudioFX.stamp();
         renderDeck();
-      }));
+      });
+      chip.innerHTML = '<b>' + c.name + (owned > 1 ? ' ×' + owned : '') + '</b><small>' + c.cost + ' 费 · ' + c.desc +
+        (inDeck ? '（已入组 ' + inDeck + '）' : '') + '</small>';
+      coll.appendChild(chip);
     });
   }
 

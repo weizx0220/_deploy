@@ -35,7 +35,18 @@ var CARDS = [
   { id: 'c_barrier', name: '金钟罩', type: 'skill', cost: 3, block: 32, rarity: 3, desc: '获得最大生命 32% 的格挡', icon: 'bell' },
   { id: 'c_godslay', name: '弑神一击', type: 'atk', cost: 3, dmg: 240, pierce: true, rarity: 3, desc: '无视格挡，造成 240% 攻击', icon: 'godslay' },
   { id: 'c_phoenix', name: '凤凰涅槃', type: 'skill', cost: 2, heal: 22, draw: 1, rarity: 3, desc: '回复 22% 生命，抽 1 张牌', icon: 'phoenix' },
-  { id: 'c_execute', name: '绝命斩', type: 'atk', cost: 2, dmg: 140, execute: true, rarity: 3, desc: '造成 140% 攻击；若敌方处于易伤，则 280%', icon: 'slash2' }
+  { id: 'c_execute', name: '绝命斩', type: 'atk', cost: 2, dmg: 140, execute: true, rarity: 3, desc: '造成 140% 攻击；若敌方处于易伤，则 280%', icon: 'slash2' },
+  /* 扩充批次 */
+  { id: 'c_swift', name: '疾风剑', type: 'atk', cost: 1, dmg: 80, draw: 1, rarity: 1, desc: '造成 80% 攻击，抽 1 张牌', icon: 'bolt' },
+  { id: 'c_gale', name: '旋风斩', type: 'atk', cost: 1, dmg: 45, hits: 2, rarity: 1, desc: '两次攻击，各 45%', icon: 'dbl' },
+  { id: 'c_bulwark', name: '不动如山', type: 'skill', cost: 2, block: 26, rarity: 2, desc: '获得最大生命 26% 的格挡', icon: 'shield2' },
+  { id: 'c_bloodrage', name: '燃血诀', type: 'skill', cost: 0, selfDmg: 5, str: 20, rarity: 2, desc: '自损 5% 生命，本场攻击 +20%', icon: 'fire' },
+  { id: 'c_needle', name: '暴雨梨花针', type: 'atk', cost: 2, dmg: 25, hits: 5, rarity: 2, desc: '五次攻击，各 25%', icon: 'star' },
+  { id: 'c_siphon', name: '摄灵术', type: 'skill', cost: 1, draw: 2, heal: 3, rarity: 2, desc: '抽 2 张牌，回复 3% 生命', icon: 'orb' },
+  { id: 'c_mirrorblade', name: '镜花水月', type: 'skill', cost: 2, block: 12, vuln: 2, rarity: 2, desc: '获得 12% 格挡，使敌方易伤 2 回合', icon: 'moon' },
+  { id: 'c_laststand', name: '背水一战', type: 'atk', cost: 1, dmg: 90, laststand: true, rarity: 3, desc: '造成 90% 攻击；生命低于 40% 时 200%', icon: 'slash2' },
+  { id: 'c_toxic', name: '万毒蚀心', type: 'skill', cost: 2, poison: 6, vuln: 2, rarity: 3, desc: '附加 6 层中毒，并使敌方易伤 2 回合', icon: 'drop' },
+  { id: 'c_zenith', name: '天人合一', type: 'skill', cost: 3, draw: 2, block: 15, str: 10, rarity: 3, desc: '抽 2 张牌，获得 15% 格挡，攻击 +10%', icon: 'phoenix' }
 ];
 
 /* 旧技能 → 卡牌 映射（习得技能/天赋/装备会将对应卡牌加入你的收藏） */

@@ -169,6 +169,7 @@ var CardBattle = (function () {
       for (var h = 0; h < hits; h++) {
         var pct = c.dmg;
         if (c.execute && S.eVulnTurns > 0) pct *= 2;             // 绝命斩
+        if (c.laststand && S.hp < S.maxhp * 0.4) pct = 200;      // 背水一战
         if (S.firstAtk && hasRelic('r_sword_tassel')) pct += 25;   // 残剑穗
         var mult = pct / 100 * (1 + S.pStr / 100);
         if (S.weakTurns > 0) mult *= 0.75;                          // 我方虚弱
@@ -203,6 +204,11 @@ var CardBattle = (function () {
       S.hp = Math.min(S.maxhp, S.hp + hv); spawnHeal(); msg('回复 ' + hv + ' 点生命');
     }
     if (c.str) { S.pStr += c.str; msg('力量 +' + c.str + '%（本场攻击提升）'); }
+    if (c.selfDmg) {
+      var sd = Math.max(1, Math.round(S.maxhp * c.selfDmg / 100));
+      S.hp = Math.max(1, S.hp - sd);
+      msg('自损 ' + sd + ' 点生命，换取爆发');
+    }
     if (c.draw) { drawCards(c.draw); msg('抽 ' + c.draw + ' 张牌'); }
     if (hasRelic('r_blood_sack')) {   // 血玉髓
       var bh = Math.max(1, Math.round(S.maxhp * 0.01));

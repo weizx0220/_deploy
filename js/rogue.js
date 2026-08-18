@@ -209,12 +209,12 @@ var Rogue = (function () {
           logLine('你被幻境一口吐出塔外——重伤倒地，但性命无忧。这一趟到此为止。');
           Game.applyWound(3, { str: -2, spr: -1 });
           $('rg-nodes').innerHTML = '';
-          return setTimeout(function () { offerEndDraft(function () { close(false); }); }, 1200);
+          return setTimeout(function () { close(false); }, 1600);
         }
         if (isBoss) {
           logLine('雾王座崩塌，幻境认你为主。');
           Game.onRogueClear();
-          return setTimeout(function () { offerEndDraft(function () { close(true); }); }, 1200);
+          return setTimeout(function () { close(true); }, 1600);
         }
         if (isElite) return eliteReward();
         offerRewards(rewardPicks);
@@ -304,48 +304,53 @@ var Rogue = (function () {
     });
   }
 
-  /* ---------- 爬塔结算抓牌（无论成败，三选一入册） ---------- */
+  function nextFloor() {
+    R.floor++;
+    bar();
+    // 中途（第 6 层后）与塔主前（第 11 层后）各抓一次牌
+    if (R.floor === 6 || R.floor === 11) {
+      logLine(R.floor === 6 ? '行至中途，雾中浮现三张牌影。' : '塔主的气息就在头顶——最后一搏前，择牌备战。');
+      return offerRunDraft();
+    }
+    renderMap();
+  }
+
+  /* 途中抓牌（三选一入册，可跳过） */
+  /* 抓牌池（三选一）：排除底牌四件套，按品质加权 */
   function draftCards() {
-    var pool = CARDS.filter(function (c) { return c.id !== 'c_strike' && c.id !== 'c_guard' && c.id !== 'c_focus' && c.id !== 'c_spark'; });
-    var W = [40, 30, 20, 10];   // 品质权重
+    var pool = CARDS.filter(function (c) { return ['c_strike', 'c_guard', 'c_focus', 'c_spark'].indexOf(c.id) < 0; });
+    var W = [40, 30, 20, 10];
     var opts = [];
     while (opts.length < 3 && pool.length) {
       var total = 0, i;
       for (i = 0; i < pool.length; i++) total += W[pool[i].rarity] || 10;
-      var roll = Math.random() * total, pickC = pool[0];
-      for (i = 0; i < pool.length; i++) { roll -= W[pool[i].rarity] || 10; if (roll <= 0) { pickC = pool[i]; break; } }
-      pool.splice(pool.indexOf(pickC), 1);
-      opts.push(pickC);
+      var roll = Math.random() * total, pc = pool[0];
+      for (i = 0; i < pool.length; i++) { roll -= W[pool[i].rarity] || 10; if (roll <= 0) { pc = pool[i]; break; } }
+      pool.splice(pool.indexOf(pc), 1);
+      opts.push(pc);
     }
     return opts;
   }
 
-  function offerEndDraft(onDone) {
+  function offerRunDraft() {
     var wrap = $('rg-nodes');
     wrap.innerHTML = '';
-    logLine('幻境临别赠礼——择一张卡牌收入囊中：');
     draftCards().forEach(function (c) {
       var b = document.createElement('button');
       b.className = 'rg-node rg-reward rg-card';
       b.innerHTML = '<b>' + c.name + '</b><small>' + c.desc + '</small>';
       b.onclick = function () {
         Game.collectCard(c.id);
-        logLine('「' + c.name + '」已收入你的牌册。');
-        setTimeout(onDone, 900);
+        logLine('「' + c.name + '」已收入牌册。');
+        setTimeout(renderMap, 600);
       };
       wrap.appendChild(b);
     });
     var skip = document.createElement('button');
     skip.className = 'rg-node rg-rest';
-    skip.innerHTML = '<b>都不要</b><small>拂袖而去</small>';
-    skip.onclick = function () { setTimeout(onDone, 100); };
+    skip.innerHTML = '<b>都不要</b><small>继续前行</small>';
+    skip.onclick = function () { renderMap(); };
     wrap.appendChild(skip);
-  }
-
-  function nextFloor() {
-    R.floor++;
-    bar();
-    renderMap();
   }
 
   return { start: start };

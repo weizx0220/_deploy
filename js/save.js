@@ -16,7 +16,8 @@ var Save = (function () {
     },
     stats: {
       lives: 0, maxAge: 0, bestGrade: null
-    }
+    },
+    deck: { collection: [], deckExtra: [] }   // 牌组跨世继承
   };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }

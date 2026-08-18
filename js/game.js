@@ -387,8 +387,8 @@
       inventory: [],
       equip: { weapon: null, armor: null, head: null, trinket: null, charm: null },
       forge: {},              // 装备强化等级 {物品id: 等级}
-      collection: [],         // 卡牌收藏
-      deckExtra: [],          // 自由构筑（≤10 张）
+      collection: (Save.data.deck && Save.data.deck.collection || []).slice(),   // 卡牌收藏（跨世继承）
+      deckExtra: (Save.data.deck && Save.data.deck.deckExtra || []).slice(),     // 自由构筑（跨世继承）
       skills: [],
       dungeonCd: {},
       quest: { stage: 0 },
@@ -833,16 +833,16 @@
     if (typeof SKILL_TO_CARD !== 'undefined' && SKILL_TO_CARD[sid]) collectCard(SKILL_TO_CARD[sid]);
   }
 
-  /* 卡牌收藏：加入并提示 */
+  /* 卡牌收藏：允许重复收集，同卡构筑最多 2 张 */
   function collectCard(cid) {
     if (!G.life.collection) G.life.collection = [];
-    if (G.life.collection.indexOf(cid) >= 0) return;
     G.life.collection.push(cid);
-    // 构筑有空位则自动入组
-    if (G.life.deckExtra.length < 10) G.life.deckExtra.push(cid);
+    var owned = G.life.collection.filter(function (x) { return x === cid; }).length;
+    var inDeck = G.life.deckExtra.filter(function (x) { return x === cid; }).length;
+    if (inDeck < 2 && inDeck < owned && G.life.deckExtra.length < 10) G.life.deckExtra.push(cid);
     var c = null;
     for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === cid) c = CARDS[i];
-    UI.miniToast('新卡牌入册「' + (c ? c.name : cid) + '」');
+    UI.miniToast('新卡牌入册「' + (c ? c.name : cid) + '」' + (owned > 1 ? '×' + owned : ''));
   }
 
   function applyReward(rw, sourceName) {
@@ -1102,6 +1102,9 @@
   function doFinish() {
     var L = G.life;
     Save.clearRun();   // 一世落幕，清除进行档
+    // 牌组跨世继承：写回档案
+    Save.data.deck = { collection: (L.collection || []).slice(), deckExtra: (L.deckExtra || []).slice() };
+    Save.save();
     AudioFX.bgm('summary');
 
     var ending = pickEnding();
