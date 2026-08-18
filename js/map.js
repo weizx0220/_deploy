@@ -169,7 +169,9 @@ var MapX = (function () {
     places.forEach(function (p) {
       var block = document.createElement('div');
       block.className = 'map-place';
-      var head = '<div class="place-head"><span class="place-icon">' + p.icon + '</span>' + p.name + '</div>';
+      var imgName = ({"学校 · 图书馆":"place_school","写字楼":"place_office","健身房":"place_gym","商业街":"place_shop","中央广场":"place_plaza","美容院":"place_beauty","金融街":"place_finance","家中":"place_home","虚空裂隙":"place_rift","随身":"place_bag","客栈":"place_home","市集":"place_shop","坊市":"place_shop","集市":"place_shop","演武场":"place_gym","训练舱":"place_gym","训练场":"place_gym","私教工作室":"place_gym","秘境":"place_rift","副本大厅":"place_rift","山门静室":"place_home","静室":"place_home","休息舱":"place_home","安全屋":"place_home","公寓":"place_home","洞府":"place_home","丹房":"place_home","情报屋":"place_office","研究室":"place_office","集团总部":"place_office","商学院":"place_school","自由广场":"place_plaza","废土":"place_rift","山门之外":"place_rift","形象中心":"place_beauty","名流会所":"place_plaza"})[p.name];
+      var imgHtml = imgName ? '<img class="place-thumb" src="' + (typeof Assets !== 'undefined' ? Assets.url(imgName + '.png') : '') + '" onerror="this.remove()">' : '';
+      var head = '<div class="place-head">' + imgHtml + '<span class="place-icon">' + p.icon + '</span>' + p.name + '</div>';
       var rows = '';
       p.acts.forEach(function (aid) {
         var a = null;

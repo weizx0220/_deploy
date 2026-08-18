@@ -1353,3 +1353,9 @@ body[data-world="xiuxian"] .event-card.sudden { border-left-color: var(--cinnaba
 .age-marker::before, .age-marker::after {
   background: linear-gradient(to right, transparent, rgba(42,42,46,0.25), transparent);
 }
+
+/* 地点缩略图 */
+.place-thumb {
+  width: 56px; height: 34px; object-fit: cover; border-radius: 5px;
+  border: 1px solid rgba(42,42,46,0.2); flex-shrink: 0;
+}
