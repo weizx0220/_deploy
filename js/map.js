@@ -341,6 +341,20 @@ var MapX = (function () {
   }
 
   /* ---------- 商店 ---------- */
+  function genStock() {
+    var pool = ITEMS.filter(function (it) { return it.price > 0; });
+    var stock = { items: [], card: null };
+    for (var i = 0; i < 3 && pool.length; i++) {
+      var idx = Math.floor(Math.random() * pool.length);
+      stock.items.push(pool.splice(idx, 1)[0].id);
+    }
+    if (Math.random() < 0.35) {
+      var cp = CARDS.filter(function (c) { return c.rarity <= 2; });
+      stock.card = cp[Math.floor(Math.random() * cp.length)].id;
+    }
+    return stock;
+  }
+
   function openShop() {
     var L = Game.life();
     var wrap = $('map-actions');
@@ -348,16 +362,9 @@ var MapX = (function () {
     var stock = L.shopStock;
     if (!stock || L.age >= stock.until) {
       // 每 3 年上新一次
-      var pool = ITEMS.filter(function (it) { return it.price > 0; });
-      stock = { until: L.age + 3, items: [], card: null };
-      for (var i = 0; i < 3 && pool.length; i++) {
-        var idx = Math.floor(Math.random() * pool.length);
-        stock.items.push(pool.splice(idx, 1)[0].id);
-      }
-      if (Math.random() < 0.35) {
-        var cp = CARDS.filter(function (c) { return c.rarity <= 2; });
-        stock.card = cp[Math.floor(Math.random() * cp.length)].id;
-      }
+      stock = genStock();
+      stock.until = L.age + 3;
+      stock.refreshCount = 0;
       L.shopStock = stock;
     }
     var left = stock.until - L.age;
@@ -365,6 +372,27 @@ var MapX = (function () {
     note.style.cssText = 'color:var(--ink-faint);font-size:13px;text-align:center;margin-bottom:8px';
     note.textContent = left > 0 ? '下次上新：' + left + ' 年后' : '新货到店';
     wrap.appendChild(note);
+    // 花钱换货：第一次 4%，第二次 5%，第三次起 10%（按当前盘缠比例）
+    var RATES = [0.04, 0.05, 0.1];
+    var rate = RATES[Math.min(stock.refreshCount, 2)];
+    var cost = Math.max(1, Math.round(L.coin * rate));
+    var rb = document.createElement('button');
+    rb.className = 'ink-btn small';
+    rb.style.cssText = 'display:block;margin:0 auto 10px';
+    rb.textContent = '换一批货（' + cost + ' ' + Game.coinName() + '，' + Math.round(rate * 100) + '%）';
+    if (L.coin < cost) rb.disabled = true;
+    rb.onclick = function () {
+      if (!Game.spendCoin(cost)) return;
+      var keep = stock.until;
+      var cnt = stock.refreshCount + 1;
+      L.shopStock = genStock();
+      L.shopStock.until = keep;
+      L.shopStock.refreshCount = cnt;
+      AudioFX.flip();
+      openShop();
+      Game.refresh();
+    };
+    wrap.appendChild(rb);
     stock.items.forEach(function (iid) {
       var it = Game.item(iid);
       if (!it) return;
