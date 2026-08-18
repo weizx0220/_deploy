@@ -305,6 +305,34 @@
   </div>
 </div>
 
+<!-- 「看广告」拼图弹层 -->
+<div id="overlay-puzzle" class="overlay hidden">
+  <div class="overlay-panel" style="width:min(420px,94vw)">
+    <div class="overlay-head">
+      <div class="overlay-title">机缘一线 · 拼图续命</div>
+    </div>
+    <div class="overlay-body" style="text-align:center">
+      <p style="color:var(--ink-faint);font-size:13px;margin-bottom:10px">拼合这幅机缘图，便可向天再借一段命。步数：<b id="pz-moves">0</b></p>
+      <div id="pz-board" class="pz-board"></div>
+      <button class="ink-btn small" style="margin-top:12px" onclick="Puzzle.giveup()">放弃机缘</button>
+    </div>
+  </div>
+</div>
+
+<!-- 复活抉择弹层 -->
+<div id="overlay-revive" class="overlay hidden">
+  <div class="overlay-panel" style="width:min(440px,94vw)">
+    <div class="overlay-body" style="text-align:center;padding:34px 26px">
+      <div style="font-size:26px;letter-spacing:8px;margin-bottom:12px">命数将尽</div>
+      <p style="color:var(--ink-soft);line-height:1.9;font-size:15px">阴差已在门外候着了。但冥冥中有一线机缘——<br>「看广告」（拼合机缘图），可续命一次。</p>
+      <div style="display:flex;gap:14px;justify-content:center;margin-top:20px">
+        <button id="btn-ad-revive" class="ink-btn primary">看广告 · 续命</button>
+        <button id="btn-accept-death" class="ink-btn">坦然归去</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 轮回者档案弹层 -->
 <div id="overlay-profile" class="overlay hidden">
   <div class="overlay-panel">
@@ -352,6 +380,7 @@
 <script src="js/cardbattle.js"></script>
 <script src="js/rogue.js"></script>
 <script src="js/map.js"></script>
+<script src="js/puzzle.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/help.js"></script>
 <script src="js/game.js"></script>

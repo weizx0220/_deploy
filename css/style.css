@@ -890,3 +890,34 @@ html, body {
   .eq-h { margin-left: -42px; }
   .life-name { width: auto; border-bottom: none; margin-bottom: 0; font-size: 15px; }
 }
+
+/* ---------- 天赋锁定 ---------- */
+.tlock {
+  position: absolute; top: 5px; left: 6px; z-index: 3;
+  font-size: 12px; color: var(--ink-faint); opacity: 0.35;
+  width: 22px; height: 22px; line-height: 22px; text-align: center;
+  border: 1px solid transparent; border-radius: 4px; cursor: pointer;
+  transition: all .2s;
+}
+.tcard:hover .tlock { opacity: 0.7; }
+.tlock.on {
+  opacity: 1; color: #f8e9d8; background: var(--cinnabar);
+  border-color: var(--cinnabar); transform: rotate(-6deg);
+  box-shadow: 0 2px 6px rgba(165,40,27,0.4);
+}
+
+/* ---------- 拼图 ---------- */
+.pz-board {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+  width: min(330px, 80vw); margin: 0 auto;
+  background: rgba(42,42,46,0.15); padding: 4px; border-radius: 6px;
+}
+.pz-tile {
+  aspect-ratio: 1; background-size: 300% 300%;
+  border-radius: 3px; cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.pz-tile:hover { transform: scale(0.97); }
+.pz-tile.sel { box-shadow: 0 0 0 2.5px var(--cinnabar); transform: scale(0.95); }
+.pz-board.solved .pz-tile { box-shadow: none; transform: none; cursor: default; }
+.pz-board.solved { animation: suddenPulse 1s ease; }

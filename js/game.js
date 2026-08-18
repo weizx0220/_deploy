@@ -43,9 +43,20 @@
     });
   }
 
-  function rollTen() {
+  function rollTen(keepIds) {
     var pool = talentPool();
     var batch = [], usedIds = {}, usedGroups = {};
+    // 锁定的天赋直接入批
+    (keepIds || []).forEach(function (kid) {
+      for (var i = 0; i < pool.length; i++) {
+        if (pool[i].id === kid) {
+          batch.push(pool[i]);
+          usedIds[pool[i].id] = true;
+          if (pool[i].exclusive) usedGroups[pool[i].exclusive] = true;
+          return;
+        }
+      }
+    });
     var guard = 0;
     var W = hasExtra('legend_up') ? [55, 42, 24, 18] : RARITY_W;   // 天命所归：天品翻倍
     while (batch.length < 10 && guard++ < 500) {
@@ -71,7 +82,8 @@
       if (!cands.length) return;
       var t = cands[Engine.rnd(cands.length)];
       for (var i = 0; i < batch.length; i++) {
-        if (batch[i].rarity === 0) {   // 顶掉一张凡品
+        // 顶掉一张凡品（锁定的不动）
+        if (batch[i].rarity === 0 && (keepIds || []).indexOf(batch[i].id) < 0) {
           usedIds[t.id] = true;
           if (t.exclusive) usedGroups[t.exclusive] = true;
           batch[i] = t;
@@ -138,6 +150,7 @@
   function startDraw() {
     G.phase = 'draw';
     G.picked = [];
+    G.lockedIds = [];
     G.redraws = 1 + (hasExtra('redraw1') ? 1 : 0) + (hasExtra('redraw2') ? 1 : 0);
     G.drawBatch = rollTen();
     $('draw-slots').textContent = Save.data.legacy.talentSlots;
@@ -187,6 +200,7 @@
     G.drawBatch.forEach(function (t, idx) {
       var card = document.createElement('div');
       card.className = 'tcard r' + t.rarity;
+      if (G.picked.indexOf(t) >= 0) card.classList.add('selected');
       card.innerHTML =
         '<div class="tcard-inner">' +
         '<div class="tcard-face tcard-back"></div>' +
@@ -196,9 +210,27 @@
         talentEffectHtml(t) +
         '<div class="trarity">' + RARITY_NAMES[t.rarity] + '</div>' +
         '</div></div>';
+      // 锁定角标（最多锁 2 张，换一批时保留）
+      var lock = document.createElement('span');
+      var isLocked = G.lockedIds.indexOf(t.id) >= 0;
+      lock.className = 'tlock' + (isLocked ? ' on' : '');
+      lock.textContent = '封';
+      lock.title = '锁定后「换一批」不会换掉它（最多 2 张）';
+      lock.onclick = function (ev) {
+        ev.stopPropagation();
+        var li = G.lockedIds.indexOf(t.id);
+        if (li >= 0) { G.lockedIds.splice(li, 1); lock.classList.remove('on'); }
+        else {
+          if (G.lockedIds.length >= 2) { UI.miniToast('至多封住两张命签'); return; }
+          G.lockedIds.push(t.id); lock.classList.add('on');
+        }
+        AudioFX.tick(0.06);
+      };
+      card.appendChild(lock);
       grid.appendChild(card);
-      // 依次翻卡
-      setTimeout(function () { card.classList.add('flipped'); AudioFX.flip(); }, 200 + idx * 120);
+      // 依次翻卡（锁定的直接亮出）
+      if (isLocked) card.classList.add('flipped');
+      else setTimeout(function () { card.classList.add('flipped'); AudioFX.flip(); }, 200 + idx * 120);
       card.onclick = function () {
         var pi = G.picked.indexOf(t);
         if (pi >= 0) { G.picked.splice(pi, 1); card.classList.remove('selected'); }
@@ -225,7 +257,7 @@
         }
       };
     });
-    $('btn-draw-ok').disabled = true;
+    $('btn-draw-ok').disabled = G.picked.length !== slots;
     $('redraw-count').textContent = G.redraws;
     $('btn-redraw').disabled = G.redraws <= 0;
   }
@@ -820,12 +852,29 @@
       var iid = L.inventory[idx];
       var it = itemById(iid);
       if (!it || it.slot !== 'use') return;
+      var changes = [];
       if (it.use) {
-        if (it.use.attr) for (var k in it.use.attr) L.attr[k] = (L.attr[k] || 0) + it.use.attr[k];
-        if (it.use.coin) L.coin += it.use.coin;
+        if (it.use.attr) for (var k in it.use.attr) {
+          L.attr[k] = (L.attr[k] || 0) + it.use.attr[k];
+          changes.push({ name: Engine.ATTR_NAMES[k] || k, value: it.use.attr[k] });
+        }
+        if (it.use.coin) { L.coin += it.use.coin; changes.push({ name: coinName(), value: it.use.coin }); }
       }
       L.inventory.splice(idx, 1);
-      UI.miniToast('使用了「' + it.name + '」');
+      // 效果弹窗 + 飘字
+      var html = '<p>' + it.desc + '</p>';
+      if (changes.length) {
+        html += '<p class="help-kv">效果：' + changes.map(function (c) {
+          return c.name + ' ' + (c.value > 0 ? '+' : '') + c.value;
+        }).join('，') + '</p>';
+      } else {
+        html += '<p class="help-kv">味道不错。</p>';
+      }
+      Help.show('使用「' + it.name + '」', html);
+      changes.forEach(function (c, i) {
+        setTimeout(function () { UI.floatText(c.name + (c.value > 0 ? '+' : '') + c.value, c.value > 0); }, i * 150);
+      });
+      persistRun();
     },
     applyEffectRes: applyEffectRes,
     applyReward: applyReward,
@@ -921,9 +970,7 @@
     var L = G.life;
     L.dead = true;
     stopAuto();
-    Save.clearRun();   // 一世落幕，清除进行档
     AudioFX.doom();
-    AudioFX.bgm('summary');
 
     addTimeline('<div class="event-card bad">' + (L.deathText || '一生就此落幕。') + '</div>');
     // 落幕旁白，缓和结局的突兀感
@@ -935,6 +982,40 @@
     else if (L.age < 130) closing = '白发送罢又一年，这一生，落子无悔，阖目无憾。';
     else closing = '沧海几度桑田，你看到了绝大多数人看不到的远方。';
     addTimeline('<div class="event-card fate">' + closing + '享年 <b>' + Math.max(0, L.age) + '</b> 岁。</div>');
+
+    // 「看广告」续命机缘（每世一次）
+    if (!L.adUsed) {
+      $('overlay-revive').classList.remove('hidden');
+      $('btn-ad-revive').onclick = function () {
+        $('overlay-revive').classList.add('hidden');
+        Puzzle.open({
+          onWin: function () {
+            L.adUsed = true;
+            L.dead = false;
+            L.deathText = '';
+            L.attr.str = Math.max(L.attr.str, 3);
+            addTimeline('<div class="event-card fate">机缘图拼合的刹那，阴差对视一眼，悻悻退去。你拍拍尘土站了起来——命，续上了。（本世续命机缘已用）</div>');
+            UI.sealToast('一线生机', '拼图续命成功');
+            renderSide();
+            persistRun();
+            AudioFX.stamp();
+          },
+          onGiveup: doFinish
+        });
+      };
+      $('btn-accept-death').onclick = function () {
+        $('overlay-revive').classList.add('hidden');
+        doFinish();
+      };
+      return;
+    }
+    doFinish();
+  }
+
+  function doFinish() {
+    var L = G.life;
+    Save.clearRun();   // 一世落幕，清除进行档
+    AudioFX.bgm('summary');
 
     var ending = pickEnding();
     var isNewEnding = ending ? Save.addEnding(ending.id) : false;
@@ -1047,8 +1128,9 @@
     $('btn-resume').onclick = function () { AudioFX.tick(); resumeRun(); };
     $('btn-redraw').onclick = function () {
       if (G.redraws <= 0) return;
-      G.redraws--; G.picked = [];
-      G.drawBatch = rollTen();
+      G.redraws--;
+      G.picked = G.picked.filter(function (t) { return G.lockedIds.indexOf(t.id) >= 0; });   // 锁定的保留选中态
+      G.drawBatch = rollTen(G.lockedIds);
       AudioFX.pluck(440, 0.1);
       renderDraw();
     };

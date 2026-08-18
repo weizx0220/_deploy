@@ -209,6 +209,24 @@ var Combat = (function () {
       cb(win, hpState);
     };
     $('bt-skills').appendChild(btn);
+    // 败北时给「看广告再战」机缘（每场一次）
+    if (!win && !S.opts.adUsed) {
+      var adBtn = document.createElement('button');
+      adBtn.className = 'ink-btn';
+      adBtn.textContent = '看广告再战';
+      adBtn.onclick = function () {
+        var opts = S.opts;
+        opts.adUsed = true;
+        S.done = true;
+        AudioFX.unduck();
+        $('overlay-battle').classList.add('hidden');
+        Puzzle.open({
+          onWin: function () { UI.miniToast('机缘已到，满血再战！'); start(opts); },
+          onGiveup: function () { var cb2 = S ? S.onEnd : null; if (cb2) { var hp2 = S.hpState; if (hp2) hp2.hp = 1; S = null; cb2(false, hp2); } }
+        });
+      };
+      $('bt-skills').appendChild(adBtn);
+    }
     log(win ? '—— 战斗胜利！——' : '—— 你败下阵来……——', win ? 'good' : 'bad');
     AudioFX[win ? 'stamp' : 'doom']();
   }
@@ -229,7 +247,8 @@ var Combat = (function () {
       foeHp: opts.enemies[0].hp,
       busy: false,
       hpState: opts.hpState || null,
-      onEnd: opts.onEnd
+      onEnd: opts.onEnd,
+      opts: opts
     };
     if (S.hpState) S.hpState.max = st.maxhp;
     $('overlay-battle').classList.remove('hidden');

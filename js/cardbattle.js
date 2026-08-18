@@ -79,7 +79,8 @@ var CardBattle = (function () {
       intent: null,
       turn: 1, busy: false, over: false,
       hpState: opts.hpState || null,
-      onEnd: opts.onEnd
+      onEnd: opts.onEnd,
+      opts: opts
     };
     if (S.hpState) S.hpState.max = maxhp;
     $('overlay-cbattle').classList.remove('hidden');
@@ -225,6 +226,29 @@ var CardBattle = (function () {
     };
     $('cb-hand').innerHTML = '';
     $('cb-hand').appendChild(btn);
+    // 败北时给「看广告再战」机缘（每场一次）
+    if (!win && !S.opts.adUsed) {
+      var adBtn = document.createElement('button');
+      adBtn.className = 'ink-btn';
+      adBtn.textContent = '看广告再战';
+      adBtn.onclick = function () {
+        var opts = S.opts;
+        opts.adUsed = true;
+        AudioFX.unduck();
+        $('overlay-cbattle').classList.add('hidden');
+        Puzzle.open({
+          onWin: function () {
+            UI.miniToast('机缘已到，满血再战！');
+            if (opts.hpState) opts.hpState.hp = 99999;   // start 时按满血截断
+            start(opts);
+          },
+          onGiveup: function () {
+            if (S) { var cb2 = S.onEnd; S = null; cb2(false); }
+          }
+        });
+      };
+      $('cb-hand').appendChild(adBtn);
+    }
     msg(win ? '—— 战斗胜利！——' : '—— 你不敌倒下……——');
     AudioFX[win ? 'stamp' : 'doom']();
   }
