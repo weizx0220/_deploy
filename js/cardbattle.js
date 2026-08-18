@@ -77,6 +77,9 @@ var CardBattle = (function () {
       deck: shuffle((opts.deck || buildDeck(opts.life)).slice()),
       hand: [], discard: [],
       intent: null,
+      pattern: PATTERNS[Math.floor(Math.random() * PATTERNS.length)],
+      patternIdx: 0,
+      weakTurns: 0,
       turn: 1, busy: false, over: false,
       hpState: opts.hpState || null,
       onEnd: opts.onEnd,
@@ -93,19 +96,23 @@ var CardBattle = (function () {
     AudioFX.pluck(160, 0.15);
   }
 
-  /* ---------- 敌人意图（百分比制：按玩家最大生命结算） ---------- */
+  /* ---------- 敌人意图（百分比制 + 回合模式轮转） ---------- */
   function intentPct() {
     return 8 + S.enemy.atk * 0.4 + S.turn * 0.4 + S.eStr;   // %
   }
+  /* 攻击/防御/强化/弱化 交叉轮转，按敌人强度选模式 */
+  var PATTERNS = [
+    ['atk', 'atk', 'debuff', 'atk', 'block', 'atk', 'buff'],
+    ['atk', 'block', 'atk', 'debuff', 'atk', 'buff', 'atk'],
+    ['atk', 'debuff', 'atk', 'atk', 'buff', 'atk', 'block']
+  ];
   function rollIntent() {
-    var r = Math.random();
-    if (r < 0.65) {
-      S.intent = { type: 'atk', pct: intentPct() };
-    } else if (r < 0.85) {
-      S.intent = { type: 'block', pct: 12 + S.turn * 0.5 };
-    } else {
-      S.intent = { type: 'buff', val: 3 };
-    }
+    var type = S.pattern[S.patternIdx % S.pattern.length];
+    S.patternIdx++;
+    if (type === 'atk') S.intent = { type: 'atk', pct: intentPct() };
+    else if (type === 'block') S.intent = { type: 'block', pct: 12 + S.turn * 0.5 };
+    else if (type === 'buff') S.intent = { type: 'buff', val: 3 };
+    else S.intent = { type: 'debuff', val: 2 };   // 弱化：你 2 回合攻击 -25%
   }
 
   /* ---------- 抽牌 ---------- */
@@ -131,7 +138,7 @@ var CardBattle = (function () {
     if (c.dmg) {
       var hits = c.hits || 1, total = 0, anyCrit = false;
       for (var h = 0; h < hits; h++) {
-        var pct = c.dmg + S.pStr;
+        var pct = (c.dmg + S.pStr) * (S.weakTurns > 0 ? 0.75 : 1);
         var crit = Math.random() < S.crit;
         if (crit) { anyCrit = true; pct = Math.round(pct * 1.5); }
         var dmg = Math.max(1, Math.round(S.eMax * pct / 100));
@@ -194,10 +201,14 @@ var CardBattle = (function () {
       var eb = Math.round(S.eMax * it.pct / 100);
       S.eBlock += eb;
       msg(e.name + ' 架起防御（格挡 +' + eb + '）');
+    } else if (it.type === 'debuff') {
+      S.weakTurns = it.val;
+      msg(e.name + ' 施以震慑——你接下来 ' + it.val + ' 回合攻击 -25%！');
     } else {
       S.eStr += it.val;
       msg(e.name + ' 气势暴涨（攻击 +' + it.val + '%）');
     }
+    if (S.weakTurns > 0) S.weakTurns--;
     // 新回合
     S.turn++;
     S.pBlock = 0;
@@ -255,8 +266,33 @@ var CardBattle = (function () {
 
   function msg(t) { $('cb-msg').textContent = t; }
 
+  /* ---------- DOM 信息栏（大字血条与意图） ---------- */
+  function renderInfo() {
+    if (!S) return;
+    $('cbi-foe-name').textContent = S.enemy.name;
+    $('cbi-foe-hp').style.width = Math.max(0, S.eHp / S.eMax * 100) + '%';
+    $('cbi-foe-hp').textContent = Math.max(0, Math.round(S.eHp)) + ' / ' + S.eMax + (S.eBlock > 0 ? '（盾' + S.eBlock + '）' : '') + (S.ePoison > 0 ? '（毒' + S.ePoison + '）' : '');
+    var it = S.intent, itTxt = '';
+    if (it) {
+      if (it.type === 'atk') itTxt = '⚔ 下回合攻击约 ' + Math.max(1, Math.round(S.maxhp * it.pct / 100)) + ' 点';
+      else if (it.type === 'block') itTxt = '🛡 下回合防御';
+      else if (it.type === 'buff') itTxt = '▲ 下回合强化（攻击+' + it.val + '%）';
+      else itTxt = '▼ 下回合弱化你（攻击-25%）';
+    }
+    $('cbi-intent').textContent = itTxt;
+    $('cbi-intent').className = 'cbi-intent ' + (it ? it.type : '');
+    $('cbi-me-hp').style.width = Math.max(0, S.hp / S.maxhp * 100) + '%';
+    $('cbi-me-hp').textContent = Math.max(0, Math.round(S.hp)) + ' / ' + S.maxhp;
+    var st = [];
+    if (S.pBlock > 0) st.push('格挡 ' + S.pBlock);
+    if (S.pStr > 0) st.push('力量 +' + S.pStr + '%');
+    if (S.weakTurns > 0) st.push('虚弱 ' + S.weakTurns + ' 回合');
+    $('cbi-me-state').textContent = st.join('　');
+  }
+
   /* ---------- 手牌渲染 ---------- */
   function renderHand() {
+    renderInfo();
     var wrap = $('cb-hand');
     wrap.innerHTML = '';
     S.hand.forEach(function (cid, i) {
@@ -341,18 +377,8 @@ var CardBattle = (function () {
     var eFlash = anim.flashes.some(function (f) { return f.who === 'e' && anim.t - f.t0 < 180; });
     anim.flashes = anim.flashes.filter(function (f) { return anim.t - f.t0 < 400; });
 
-    drawPlayer(ctx, 180 + pOff, H - 70 + bob * 0.6, pFlash);
-    drawMonster(ctx, 700 + eOff, H - 70 + bob, S.spec, eFlash, S.eHp <= 0);
-
-    // 敌人血条 + 格挡 + 意图
-    barAt(ctx, 700 - 70, 30, 140, S.eHp, S.eMax, '#a5281b');
-    if (S.eBlock > 0) { ctx.fillStyle = '#3d6b5e'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('🛡 ' + S.eBlock, 700, 26); }
-    drawIntent(ctx, 700, 66);
-    if (S.ePoison > 0) { ctx.fillStyle = '#6b4d8f'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('毒 ' + S.ePoison, 700, 108); }
-    // 玩家血条 + 格挡
-    barAt(ctx, 180 - 70, 30, 140, S.hp, S.maxhp, '#3d6b5e');
-    if (S.pBlock > 0) { ctx.fillStyle = '#3d6b5e'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('🛡 ' + S.pBlock, 180, 26); }
-    if (S.pStr > 0) { ctx.fillStyle = '#a5281b'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('力 +' + S.pStr + '%', 180, 108); }
+    drawPlayer(ctx, 180 + pOff, H - 50 + bob * 0.6, pFlash);
+    drawMonster(ctx, 700 + eOff, H - 50 + bob, S.spec, eFlash, S.eHp <= 0);
 
     // 粒子
     anim.parts = anim.parts.filter(function (p) { return p.life > 0; });

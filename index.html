@@ -272,7 +272,15 @@
       <div class="overlay-title" id="cb-title">幻境战斗</div>
     </div>
     <div class="overlay-body cb-body">
-      <canvas id="cb-canvas" width="880" height="300"></canvas>
+      <div class="cb-foebar">
+        <div class="cb-foe-line"><b id="cbi-foe-name"></b><span id="cbi-intent"></span></div>
+        <div class="bt-bar big"><div id="cbi-foe-hp" class="bt-fill foe"></div></div>
+      </div>
+      <canvas id="cb-canvas" width="880" height="260"></canvas>
+      <div class="cb-meline">
+        <div class="bt-bar big"><div id="cbi-me-hp" class="bt-fill me"></div></div>
+        <div id="cbi-me-state"></div>
+      </div>
       <div id="cb-msg" class="cb-msg"></div>
       <div class="cb-bottom">
         <div class="cb-pile">牌库 <b id="cb-draw-n">0</b></div>

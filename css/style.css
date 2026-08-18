@@ -921,3 +921,27 @@ html, body {
 .pz-tile.sel { box-shadow: 0 0 0 2.5px var(--cinnabar); transform: scale(0.95); }
 .pz-board.solved .pz-tile { box-shadow: none; transform: none; cursor: default; }
 .pz-board.solved { animation: suddenPulse 1s ease; }
+
+/* ---------- 卡战信息栏（大字版） ---------- */
+.bt-bar.big { height: 26px; border-radius: 13px; }
+.bt-bar.big .bt-fill { font-size: 13.5px; line-height: 26px; font-weight: bold; }
+.cb-foebar { margin-bottom: 8px; }
+.cb-foe-line { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+.cb-foe-line b { font-size: 19px; letter-spacing: 3px; }
+.cbi-intent { font-size: 14px; letter-spacing: 1px; }
+.cbi-intent.atk { color: var(--cinnabar); }
+.cbi-intent.block { color: var(--jade); }
+.cbi-intent.buff { color: var(--gold); }
+.cbi-intent.debuff { color: #6b4d8f; }
+.cb-meline { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+.cb-meline .bt-bar { flex: 1; }
+#cbi-me-state { font-size: 13px; color: var(--gold); white-space: nowrap; min-width: 60px; }
+
+/* ---------- 行囊分类 ---------- */
+.bag-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.bag-cats .cat {
+  font-size: 12.5px; letter-spacing: 1px; padding: 3px 12px; border-radius: 14px;
+  border: 1px solid var(--ink-faint); color: var(--ink-soft); cursor: pointer; background: none;
+  font-family: var(--font-kai);
+}
+.bag-cats .cat.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }

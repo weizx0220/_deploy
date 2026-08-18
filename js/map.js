@@ -127,8 +127,15 @@ var MapX = (function () {
       var cdLeft = (L.dungeonCd[d.id] || 0) - L.age;
       var div = document.createElement('div');
       div.className = 'map-act';
+      var rwTxt = '';
+      if (d.reward) {
+        var rp = [];
+        if (d.reward.coin) rp.push('赏金 ~' + d.reward.coin);
+        if (d.reward.items) rp.push.apply(rp, d.reward.items.map(function (x) { return '「' + Game.itemName(x) + '」'; }));
+        rwTxt = '<br><span style="color:var(--gold)">' + rp.join(' ') + '</span>';
+      }
       div.innerHTML = '<div class="l-name">' + d.name + ' <small style="color:var(--gold)">' + '★'.repeat(d.difficulty) + '</small></div>' +
-        '<div class="l-desc">' + d.desc + '</div>';
+        '<div class="l-desc">' + d.desc + rwTxt + '</div>';
       var btn = document.createElement('button');
       btn.className = 'ink-btn small';
       if (cdLeft > 0) { btn.disabled = true; btn.textContent = '休整中（' + cdLeft + ' 年）'; }
@@ -185,8 +192,9 @@ var MapX = (function () {
       if (!it) return;
       var div = document.createElement('div');
       div.className = 'map-act';
+      var pv = itemPreview(it);
       div.innerHTML = '<div class="l-name">' + it.name + ' <small style="color:var(--gold)">' + it.price + ' ' + Game.coinName() + '</small></div>' +
-        '<div class="l-desc">' + it.desc + '</div>';
+        '<div class="l-desc">' + it.desc + (pv ? '<br><span style="color:var(--jade)">' + pv + '</span>' : '') + '</div>';
       var btn = document.createElement('button');
       btn.className = 'ink-btn small';
       btn.textContent = '买下';
@@ -244,6 +252,22 @@ var MapX = (function () {
   /* ---------- 牌组构筑 ---------- */
   function cardOf(id) { for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === id) return CARDS[i]; return null; }
 
+  /* 物品属性/效果预览（商店、行囊、副本奖励共用） */
+  function itemPreview(it) {
+    var p = [];
+    if (it.atk) p.push('攻+' + it.atk);
+    if (it.def) p.push('防+' + it.def);
+    if (it.hp) p.push('血+' + it.hp);
+    if (it.skill) {
+      for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === it.skill) { p.push('技·' + SKILLS[i].name); break; }
+    }
+    if (it.use) {
+      if (it.use.attr) for (var k in it.use.attr) p.push(Engine.ATTR_NAMES[k] + '+' + it.use.attr[k]);
+      if (it.use.coin) p.push('盘缠+' + it.use.coin);
+    }
+    return p.length ? p.join(' ') : '';
+  }
+
   function openDeck() {
     $('overlay-map').classList.add('hidden');
     renderDeck();
@@ -290,7 +314,13 @@ var MapX = (function () {
   /* ---------- 装备 / 行囊（环绕式装备栏 + 强化 + 售卖） ---------- */
   var SLOT_NAMES = { weapon: '兵刃', armor: '衣甲', head: '头饰', trinket: '饰品', charm: '法宝' };
   var invTab = 'equip';
+  var invCat = 'all';
   var slotSel = null;
+
+  function skillName(sid) {
+    for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === sid) return SKILLS[i].name;
+    return sid;
+  }
 
   function effStats(it) {
     var lv = (Game.life().forge || {})[it.id] || 0;
@@ -407,17 +437,45 @@ var MapX = (function () {
     $('inv-bag').classList.remove('hidden');
     var wrap = $('inv-list');
     wrap.innerHTML = '';
-    if (!L.inventory.length) wrap.innerHTML = '<p style="color:var(--ink-faint)">囊中空空。</p>';
-    L.inventory.forEach(function (iid, idx) {
+    // 分类筛选
+    var cats = [['all', '全部'], ['weapon', '兵刃'], ['armor', '衣甲'], ['head', '头饰'], ['trinket', '饰品'], ['charm', '法宝'], ['use', '消耗品']];
+    var catBar = document.createElement('div');
+    catBar.className = 'bag-cats';
+    cats.forEach(function (c) {
+      var b = document.createElement('button');
+      b.className = 'cat' + (invCat === c[0] ? ' on' : '');
+      b.textContent = c[1];
+      b.onclick = function () { invCat = c[0]; AudioFX.tick(0.05); renderBagTab(); };
+      catBar.appendChild(b);
+    });
+    wrap.appendChild(catBar);
+
+    var shown = L.inventory.filter(function (iid) {
       var it = Game.item(iid);
-      if (!it) return;
+      return it && (invCat === 'all' || it.slot === invCat);
+    });
+    if (!shown.length) {
+      var emp = document.createElement('p');
+      emp.style.color = 'var(--ink-faint)';
+      emp.textContent = L.inventory.length ? '此类暂无物品。' : '囊中空空。';
+      wrap.appendChild(emp);
+    }
+    shown.forEach(function (iid) {
+      var idx = L.inventory.indexOf(iid);
+      var it = Game.item(iid);
       var es = effStats(it);
       var div = document.createElement('div');
       div.className = 'map-act';
-      var statTxt = it.slot === 'use' ? '' :
-        (' <small style="color:var(--jade)">' +
+      var statTxt = '';
+      if (it.slot === 'use') {
+        var pv = itemPreview(it);
+        statTxt = pv ? ' <small style="color:var(--jade)">' + pv + '</small>' : '';
+      } else {
+        statTxt = ' <small style="color:var(--jade)">' +
          (es.atk ? '攻+' + es.atk + ' ' : '') + (es.def ? '防+' + es.def + ' ' : '') + (es.hp ? '血+' + es.hp : '') +
-         (es.lv ? ' <span style="color:var(--gold)">+' + es.lv + '</span>' : '') + '</small>');
+         (it.skill ? ' 技·' + skillName(it.skill) : '') +
+         (es.lv ? ' <span style="color:var(--gold)">+' + es.lv + '</span>' : '') + '</small>';
+      }
       var equipped = it.slot !== 'use' && L.equip[it.slot] === iid;
       div.innerHTML = '<div class="l-name">' + it.name + (equipped ? ' <small style="color:var(--cinnabar)">已装备</small>' : '') + statTxt + '</div>' +
         '<div class="l-desc">' + it.desc + '</div>';
