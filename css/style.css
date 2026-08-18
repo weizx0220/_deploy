@@ -1284,3 +1284,72 @@ body[data-world="xiuxian"] .event-card.sudden { border-left-color: var(--cinnaba
   text-align: center; font-size: 13px; color: var(--gold); letter-spacing: 2px;
   margin-bottom: 4px;
 }
+
+/* ============================================================
+   未来人生启发：场景化地点卡 + 视觉层级增强
+   ============================================================ */
+/* 地点卡升级为视觉卡 */
+.map-place {
+  border: 1px solid rgba(42,42,46,0.14);
+  background: rgba(255,252,244,0.75);
+  box-shadow: 0 3px 12px rgba(42,42,46,0.07);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.map-place:hover { box-shadow: 0 6px 20px rgba(42,42,46,0.12); transform: translateY(-1px); }
+.place-head {
+  font-size: 16px; letter-spacing: 4px;
+  background: linear-gradient(to right, rgba(42,42,46,0.07), transparent);
+  padding: 10px 14px;
+}
+.place-icon {
+  width: 34px; height: 34px; border-radius: 8px; font-size: 16px;
+  background: linear-gradient(135deg, var(--ink), var(--ink-soft));
+  box-shadow: 0 2px 6px rgba(42,42,46,0.25);
+}
+.place-act { padding: 12px 16px; }
+.place-act .l-name { font-size: 16px; }
+.place-act .l-desc { font-size: 12.5px; }
+
+/* HUD 角色卡化 */
+#life-hud {
+  padding: 10px 18px;
+  border-radius: 12px;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(255,252,244,0.92), rgba(243,237,224,0.85));
+}
+#hud-age {
+  font-size: 22px; font-weight: bold; color: var(--ink);
+  border-right: 2px solid var(--cinnabar); padding-right: 10px; margin-right: -6px;
+}
+.hud-name {
+  font-size: 18px; color: var(--ink);
+  border-bottom: 2px solid var(--cinnabar); padding-bottom: 1px;
+}
+#btn-drawer { border-radius: 8px; }
+
+/* 抽屉分区标题加纹样 */
+.drawer-sec {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+}
+.drawer-sec::before, .drawer-sec::after {
+  content: ""; position: static; flex: 1; max-width: 60px;
+  height: 5px;
+  background:
+    repeating-linear-gradient(90deg, rgba(42,42,46,0.25) 0 6px, transparent 6px 10px);
+  border-top: 1px solid rgba(42,42,46,0.12);
+  border-bottom: 1px solid rgba(42,42,46,0.12);
+}
+/* 命格抽屉整体纸感 */
+#side-drawer {
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.5), transparent 60%),
+    var(--paper);
+}
+
+/* 事件卡片时间轴感：左侧墨点引导线 */
+#life-timeline { position: relative; }
+.event-card { position: relative; }
+.age-marker { font-size: 14px; }
+.age-marker::before, .age-marker::after {
+  background: linear-gradient(to right, transparent, rgba(42,42,46,0.25), transparent);
+}
