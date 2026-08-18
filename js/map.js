@@ -15,12 +15,12 @@ var MapX = (function () {
     $('map-ap-note').textContent = '每 ' + Game.apInterval() + ' 年 +1，上限 3';
     $('map-coin').textContent = L.coin + ' ' + Game.coinName();
     var acts = [
-      { id: 'train', name: '历练', desc: '出门闯荡，或遇敌或遇缘（1 行动点）' },
-      { id: 'dungeon', name: '副本', desc: '挑战秘境险地，赢取装备赏金（1 行动点）' },
-      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，血不回满（1 行动点）' },
-      { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）' },
-      { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）' },
-      { id: 'rest', name: '休息', desc: '泡个热水澡，体质 +1（1 行动点，每年限一次）' }
+      { id: 'train', name: '历练', desc: '出门闯荡，或遇敌或遇缘（1 行动点）', cost: 1 },
+      { id: 'dungeon', name: '副本', desc: '挑战秘境险地，赢取装备赏金（1 行动点）', cost: 1 },
+      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌（3 行动点）', cost: 3 },
+      { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗行动点）', cost: 0 },
+      { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗行动点）', cost: 0 },
+      { id: 'rest', name: '休息', desc: '泡个热水澡，体质 +1（1 行动点，每年限一次）', cost: 1 }
     ];
     var wrap = $('map-actions');
     wrap.innerHTML = '';
@@ -31,8 +31,7 @@ var MapX = (function () {
       var btn = document.createElement('button');
       btn.className = 'ink-btn small';
       btn.textContent = '前往';
-      var needAp = a.id !== 'shop';
-      if (needAp && L.ap < 1) { btn.disabled = true; btn.textContent = '行动点不足'; }
+      if (L.ap < a.cost) { btn.disabled = true; btn.textContent = a.cost >= 3 ? '需 3 行动点' : '行动点不足'; }
       if (a.id === 'rest' && L.restYear === L.age) { btn.disabled = true; btn.textContent = '今年已歇过'; }
       btn.onclick = function () { act(a.id); };
       div.appendChild(btn);
@@ -45,6 +44,7 @@ var MapX = (function () {
     if (id === 'shop') return openShop();
     if (id === 'dungeon') return openDungeons();
     if (id === 'deck') return openDeck();
+    if (id === 'rogue' && L.ap < 3) return;
     if (L.ap < 1) return;
     if (id === 'rest') {
       L.ap--; L.restYear = L.age;
@@ -54,7 +54,7 @@ var MapX = (function () {
       return render();
     }
     if (id === 'rogue') {
-      L.ap--;
+      L.ap -= 3;
       $('overlay-map').classList.add('hidden');
       Rogue.start(L, function (win) {
         Game.refresh();
