@@ -1214,7 +1214,12 @@
     ed_bazong_win: 'novel_bazong.png', ed_moshi_win: 'novel_moshi.png',
     ed_old_age: 'end_family.png', ed_four_gen: 'end_family.png',
     ed_lonely: 'end_lonely.png', ed_gloomy: 'end_gloomy.png',
-    ed_guoshi: 'end_scholar.png', ed_literati: 'end_scholar.png'
+    ed_guoshi: 'end_scholar.png', ed_literati: 'end_scholar.png',
+    ed_die_child: 'end_child.png', ed_die_young: 'end_young.png',
+    ed_lucky_star: 'end_lucky.png', ed_ordinary: 'end_ordinary.png',
+    ed2_flat_master: 'end_lazy.png', ed_book_soul: 'end_book.png',
+    ed_poor_genius: 'end_genius_poor.png', ed_rich: 'end_rich.png',
+    ed_richlife: 'end_richlife.png'
   };
 
   function renderSummary(ending, grade, reward, isNewEnding) {

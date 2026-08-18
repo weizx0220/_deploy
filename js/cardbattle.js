@@ -21,6 +21,11 @@ var CardBattle = (function () {
 
   /* ---------- 怪物造型判定 ---------- */
   function bodySpec(name) {
+    // 四位塔主专属立绘
+    if (/虚无/.test(name)) return { body: 'boss_xuwu', color: '#3a2a4a' };
+    if (/执念/.test(name)) return { body: 'boss_zhinian', color: '#4a2a3a' };
+    if (/饕餮/.test(name)) return { body: 'boss_taotie', color: '#4a3a2a' };
+    if (/心魔|另一个你/.test(name)) return { body: 'boss_xinmo', color: '#2a2a3a' };
     if (/软泥|史莱姆|锈怪/.test(name)) return { body: 'slime', color: '#5a6b4a' };
     if (/幽灵|游魂|魂|魅|影/.test(name)) return { body: 'ghost', color: '#4a5a6b' };
     if (/骑士|守卫|典狱长|铠甲/.test(name)) return { body: 'knight', color: '#4a4a55' };
