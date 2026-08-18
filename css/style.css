@@ -1536,3 +1536,10 @@ body[data-world] .screen-title { color: var(--ink); }
 }
 .soc-favor-fill { height: 100%; background: linear-gradient(to right, var(--gold), var(--cinnabar)); border-radius: 3px; }
 body[data-world] .soc-favor { background: rgba(255,255,255,0.1); }
+
+/* NPC 头像 */
+.soc-avatar {
+  width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--gold, #b8862f); flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}

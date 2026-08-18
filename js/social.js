@@ -123,9 +123,11 @@ var Social = (function () {
       var stage = stageOf(rel.favor);
       var isMarried = life.flags['spouse_' + id];
       div.innerHTML =
-        '<div><div class="l-name">' + n.name + ' <small style="color:var(--wacc,#b8862f)">' + (isMarried ? '伴侣' : stage) + '</small></div>' +
+        '<div style="display:flex;gap:12px;align-items:flex-start">' +
+        '<img class="soc-avatar" src="' + (typeof Assets !== 'undefined' ? Assets.url(n.id + '.png') : '') + '" onerror="this.remove()">' +
+        '<div style="flex:1"><div class="l-name">' + n.name + ' <small style="color:var(--wacc,#b8862f)">' + (isMarried ? '伴侣' : stage) + '</small></div>' +
         '<div class="l-desc">' + n.vibe + '</div>' +
-        '<div class="soc-favor"><div class="soc-favor-fill" style="width:' + Math.min(100, rel.favor) + '%"></div></div></div>';
+        '<div class="soc-favor"><div class="soc-favor-fill" style="width:' + Math.min(100, rel.favor) + '%"></div></div></div></div>';
       var btns = document.createElement('div');
       btns.className = 'soc-btns';
       var b1 = document.createElement('button');
