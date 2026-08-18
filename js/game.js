@@ -420,6 +420,7 @@
       actionCd: {},
       actionCounts: {},
       career: null,           // 职业 {id, level 0-3}
+      npcs: {},               // 人际关系 {npcId: {favor, lastYear, chatYear}}
       history: [],
       moments: [],
       dead: false,
@@ -1024,6 +1025,8 @@
     apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
     collectCard: collectCard,
     applyWound: applyWound,
+    addCard: addTimeline,
+    persist: persistRun,
     careerOf: careerOf,
     CAREERS: CAREERS,
     /* 行动计数：达到里程碑时立 flag，供联动事件触发 */
@@ -1075,6 +1078,9 @@
       L.wound--;
       if (L.wound === 0) UI.miniToast('伤势痊愈，又可以大展拳脚了');
     }
+    // 人际：结识新缘与关系衰减
+    Social.checkMeet();
+    Social.yearTick();
     // 家境生财：每年按家境产生盘缠收入
     if (L.attr.mny > 0) L.coin += Math.floor(L.attr.mny / 3);
     // 职业年薪与晋升
@@ -1348,6 +1354,7 @@
       AudioFX.tick(); MapX.open();
     };
     $('btn-inv').onclick = function () { AudioFX.tick(); MapX.openInventory(); };
+    $('btn-social').onclick = function () { AudioFX.tick(); Social.openPanel(); };
     $('btn-auto').onclick = toggleAuto;
     $('auto-speed').onchange = function () {
       if (G.auto) { stopAuto(); toggleAuto(); }

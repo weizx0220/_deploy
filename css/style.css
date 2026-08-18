@@ -1527,3 +1527,12 @@ body[data-world] .screen-title { color: var(--ink); }
   #life-banner { height: 72px; }
   #life-banner-text { font-size: 14px; left: 10px; bottom: 6px; }
 }
+
+/* ---------- 人际 ---------- */
+.soc-btns { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.soc-favor {
+  height: 6px; border-radius: 3px; background: rgba(42,42,46,0.12);
+  margin-top: 6px; overflow: hidden; max-width: 240px;
+}
+.soc-favor-fill { height: 100%; background: linear-gradient(to right, var(--gold), var(--cinnabar)); border-radius: 3px; }
+body[data-world] .soc-favor { background: rgba(255,255,255,0.1); }
