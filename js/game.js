@@ -352,7 +352,10 @@
       coin: tpl ? (tpl.coin || 0) : 30,
       ap: 3,
       inventory: [],
-      equip: { weapon: null, armor: null, trinket: null },
+      equip: { weapon: null, armor: null, head: null, trinket: null, charm: null },
+      forge: {},              // 装备强化等级 {物品id: 等级}
+      collection: [],         // 卡牌收藏
+      deckExtra: [],          // 自由构筑（≤10 张）
       skills: [],
       dungeonCd: {},
       quest: { stage: 0 },
@@ -363,14 +366,21 @@
       dead: false,
       deathText: ''
     };
-    // 模板初始物品与技能
+    // 模板初始物品与技能（走统一入口，附带技能卡牌自动入册）
     if (tpl) {
-      (tpl.items || []).forEach(function (iid) {
-        G.life.inventory.push(iid);
-        var it = itemById(iid);
-        if (it && it.slot !== 'use') G.life.equip[it.slot] = iid;
+      (tpl.items || []).forEach(function (iid) { gainItem(iid); });
+      (tpl.skills || []).forEach(function (sid) { learnSkill(sid); });
+    }
+    // 天赋/技能 → 卡牌入册
+    if (typeof SKILL_TO_CARD !== 'undefined') {
+      G.life.talents.forEach(function (t) {
+        var m = { t_box: 'sk_heal', t_cthulhu: 'sk_dark', t_jade: 'sk_shield', t_luck: 'sk_double' }[t.id];
+        if (m && SKILL_TO_CARD[m]) collectCard(SKILL_TO_CARD[m]);
+        if (t.id === 't_cthulhu') collectCard('c_drain');
       });
-      (tpl.skills || []).forEach(function (sid) { G.life.skills.push(sid); });
+      G.life.skills.slice().forEach(function (sid) {
+        if (SKILL_TO_CARD[sid]) collectCard(SKILL_TO_CARD[sid]);
+      });
     }
     // 轮回殿增益：出生盘缠/传家宝/武学启蒙
     if (hasExtra('coin_start')) G.life.coin += 150;
@@ -449,6 +459,7 @@
 
   function renderSide() {
     var L = G.life;
+    $('life-name').textContent = L.name + (L.gender === 'M' ? ' · 乾' : ' · 坤');
     $('life-age-big').textContent = Math.max(0, L.age);
     $('life-route').textContent = ROUTE_NAMES[L.route] || '';
     updateScene();
@@ -672,14 +683,33 @@
     UI.miniToast('获得物品「' + it.name + '」');
     // 装备位空着则自动穿上
     if (it.slot !== 'use' && !G.life.equip[it.slot]) G.life.equip[it.slot] = iid;
+    // 附带技能 → 对应卡牌入册
+    if (it.skill && typeof SKILL_TO_CARD !== 'undefined' && SKILL_TO_CARD[it.skill]) {
+      collectCard(SKILL_TO_CARD[it.skill]);
+    }
   }
 
   function learnSkill(sid) {
-    if (G.life.skills.indexOf(sid) >= 0) return;
-    G.life.skills.push(sid);
-    var sk = null;
-    for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === sid) sk = SKILLS[i];
-    UI.miniToast('习得技能「' + (sk ? sk.name : sid) + '」');
+    if (G.life.skills.indexOf(sid) < 0) {
+      G.life.skills.push(sid);
+      var sk = null;
+      for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === sid) sk = SKILLS[i];
+      UI.miniToast('习得技能「' + (sk ? sk.name : sid) + '」');
+    }
+    // 对应卡牌加入收藏
+    if (typeof SKILL_TO_CARD !== 'undefined' && SKILL_TO_CARD[sid]) collectCard(SKILL_TO_CARD[sid]);
+  }
+
+  /* 卡牌收藏：加入并提示 */
+  function collectCard(cid) {
+    if (!G.life.collection) G.life.collection = [];
+    if (G.life.collection.indexOf(cid) >= 0) return;
+    G.life.collection.push(cid);
+    // 构筑有空位则自动入组
+    if (G.life.deckExtra.length < 10) G.life.deckExtra.push(cid);
+    var c = null;
+    for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === cid) c = CARDS[i];
+    UI.miniToast('新卡牌入册「' + (c ? c.name : cid) + '」');
   }
 
   function applyReward(rw, sourceName) {
@@ -783,6 +813,11 @@
     },
     questCheck: questCheck,
     apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
+    collectCard: collectCard,
+    forgeMult: function (iid) {
+      var lv = (G.life && G.life.forge || {})[iid] || 0;
+      return 1 + 0.25 * lv;
+    },
     legacyCombat: function () {
       return {
         atk: hasExtra('atk_plus') ? 5 : 0,
@@ -851,6 +886,15 @@
     AudioFX.bgm('summary');
 
     addTimeline('<div class="event-card bad">' + (L.deathText || '一生就此落幕。') + '</div>');
+    // 落幕旁白，缓和结局的突兀感
+    var closing;
+    if (L.flags['ascended']) closing = '人间从此少了一位凡人，天上多了一尊真仙。';
+    else if (L.age < 18) closing = '烛火刚燃便熄，这一世太短，短到来不及遗憾。';
+    else if (L.age < 45) closing = '长路走到一半戛然而止。未竟的事、未见的人，都留在了风里。';
+    else if (L.age < 75) closing = '哀乐渐起。半生奔忙，至此画上句点。';
+    else if (L.age < 130) closing = '白发送罢又一年，这一生，落子无悔，阖目无憾。';
+    else closing = '沧海几度桑田，你看到了绝大多数人看不到的远方。';
+    addTimeline('<div class="event-card fate">' + closing + '享年 <b>' + Math.max(0, L.age) + '</b> 岁。</div>');
 
     var ending = pickEnding();
     var isNewEnding = ending ? Save.addEnding(ending.id) : false;

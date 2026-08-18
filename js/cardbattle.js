@@ -6,34 +6,9 @@ var CardBattle = (function () {
   function $(id) { return document.getElementById(id); }
   function cardById(id) { for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === id) return CARDS[i]; return null; }
 
-  /* ---------- 组牌 ---------- */
+  /* ---------- 组牌：固定底牌 + 自由构筑（最多 10 张） ---------- */
   function buildDeck(life) {
-    var deck = ['c_strike', 'c_strike', 'c_strike', 'c_strike',
-                'c_guard', 'c_guard', 'c_guard', 'c_focus', 'c_spark'];
-    var added = {};
-    // 已习得技能 → 对应卡牌
-    (life.skills || []).forEach(function (sid) {
-      var cid = SKILL_TO_CARD[sid];
-      if (cid && !added[cid]) { added[cid] = 1; deck.push(cid); }
-    });
-    // 天赋附带技能 → 卡牌
-    (life.talents || []).forEach(function (t) {
-      var map = { t_box: 'sk_heal', t_cthulhu: 'sk_dark', t_jade: 'sk_shield', t_luck: 'sk_double' }[t.id];
-      var cid = map && SKILL_TO_CARD[map];
-      if (cid && !added[cid]) { added[cid] = 1; deck.push(cid); }
-      if (t.id === 't_cthulhu' && !added['c_drain']) { added['c_drain'] = 1; deck.push('c_drain'); }
-    });
-    // 装备附带技能 → 卡牌
-    (life.inventory || []).forEach(function (iid) {
-      if (life.equip.weapon !== iid && life.equip.armor !== iid && life.equip.trinket !== iid) return;
-      for (var i = 0; i < ITEMS.length; i++) {
-        if (ITEMS[i].id === iid && ITEMS[i].skill) {
-          var cid = SKILL_TO_CARD[ITEMS[i].skill];
-          if (cid && !added[cid]) { added[cid] = 1; deck.push(cid); }
-        }
-      }
-    });
-    return deck;
+    return BASE_DECK.concat(life.deckExtra || []);
   }
 
   function shuffle(a) {
@@ -86,7 +61,8 @@ var CardBattle = (function () {
   /* opts: { life, enemy, deck, hpState, title, onEnd(win) } */
   function start(opts) {
     var st = Combat.playerStats(opts.life);
-    var maxhp = st.maxhp;
+    // 卡牌战斗生命独立设置：100 + 体质×2
+    var maxhp = 100 + Math.round(opts.life.attr.str * 2);
     S = {
       life: opts.life,
       title: opts.title || '幻境战斗',
@@ -95,7 +71,7 @@ var CardBattle = (function () {
       spec: bodySpec(opts.enemy.name),
       maxhp: maxhp,
       hp: opts.hpState ? Math.min(opts.hpState.hp, maxhp) : maxhp,
-      pBlock: 0, pStr: Math.max(0, Math.floor((st.atk - 10) / 3)),
+      pBlock: 0, pStr: Math.max(0, Math.floor((st.atk - 10) / 4)),   // 力量=攻击伤害+%
       crit: st.crit,
       energy: 3,
       deck: shuffle((opts.deck || buildDeck(opts.life)).slice()),
@@ -107,6 +83,7 @@ var CardBattle = (function () {
     };
     if (S.hpState) S.hpState.max = maxhp;
     $('overlay-cbattle').classList.remove('hidden');
+    AudioFX.duck();
     $('cb-title').textContent = S.title;
     rollIntent();
     drawCards(5);
@@ -115,15 +92,18 @@ var CardBattle = (function () {
     AudioFX.pluck(160, 0.15);
   }
 
-  /* ---------- 敌人意图 ---------- */
+  /* ---------- 敌人意图（百分比制：按玩家最大生命结算） ---------- */
+  function intentPct() {
+    return 8 + S.enemy.atk * 0.4 + S.turn * 0.4 + S.eStr;   // %
+  }
   function rollIntent() {
-    var e = S.enemy, r = Math.random();
+    var r = Math.random();
     if (r < 0.65) {
-      S.intent = { type: 'atk', val: Math.round(e.atk * (0.9 + Math.random() * 0.25) + S.eStr) };
+      S.intent = { type: 'atk', pct: intentPct() };
     } else if (r < 0.85) {
-      S.intent = { type: 'block', val: 6 + Math.round(S.turn * 1.5) };
+      S.intent = { type: 'block', pct: 12 + S.turn * 0.5 };
     } else {
-      S.intent = { type: 'buff', val: 2 };
+      S.intent = { type: 'buff', val: 3 };
     }
   }
 
@@ -148,12 +128,12 @@ var CardBattle = (function () {
     S.busy = true;
 
     if (c.dmg) {
-      var hits = c.hits || 1, total = 0;
+      var hits = c.hits || 1, total = 0, anyCrit = false;
       for (var h = 0; h < hits; h++) {
-        var base = c.dmg + S.pStr;
+        var pct = c.dmg + S.pStr;
         var crit = Math.random() < S.crit;
-        if (crit) base = Math.round(base * 1.5);
-        var dmg = base;
+        if (crit) { anyCrit = true; pct = Math.round(pct * 1.5); }
+        var dmg = Math.max(1, Math.round(S.eMax * pct / 100));
         if (!c.pierce) {
           var absorbed = Math.min(S.eBlock, dmg);
           S.eBlock -= absorbed; dmg -= absorbed;
@@ -161,14 +141,20 @@ var CardBattle = (function () {
         S.eHp -= dmg; total += dmg;
         spawnHit(false, crit);
       }
-      msg('「' + c.name + '」造成 ' + total + ' 点伤害' + (crit ? '（暴击）' : ''));
+      msg('「' + c.name + '」造成 ' + total + ' 点伤害' + (anyCrit ? '（暴击）' : ''));
       lunge(false);
       AudioFX.pluck(200 + Math.random() * 120, 0.14);
       if (c.poison) { S.ePoison += c.poison; msg('敌方中毒 ' + S.ePoison + ' 层'); }
     }
-    if (c.block) { S.pBlock += c.block; spawnShield(); msg('获得 ' + c.block + ' 点格挡'); AudioFX.tick(); }
-    if (c.heal) { S.hp = Math.min(S.maxhp, S.hp + c.heal); spawnHeal(); msg('回复 ' + c.heal + ' 点生命'); }
-    if (c.str) { S.pStr += c.str; msg('力量 +' + c.str + '（本场攻击提升）'); }
+    if (c.block) {
+      var bv = Math.round(S.maxhp * c.block / 100);
+      S.pBlock += bv; spawnShield(); msg('获得 ' + bv + ' 点格挡'); AudioFX.tick();
+    }
+    if (c.heal) {
+      var hv = Math.round(S.maxhp * c.heal / 100);
+      S.hp = Math.min(S.maxhp, S.hp + hv); spawnHeal(); msg('回复 ' + hv + ' 点生命');
+    }
+    if (c.str) { S.pStr += c.str; msg('力量 +' + c.str + '%（本场攻击提升）'); }
     if (c.draw) { drawCards(c.draw); msg('抽 ' + c.draw + ' 张牌'); }
 
     renderHand();
@@ -186,27 +172,30 @@ var CardBattle = (function () {
 
   function enemyAct() {
     var it = S.intent, e = S.enemy;
-    // 中毒结算
+    // 中毒结算（每层 = 敌方最大生命 1.5%）
     if (S.ePoison > 0) {
-      S.eHp -= S.ePoison;
-      msg(e.name + ' 受到 ' + S.ePoison + ' 点毒伤');
+      var pd = Math.max(1, Math.round(S.eMax * 0.015 * S.ePoison));
+      S.eHp -= pd;
+      msg(e.name + ' 受到 ' + pd + ' 点毒伤');
       S.ePoison = Math.max(0, S.ePoison - 1);
       if (S.eHp <= 0) return finish(true);
     }
     if (it.type === 'atk') {
-      var dmg = Math.max(0, it.val - S.pBlock);
-      S.pBlock = Math.max(0, S.pBlock - it.val);
+      var raw = Math.max(1, Math.round(S.maxhp * it.pct / 100));
+      var dmg = Math.max(0, raw - S.pBlock);
+      S.pBlock = Math.max(0, S.pBlock - raw);
       S.hp -= dmg;
       lunge(true); spawnHit(true, false);
       msg(e.name + ' 攻击，你受到 ' + dmg + ' 点伤害');
-      AudioFX.doom && dmg > 15 ? AudioFX.tick() : AudioFX.tick(0.08);
+      AudioFX.tick(0.08);
       if (S.hp <= 0) return setTimeout(function () { finish(false); }, 600);
     } else if (it.type === 'block') {
-      S.eBlock += it.val;
-      msg(e.name + ' 架起防御（格挡 +' + it.val + '）');
+      var eb = Math.round(S.eMax * it.pct / 100);
+      S.eBlock += eb;
+      msg(e.name + ' 架起防御（格挡 +' + eb + '）');
     } else {
       S.eStr += it.val;
-      msg(e.name + ' 气势暴涨（攻击 +' + it.val + '）');
+      msg(e.name + ' 气势暴涨（攻击 +' + it.val + '%）');
     }
     // 新回合
     S.turn++;
@@ -229,6 +218,7 @@ var CardBattle = (function () {
     btn.className = 'ink-btn primary';
     btn.textContent = win ? '凯旋' : '撤退';
     btn.onclick = function () {
+      AudioFX.unduck();
       $('overlay-cbattle').classList.add('hidden');
       var cb = S.onEnd; S = null;
       cb(win);
@@ -338,7 +328,7 @@ var CardBattle = (function () {
     // 玩家血条 + 格挡
     barAt(ctx, 180 - 70, 30, 140, S.hp, S.maxhp, '#3d6b5e');
     if (S.pBlock > 0) { ctx.fillStyle = '#3d6b5e'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('🛡 ' + S.pBlock, 180, 26); }
-    if (S.pStr > 0) { ctx.fillStyle = '#a5281b'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('力 ' + S.pStr, 180, 108); }
+    if (S.pStr > 0) { ctx.fillStyle = '#a5281b'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('力 +' + S.pStr + '%', 180, 108); }
 
     // 粒子
     anim.parts = anim.parts.filter(function (p) { return p.life > 0; });
@@ -368,9 +358,15 @@ var CardBattle = (function () {
     if (!it) return;
     ctx.font = 'bold 14px sans-serif';
     ctx.textAlign = 'center';
-    if (it.type === 'atk') { ctx.fillStyle = '#a5281b'; ctx.fillText('⚔ 攻击 ' + it.val, x, y); }
-    else if (it.type === 'block') { ctx.fillStyle = '#3d6b5e'; ctx.fillText('🛡 防御 ' + it.val, x, y); }
-    else { ctx.fillStyle = '#b8862f'; ctx.fillText('▲ 强化 +' + it.val, x, y); }
+    if (it.type === 'atk') {
+      var raw = Math.max(1, Math.round(S.maxhp * it.pct / 100));
+      ctx.fillStyle = '#a5281b'; ctx.fillText('⚔ 攻击 ' + raw + '（' + it.pct.toFixed(0) + '%）', x, y);
+    }
+    else if (it.type === 'block') {
+      var eb = Math.round(S.eMax * it.pct / 100);
+      ctx.fillStyle = '#3d6b5e'; ctx.fillText('🛡 防御 ' + eb, x, y);
+    }
+    else { ctx.fillStyle = '#b8862f'; ctx.fillText('▲ 强化 +' + it.val + '%', x, y); }
   }
 
   /* ---------- 模型绘制 ---------- */

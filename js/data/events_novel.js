@@ -1253,5 +1253,1520 @@ var EVENTS_NOVEL = [
     { text: '换一件防弹背心', effect: { coin: -200, items: ['it_vest'] }, result: '背心沉得压肩。老烟鬼咧嘴一笑："沉好啊，命更沉。"', kind: 'good' },
     { text: '拜师学维修', effect: { attr: { int: 2 }, coin: 30 }, result: '你跟着修了半个月枪械，满手机油。老烟鬼把学费免了："手稳，心细，像年轻时的我。"', kind: 'good' }
   ]
+},
+
+// ========== 第三轮扩充：终局铺垫·新支线·风物（ev_n3_） ==========
+
+// ---- 武侠 · 终局铺垫 ----
+
+{
+  id: 'ev_n3_wuxia_zhaohuan',
+  age: [34, 42],
+  pool: 'novel_wuxia',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  cond: { attr: { str: { gte: 20 } } },
+  text: '近来江湖风向不对：魔教十年来第一次封山，少林武当同时召回云游弟子，连悦来客栈的说书先生都停更了《武林月旦评》。老江湖们压低声音——要变天了。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_dongyuan',
+  age: [36, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { anyFlag: ['wuxia_miji', 'wuxia_guanfu'] },
+  text: '英雄帖一夜撒遍十三省，落款是少林武当联名：魔教教主闭关将出，正魔决战在即。你收到的那张帖子上，单独用朱笔添了四个字："非你不可。"',
+  choices: [
+    { text: '接帖，即刻动身', effect: { attr: { spr: 2, str: 1 } }, result: '你把帖子压在剑下抚平，当夜便上了路。官道两旁，同路人的火把连成了星河。', kind: 'good', big: true },
+    { text: '先回山向师门复命', effect: { attr: { int: 1, spr: 1 } }, result: '师父听完只回了三个字："去吧。"你磕了三个头，起身时已预感到，这是最后一面。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_xinjing',
+  age: [38, 45],
+  pool: 'novel_wuxia',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { attr: { str: { gte: 24 } } },
+  text: '决战前夜，你独自登上华山。云海在脚下翻涌，你想起崖底的骷髅、客栈的百晓生、红衣的圣女……三十年种种，都凝成了剑穗上的一缕风。这一战之后，江湖该换个讲法了。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+
+// ---- 武侠 · 风物 lore ----
+
+{
+  id: 'ev_n3_wuxia_chapeng',
+  age: [16, 44],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '官道旁的茶棚是江湖的信息交易所：一钱银子一碗粗茶，附赠方圆百里的恩怨情仇。你总结出规律——说书人拍醒木的力道，和消息的劲爆程度成正比。',
+  effect: { attr: { int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_chuohao',
+  age: [16, 40],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '在江湖混，绰号比姓名要紧。报上"张三"没人理，报上"白衣快剑张三"，对方先掂量三分。你想了想自己的外号，决定最近行事再低调点。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_chongyang',
+  age: [18, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '重阳登高是武林盛事：各大门派借登高之名行比试之实，山顶那坛菊花酒，只有当年最强的年轻人够得着。你看着一群少年抢作一团，恍如昨日。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxia_miaohui',
+  age: [16, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '城隍庙会比武林大会热闹：糖画摊挨着兵器摊，耍猴的锣鼓盖过切磋的呼喝。你给泥人摊捐了锭银子——摊主捏了个你，剑眉星目，就是脸圆了点。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_shuku',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  text: '门派藏书阁规矩森严：一层拳脚，二层兵刃，三层内功，顶层锁着的据说是祖师爷手札。守阁长老打瞌睡，口水流到了《拳经》上——你只敢在心里腹诽。',
+  effect: { attr: { int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_saiwai',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '塞北的雪一下就是三月，客栈里挤满等开春的镖师和刀客。掌柜温一壶烧刀子，墙上挂着八十年没人摘的旧剑。你听他们吹牛到天亮，出门时，雪停了。',
+  effect: { attr: { spr: 1, str: 1 } }
+},
+
+// ---- 武侠 · 新支线 ----
+
+{
+  id: 'ev_n3_wuxia_enyuan',
+  age: [20, 38],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '一位瞎眼老者拦住你的去路，拄拐长揖：求你替他了结与铁掌帮的二十年恩怨。',
+  choices: [
+    { text: '查明真相再断', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 2, spr: 2 } }, result: '你翻出当年卷宗——所谓血仇竟是第三方挑拨。两家人在你见证下同饮一杯，二十年的刀同时入鞘。', kind: 'good', big: true },
+    { text: '提剑上门讨说法', effect: { attr: { str: -1, spr: 1 } }, result: '打到一半双方才发现是误会，讪讪收剑。你揉着淤青感叹：江湖多少仇，都死于一场没聊开的天。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_shoutu',
+  age: [24, 42],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '一个逃荒来的少年在你门前跪了三天，额头磕出了血，只求拜师。',
+  choices: [
+    { text: '收下这个徒弟', effect: { attr: { spr: 2, int: 1 }, setFlags: ['wuxia_tudi'] }, result: '少年练武肯下死力气，三年后已能替你出战门派大比。看他挥剑的背影，你想起当年的自己。', kind: 'good', big: true },
+    { text: '赠银百两，让他回家', effect: { attr: { mny: -1, spr: 1 } }, result: '少年走后，你听说他用那百两银子开了间武馆，教穷孩子练拳。也算另一种传承。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_chouzhi',
+  age: [22, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '多年前败在你剑下的仇家之子登门，跪呈一封书信——其父临终遗言：败于你手，心服口服；犬子若成器，请代我指点一二。',
+  choices: [
+    { text: '收信指点，不记前仇', effect: { attr: { int: 2, spr: 2 } }, result: '十年后那少年成了新一代名侠，逢人便说剑术得自"先父至交"。恩怨二字，到你这里断了根。', kind: 'good', big: true },
+    { text: '婉拒，江湖路各走各的', effect: { attr: { spr: -1, int: 1 } }, result: '少年磕了个头，转身走进风雪。你望着他的背影，忽然不知道自己是不是做错了。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_matou',
+  age: [22, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '漕帮和盐帮为争夺码头对峙三日，刀枪都架上了。两边不约而同递来拜帖，请你主持公道。',
+  choices: [
+    { text: '摆酒调停', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { mny: 1, spr: 2 } }, result: '你定下"单日漕、双日盐、初一十五歇码头"的规矩，两边都觉得没吃亏。这顿和事酒，喝了三天三夜。', kind: 'good', big: true },
+    { text: '让他们自己打明白', effect: { attr: { spr: -1 } }, result: '两败俱伤，官府趁势把码头收了官营。你这才明白：有时候不插手，也是一种选择——坏的那种。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_yaowang',
+  age: [20, 42],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '药王谷规矩怪：求药不收银两，只收一个等值的故事。谷主泡好茶，眯眼等你开口。',
+  choices: [
+    { text: '讲你的崖底奇遇', effect: { attr: { spr: 2, str: 1 } }, result: '谷主听得拍案叫绝，当场赠你一枚九花玉露丸："好故事，值得好药。"', kind: 'good' },
+    { text: '现编一个传奇', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '谷主听完沉默半晌："编的。"你心头一紧，他又笑了："但编得好。药，给你。"', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_tongxing',
+  age: [20, 36],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '官道上，一位蒙面女侠拦住你："同路吗？我听说前面黑风峡不太平。"她的剑穗上，系着半枚眼熟的铜钱。',
+  choices: [
+    { text: '结伴同行', effect: { attr: { chr: 2, spr: 2 } }, result: '一路并肩闯过黑风峡。分别时她摘下面巾一笑，没说姓名——江湖很大，有缘总会再见。', kind: 'good', big: true },
+    { text: '独来独往惯了', effect: { attr: { spr: -1 } }, result: '后来听说黑风峡那晚有人独斗三十悍匪，剑法精妙。你望着月亮，莫名有些怅然。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_pantu',
+  age: [24, 42],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  kind: 'fate',
+  text: '门派抓到私通魔教的叛徒——是你的同门师弟。刑堂上下等你发落，按门规，当废去武功，逐出师门。',
+  choices: [
+    { text: '先查他叛门的缘由', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 1, spr: 2 } }, result: '你查出魔教挟持了他的家人。真相大白，掌门网开一面，师弟跪在你面前泣不成声。', kind: 'good', big: true },
+    { text: '按门规处置', effect: { attr: { spr: -1, int: 1 } }, result: '行刑那晚，你在山门外放了一壶酒。规矩是规矩，情分是情分——这两样，从来不在一张桌子上。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_miwu',
+  age: [22, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  text: '姑苏城接连有武师失踪，现场只留一团不散的白雾。知府悬赏千两，满城人心惶惶。',
+  choices: [
+    { text: '夜探迷雾', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { mny: 1, spr: 2 } }, result: '雾里藏着个用迷魂香掳人的采花贼，你把他拎出来时，全城武师夹道相迎。', kind: 'good', big: true },
+    { text: '报官，静观其变', effect: { attr: { int: 1 } }, result: '官府折腾半月无果，最后还是六扇门的高手破了案。你默默记下一课：迷雾本身，往往是答案的一半。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_bangzhu',
+  age: [26, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '丐帮新老帮主交接，请你做公证人。打狗棒传到一半，跳出个长老，指控新帮主身世来路不正。',
+  choices: [
+    { text: '当场查验身世', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2, spr: 1 } }, result: '你三问两验，戳破长老伪造的文书——原来他想扶持自己的侄儿。丐帮上下对你心服口服。', kind: 'good', big: true },
+    { text: '请丐帮关起门自决', effect: { attr: { spr: 1 } }, result: '三天后新帮主亲自登门道谢：他查清了冤案，还顺手清理了门户。你觉得这人不简单。', kind: 'good' }
+  ]
+},
+
+// ---- 武侠 · 门派恩怨与江湖地位 ----
+
+{
+  id: 'ev_n3_wuxia_miemen',
+  age: [18, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'bad',
+  text: '一夜之间，武夷山清微派满门被屠，凶手留下一朵黑色莲花。江湖人人自危，各派开始互相猜忌——而这，正是凶手想要的效果。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+{
+  id: 'ev_n3_wuxia_yingxiong',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '少林广发英雄帖，邀天下豪杰共商黑莲血案。大雄宝殿里坐了三百号人，吵了三天，唯一达成的共识是：下次开会，别叫这么多人。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_zhenwu',
+  age: [22, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '武当镇派宝剑"真武"失窃，矛头直指魔教。武当七剑联袂下山，魔教则宣布悬赏缉拿真凶——正邪两道，难得达成了同一个小目标。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_chuanwei',
+  age: [26, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '掌门大限将至，传位之争暗流涌动。大师兄资历深，二师兄人缘好，而你……长老们看你的眼神，最近越来越不对劲。',
+  choices: [
+    { text: '力挺大师兄上位', effect: { attr: { spr: 2, mny: 1 } }, result: '新掌门上任第一件事，就是把执剑长老的位置给了你。会做人的，运气都不会太差。', kind: 'good', big: true },
+    { text: '当仁不让，我也争一争', cond: { attr: { chr: { gte: 6 } } }, effect: { attr: { mny: 2, spr: 2, chr: 1 } }, result: '演武场上你连过七关，技压同门。接掌玉圭那晚，山门外求见的人排到了山脚。', kind: 'good', big: true }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_yuedan',
+  age: [22, 40],
+  pool: 'novel_wuxia',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '最新一期《武林月旦评》出了：你的名号从"剑客"升级为"剑侠"，评语是"剑快，心正，饭量大"。你把最后三个字圈出来，决定找百晓生谈谈。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_tiaozhan',
+  age: [20, 38],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '又有年轻剑客上门挑战，指名要领教高招——本月第三个。江湖地位就是这么麻烦：打赢了涨名望，打输了涨笑话。',
+  choices: [
+    { text: '三招之内解决', cond: { attr: { str: { gte: 7 } } }, effect: { attr: { spr: 2, chr: 1 } }, result: '第三招你收剑入鞘，对方抱拳："受教。"第二天江湖传闻又多了新版本。', kind: 'good' },
+    { text: '先请他吃顿饭再比划', effect: { attr: { spr: 1, int: 1 } }, result: '三杯酒下肚，挑战变成了请教，对手变成了酒友。临走他撂下话：明年还来——蹭饭。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_biaoju2',
+  age: [22, 42],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '长风镖局来势汹汹，放话三个月内挤垮你的生意，还把你家的镖旗画在了茅厕门上。',
+  choices: [
+    { text: '擂台见，镖局对镖局', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { mny: 2, spr: 1 } }, result: '三场比试全赢。长风镖局总镖头倒是光棍，当场认输并入你麾下——江湖从此少个对头，多员猛将。', kind: 'good', big: true },
+    { text: '降价抢单，商战到底', effect: { attr: { mny: -1, int: 1 } }, result: '价格战打了半年，两家都瘦了一圈，最后握手言和合伙分红。账算下来，居然比开打前还赚。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_lunjianbei',
+  age: [24, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  text: '路过华山，你仰头看论剑碑上历代天下第一的留名。守碑老道递来一柄刻刀："位置还多，英雄随意。"你笑了笑，把刀还了回去——名字刻在哪，得靠剑说话。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_haibu',
+  age: [18, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'bad',
+  text: '城门新贴的海捕文书上赫然画着你的脸，罪名"夜闯知府银库"。画像丑得惊天地泣鬼神，唯独那双眼睛神还原——该死，画师的工笔全用在眼睛上了。',
+  effect: { attr: { spr: -1, luk: -1 } }
+},
+{
+  id: 'ev_n3_wuxia_shuoshu',
+  age: [20, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '酒馆里，说书人正讲"某大侠三招败魔教护法"，添油加醋得你本人都快认不出自己。邻桌小孩听得两眼放光："我长大了也要当他！"你默默给他碗里加了个鸡腿。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_saomu',
+  age: [22, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'fate',
+  text: '师父忌日，你上山扫墓，碑前摆了三个酒杯。下山时雪落满肩，你忽然明白：所谓传承，就是师父不在了，但你还在出剑。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_donglian',
+  age: [16, 36],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '冬练三九，你在结冰的演武场上打了三个时辰拳，汗气在头顶蒸成白雾。小师弟们裹着棉被围观，像看一个移动的蒸笼。',
+  effect: { attr: { str: 2, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_yifu',
+  age: [24, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  text: '曾经对你爱答不理的小门派，如今掌门人亲自登门送礼，话里话外想"依附"你。江湖地位这回事，全写在他们笑容的弧度里。',
+  effect: { attr: { mny: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_hejie',
+  age: [26, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '结仇六十年的峨眉与青城，在你牵头下办了场和解宴。两位掌门碰杯时手都在抖，台下弟子哭成一片——六十年的恩怨，终究要有人先放下。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_tangmen',
+  age: [20, 42],
+  pool: 'novel_wuxia',
+  weight: 7,
+  kind: 'bad',
+  text: '你误食了唐门试毒大会上的"点心"，上吐下泻三天。唐门弟子登门道歉，留下一瓶解药和一张字条："抱歉，那盘是展品。"',
+  effect: { attr: { str: -2, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_zhaoan',
+  age: [22, 40],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  text: '黑风寨大当家托人捎话：愿率全寨三百弟兄接受招安，只求一个正经营生。而朝廷的回复，是一道剿灭令。',
+  choices: [
+    { text: '为三百人奔走斡旋', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { mny: 1, spr: 2 } }, result: '你带着方案三进府城，最终黑风寨改编为护商队，大当家当了队长。剿灭令，悄无声息地作废了。', kind: 'good', big: true },
+    { text: '明哲保身，不多管闲事', effect: { attr: { spr: -1 } }, result: '三个月后黑风寨被破，大当家自刎前留话："不怪你，只怪这世道。"你路过寨子废墟，驻足了很久。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxia_laoxia',
+  age: [28, 46],
+  pool: 'novel_wuxia',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '名动一时的铁剑先生过世，葬礼来了三百江湖人，一半旧友，一半旧仇。仇家们上了香，转身便把恩怨一笔勾销——江湖人的葬礼，也是江湖人的和解。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_yecha',
+  age: [18, 44],
+  pool: 'novel_wuxia',
+  weight: 9,
+  text: '小客栈的夜半，南来北往的江湖客围着火炉吹牛：有人说见过会飞的剑，有人说西域有种武功专克内功。你添了根柴，把真真假假都听进了心里。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxia_bingqi',
+  age: [26, 44],
+  pool: 'novel_wuxia',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  text: '兵器谱重排，你的佩剑从第四十七位跳到第九。铸剑山庄连夜来信，愿出千两收购"第九名的第一手使用心得"。你回信四个字："多打架，少擦剑。"',
+  effect: { attr: { mny: 1, spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxia_guonian',
+  age: [16, 46],
+  pool: 'novel_wuxia',
+  weight: 8,
+  text: '年关，门派张灯结彩，弟子们比完武比包饺子。你包的饺子煮成了一锅片汤，师父却吃得干干净净："江湖儿女，能吃就是福。"',
+  effect: { attr: { spr: 2, str: 1 } }
+},
+
+// ---- 无限流 · 终局铺垫 ----
+
+{
+  id: 'ev_n3_wuxian_saiji',
+  age: [30, 40],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  cond: { attr: { str: { gte: 18 } } },
+  text: '主神空间的公告光幕毫无征兆地变成暗红色，所有副本排期清空，只剩一行字：【最终赛季即将开启，参赛者名单生成中】。你的名字，在名单第一页。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_dongyuan',
+  age: [32, 44],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { flags: ['wuxian_gonghui'] },
+  text: '公会紧急召集全体核心成员。会长的声音前所未有地严肃："最终副本的情报，我用三件S级道具换到一页。这次不是下本，是赴死——想退出的，现在可以走。"会议室里，没人动。',
+  choices: [
+    { text: '第一个在出征名单上签名', effect: { attr: { spr: 2, str: 1 } }, result: '你签完把笔一撂："下一个。"那一晚，签名册被写满了三本。', kind: 'good', big: true },
+    { text: '先把身后事安排明白', effect: { attr: { int: 1, spr: 1 } }, result: '你把道具、积分和攻略一一列好，托付给留守的新人。做完这些，你签名的手反而稳了。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_gaobie',
+  age: [33, 46],
+  pool: 'novel_wuxian',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '进入最终副本的前夜，你把这些年攒的道具一件件擦好，给每位老队友写了留言。写给队长的那封，你对着他永远灰下去的头像愣了很久，最后只写了一句："这次换我兜底。"',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+
+// ---- 无限流 · 主神空间 lore ----
+
+{
+  id: 'ev_n3_wuxian_guanzhan',
+  age: [18, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '观战厅花十积分就能围观别人的副本直播。最火的是一对活宝兄弟，操作菜得离谱，弹幕却暖得离谱："别死啊，我还等着看你们下饭。"',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_bangdan',
+  age: [18, 44],
+  pool: 'novel_wuxian',
+  weight: 7,
+  text: '积分榜前一百名，三年换了八十一个。老玩家说这榜要用追悼会的心态看——每一个消失的名字，都是某个副本里没走出来的人。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+{
+  id: 'ev_n3_wuxian_fuhuo',
+  age: [20, 44],
+  pool: 'novel_wuxian',
+  weight: 7,
+  kind: 'fate',
+  text: '空间规则第零条：死亡即抹杀，复活类道具除外。于是S级复活道具成了比命还硬的硬通货，黑市上为它流的血，比副本里死的还多。',
+  effect: { attr: { int: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_jiuba',
+  age: [19, 46],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '休息区有家"存档点酒吧"，老板娘据说通关过九十九个副本，如今只调酒不下本。她的招牌酒叫"差一点"——敬所有倒在通关前一秒的人。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxian_tianqi',
+  age: [18, 46],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '主神空间也有天气：结算日"晴"，团灭高发期"暴雨"，主神心情好了会下"积分雨"。那天全空间的人都仰着头张嘴，像一群等投喂的鸽子。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxian_pindao',
+  age: [18, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '新人频道永远热闹："求带！""副本里捡的戒指能戴吗？""救命我把NPC惹毛了！"你想起当年的自己，默默发了条置顶帖：《新人保命十条，免费》。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+
+// ---- 无限流 · 新支线 ----
+
+{
+  id: 'ev_n3_wuxian_shuangsheng',
+  age: [20, 38],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  text: '特殊副本"双生"强制两人组队，匹配给你的搭档是个全程闭目装死的白发少年。',
+  choices: [
+    { text: '背着他通关', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { spr: 2, luk: 1 } }, result: '通关瞬间少年睁开眼——他是主神的质检程序。你的评分直接拉满，附赠一句："很久没人愿意背着我了。"', kind: 'good', big: true },
+    { text: '投诉匹配系统', effect: { attr: { int: 1 } }, result: '系统回复："匹配结果无误。"你狐疑地回头，少年冲你眨了眨眼，继续装死。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_jingji',
+  age: [22, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '竞技场副本开启：十名玩家擂台混战，观众下注，赢家通吃。',
+  choices: [
+    { text: '报名上场', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { mny: 2, spr: 1 } }, result: '你连下三城，赔率从1赔9打到1赔1.1。领奖时庄家看你的眼神像看瘟神。', kind: 'good' },
+    { text: '坐观众席收情报', effect: { attr: { int: 1, spr: 1 } }, result: '你把前十名的招式套路记了满满一本。看台上的收获，未必比擂台上少。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_canting',
+  age: [24, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  text: '经营类副本"末日小餐馆"：三十天内让一家倒闭餐馆盈利，失败则赔光积分。',
+  choices: [
+    { text: '亲自掌勺', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { mny: 2, spr: 2 } }, result: '你推出招牌菜"罐头乱炖"，菜单标注"不含丧尸"。店火了，通关评价：米其林阴间一星。', kind: 'good', big: true },
+    { text: '高薪挖来NPC大厨', effect: { attr: { mny: -1, spr: 1 } }, result: '大厨手艺惊人，餐馆起死回生。结算时他问你下个副本还带不带他——你第一次听说NPC会求职。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_tushuguan',
+  age: [22, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  text: '解谜副本"无限图书馆"：每本书都是一道谜题，解不开的书，会在午夜翻过来看你。',
+  choices: [
+    { text: '按索书号找规律', cond: { attr: { int: { gte: 7 } } }, effect: { attr: { int: 2 } }, result: '你发现书号连起来是一句话："出口在儿童绘本区。"全场最幼稚的选择，救了所有人。', kind: 'good', big: true },
+    { text: '暴力撕书', effect: { attr: { str: -2, spr: -1 } }, result: '图书馆很生气，后果很严重。你被追杀到天亮，从此对纸制品过敏。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_nongchang',
+  age: [20, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '种田副本"最后的农场"：没有怪物，只有四季。你在里面种了三年地，外界只过了三小时。副本评价："恭喜获得珍贵体验——普通人的一生。"',
+  effect: { attr: { spr: 2, str: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_xinli',
+  age: [24, 44],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  text: '空间里新开了家心理诊所，专治轮回创伤。医生是个通关失败被永远留下的老玩家，开场白永远是："说说，你多久没睡过一个不用设防的觉了？"',
+  choices: [
+    { text: '坐下聊聊', effect: { attr: { spr: 3, int: 1 } }, result: '你聊了三个小时，出门时天光大亮。账单上写着：本次免费——医生也需要有人听他说话。', kind: 'good' },
+    { text: '"我没事"，转身离开', effect: { attr: { spr: -1, str: 1 } }, result: '出门时他喊住你："能把"我没事"说得这么利索的，都是重症。下周三，给你留号。"', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_duju2',
+  age: [20, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '死对头玩家当众下战书：下个副本谁评分低，谁公开叫对方一声"爸爸"。',
+  choices: [
+    { text: '应战', cond: { attr: { luk: { gte: 4 } } }, effect: { attr: { spr: 2 } }, result: '你以半分险胜。他咬牙喊了一声，从此见你绕道走——小道消息说，他偷偷把你的攻略抄了三遍。', kind: 'good' },
+    { text: '没意思，不比', effect: { attr: { int: 1, spr: 1 } }, result: '他愣了半天，嘟囔一句"没劲"。第二天他自己下了那个副本，评分比你预估的还低。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_daiwa',
+  age: [22, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '系统派给你三个萌新，奖励按存活数结算。看着他们清澈又愚蠢的眼神，你血压先上来了。',
+  choices: [
+    { text: '保姆式全程护航', effect: { attr: { spr: 2, str: -1 } }, result: '三个萌新全须全尾通关，结算时凑积分给你买了杯"存档点"的酒——酒单上那杯叫"大哥"。', kind: 'good', big: true },
+    { text: '只讲要点，生死自负', effect: { attr: { int: 1, spr: -1 } }, result: '活下来两个。第三个的名字，你记在了手册最后一页——那页已经有七个名字了。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_wuxian_npc',
+  age: [26, 44],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '某个副本的NPC在结算前忽然抓住你的手腕："我知道你们要走了。告诉我，外面的世界……是真的吗？"',
+  choices: [
+    { text: '告诉他真相', effect: { attr: { int: 2, spr: -1 } }, result: '他笑了："那你们真可怜，死了没人重开。"副本关闭，这句话陪你走了很多年。', kind: 'good', big: true },
+    { text: '骗他说"都是假的"', effect: { attr: { spr: -2 } }, result: '他松了口气，目送你离开。回程的光柱里，你不敢回头。', kind: 'bad' }
+  ]
+},
+
+// ---- 无限流 · 副本机制与轮回者众生相 ----
+
+{
+  id: 'ev_n3_wuxian_lunpan',
+  age: [18, 44],
+  pool: 'novel_wuxian',
+  weight: 9,
+  text: '本周随机副本轮盘开奖，全空间屏息围观。指针停在"童话镇"三个字上，老玩家集体倒吸凉气——名字越可爱的本，死亡率越高，这是常识。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_xianyu',
+  age: [19, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '有人把副本过成了咸鱼局：恐怖片副本里搭灶做饭，丧尸本里开民宿。系统给了他专属称号"副本害虫"。你默默关注了他的直播间，每天准时下饭。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxian_zuzhou',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  kind: 'bad',
+  text: '减益诅咒副本：全员随机挂一个负面状态。你抽到的是"说真话"——整整七天，你在队友面前毫无秘密，包括你藏了三年的那个名字。',
+  effect: { attr: { spr: -2, chr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_wuxianren',
+  age: [22, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  text: '传说中的"无限人"——把同一个副本刷了一百遍的狠人，只为刷满图鉴。你问他图什么，他说："这破空间连只猫都不给养，我总得收集点什么。"',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_chongzu',
+  age: [20, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '队伍重组，新来个话痨牧师和一个沉默的肉盾。第一次下本，话痨的嘴和肉盾的盾同时救了全队——一个负责引怪，一个负责抗怪，分工明确。',
+  effect: { attr: { spr: 2, str: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_houyizheng',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  kind: 'bad',
+  text: '恐怖本后遗症：你现在听到八音盒的声音就汗毛倒竖。队友善解人意地把你的闹铃换成了唢呐，效果更糟了。',
+  effect: { attr: { spr: -1, str: -1 } }
+},
+{
+  id: 'ev_n3_wuxian_qihuo',
+  age: [20, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '交易所最近流行"副本期货"：押注下赛季哪种本增多。你没忍住下了两手，从此看光幕像看大盘——资深韭菜的自我修养。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_heji',
+  age: [22, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '你的通关录像被人剪成《高燃合集》爆火，弹幕齐刷"学废了"。有萌新照着操作，在同样的位置以同样的姿势白给，发帖控诉你"误人子弟"。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_qianghua',
+  age: [22, 42],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '装备强化炉前排长队，前面大哥的+12武器碎成了烟花，他当场表演行为艺术《男人的崩溃只在一瞬间》。你默默把强化券塞回了口袋。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_juhui',
+  age: [26, 46],
+  pool: 'novel_wuxian',
+  weight: 7,
+  text: '老玩家聚会，话题永远是"当年那个副本"。有人手臂上是刀疤，有人眼底是故事。散场时有人说了句"下个本，都给我活着回来"，没人接话，但大家都点了点头。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_wuxian_cunzhang',
+  age: [24, 44],
+  pool: 'novel_wuxian',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  text: '你在副本里救下的小女孩NPC，竟在你下次进入时长成了发布任务的村长。她递来任务卷轴时眨眨眼："这次，换我给你开后门。"',
+  effect: { attr: { spr: 2, luk: 1 } },
+  big: true
+},
+{
+  id: 'ev_n3_wuxian_lianbai',
+  age: [20, 42],
+  pool: 'novel_wuxian',
+  weight: 7,
+  kind: 'bad',
+  text: '高难度本连跪五次，队里气氛跌到冰点。第六次进本前，肉盾默默买了六瓶最便宜的汽水："喝完这口，当第一把打。"',
+  effect: { attr: { str: -1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_budang',
+  age: [22, 44],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '论坛神帖《论主神空间的一百个BUG》被置顶又被秒删，楼主账号变灰。三小时后，同样的帖子换了个小号重新出现，标题多了俩字：补档。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_jingsu',
+  age: [26, 44],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'good',
+  text: '空间首届全服竞速赛，通关最快的队伍平分十万积分。你们队一路领先，终点前队长却停下扶起了摔倒的萌新队。最终名次：第三。领奖时，掌声比冠军还响。',
+  effect: { attr: { spr: 3 } },
+  big: true
+},
+{
+  id: 'ev_n3_wuxian_baimen',
+  age: [24, 42],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '深夜，空间边缘出现一扇从未见过的白色门扉，门上贴着你的手写体便签——是你从未写过的字迹："别开门，除非你准备好知道真相。"你拍了张照，设成壁纸，又撤回了。',
+  effect: { attr: { int: 2, spr: -1 } }
+},
+{
+  id: 'ev_n3_wuxian_licai',
+  age: [22, 40],
+  pool: 'novel_wuxian',
+  weight: 8,
+  text: '空间推出"积分理财"，年化百分之五。全服沸腾，你想起上辈子被基金套牢的绿光，毅然选择活期。三个月后理财暴雷，你的活期成了全服唯一的笑话反面。',
+  effect: { attr: { int: 2, spr: 1 } }
+},
+{
+  id: 'ev_n3_wuxian_dipai',
+  age: [26, 44],
+  pool: 'novel_wuxian',
+  weight: 7,
+  text: '资深者教你最后一课：永远留一张底牌；永远别让人知道你的底牌；永远假装自己还有一张底牌。三条加起来，叫活着的艺术。',
+  effect: { attr: { int: 2 } }
+},
+{
+  id: 'ev_n3_wuxian_bailian',
+  age: [30, 46],
+  pool: 'novel_wuxian',
+  weight: 6,
+  once: true,
+  kind: 'good',
+  text: '你的累计通关数破百，空间降下金色称号"百炼"。公告只挂了三分钟，新人频道却刷了整晚——在平均活不过二十个副本的地方，一百，是个神话。',
+  effect: { attr: { spr: 2, str: 1 } },
+  big: true
+},
+{
+  id: 'ev_n3_wuxian_pingjing',
+  age: [32, 46],
+  pool: 'novel_wuxian',
+  weight: 7,
+  kind: 'fate',
+  text: '最终赛季临近，空间的气氛变了：黑市物价飞涨，不知何时多出的教堂前排起长队，连"存档点"的老板娘都在吧台后磨刀。暴风雨前的平静，原来是有声音的。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+
+// ---- 霸总 · 终局铺垫 ----
+
+{
+  id: 'ev_n3_bazong_fengbao',
+  age: [36, 46],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  cond: { attr: { mny: { gte: 15 } } },
+  text: '资本市场风向突变：三家海外基金同时做空厉氏关联产业，顾氏传媒的通稿火力全开，连一向中立的沈家都开始增持现金。助理把报告放在你桌上时，手是抖的——所有人都闻到了决战的味道。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_tanpai',
+  age: [38, 48],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { anyFlag: ['bazong_contract', 'bazong_renew'] },
+  text: '深夜书房，厉承烨把所有底牌摊在你面前：股权结构、离岸账户、还有他准备了三年的反收购预案。"以前我习惯一个人扛，"他顿了顿，"现在，我想问你愿不愿意和我一起打完这一仗。"',
+  choices: [
+    { text: '"废话，夫妻同心，其利断金。"', effect: { attr: { spr: 2, mny: 1 } }, result: '他怔了怔，笑了。那晚书房的灯亮到凌晨四点，作战图上并排签着两个名字。', kind: 'good', big: true },
+    { text: '"先说好，输了家产分我一半。"', effect: { attr: { spr: 2, int: 1 } }, result: '他笔尖一顿："我的早就是你的。"顿了顿又补一句："所以不存在输。"', kind: 'good', big: true }
+  ]
+},
+{
+  id: 'ev_n3_bazong_xinlu',
+  age: [38, 50],
+  pool: 'novel_bazong',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '大战前的清晨，你站在落地窗前看这座城苏醒。从被雷劈进这本书那天算起，你斗过白月光、撕过恶婆婆、收购过对家……如今棋至残局，你忽然很想感谢当年那道雷。',
+  effect: { attr: { spr: 3 } }
+},
+
+// ---- 霸总 · 豪门风物 lore ----
+
+{
+  id: 'ev_n3_bazong_yiyuan',
+  age: [22, 48],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '豪门的私人医院像五星级酒店：VIP病房带江景，体检报告用烫金封皮，院长见你第一句永远是"气色真好"。你后来才知道，他们对所有人都这么说——这叫情绪价值。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_bazong_paimai',
+  age: [24, 48],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '拍卖行是豪门的第二战场：举牌即表态，落槌即站队，一幅画背后是三家公司股价的涨跌。你学会的第一课是——永远不要为喜欢的东西第一个举牌。',
+  effect: { attr: { int: 2 } }
+},
+{
+  id: 'ev_n3_bazong_saima',
+  age: [26, 48],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '周末赛马会，太太们比帽子，先生们比眼光。你随手买的那匹"灰姑娘"爆冷夺冠，全场名媛的笑容同时凝固——你看盘的眼光，从此成了圈内传说。',
+  effect: { attr: { mny: 1, spr: 2 } }
+},
+{
+  id: 'ev_n3_bazong_xintuo',
+  age: [26, 50],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '家族信托律师讲了三个小时架构设计：离岸、防火墙、代持……你终于明白豪门为什么富过三代——人家的离婚、破产和意外，都提前写进了合同。',
+  effect: { attr: { int: 2 } }
+},
+{
+  id: 'ev_n3_bazong_guanjia',
+  age: [22, 46],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '厉家老管家是个宝藏：会八国语言，记得住三百位宾客的忌口，还能在厉承烨皱眉前三秒递上胃药。他悄悄告诉你秘诀："在这个家，总裁是面子，您才是里子。"',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_zhuanfang',
+  age: [24, 46],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '你上了财经频道专访，主持人问成功秘诀，你答："主要是运气好。"播出后"运气好"三个字被做成表情包，公关部连夜开会研究你的凡尔赛式公关学。',
+  effect: { attr: { chr: 1, spr: 2 } }
+},
+
+// ---- 霸总 · 新支线（商战与拉扯） ----
+
+{
+  id: 'ev_n3_bazong_wajue',
+  age: [26, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '顾氏三倍年薪挖厉氏核心技术团队，团队负责人深夜约你喝茶，欲言又止。',
+  choices: [
+    { text: '加钱加股权留人', cond: { attr: { mny: { gte: 5 } } }, effect: { attr: { mny: -2, spr: 1 } }, result: '你把股权协议推过去："要走的留不住，要留的给足。"第二天，团队集体撤回了辞呈。', kind: 'good', big: true },
+    { text: '放人，然后釜底抽薪', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2 } }, result: '你早把核心专利拆分注册在个人名下。团队走了三天，又灰溜溜地回来了——顾氏花三倍年薪，买了个空壳。', kind: 'good', big: true }
+  ]
+},
+{
+  id: 'ev_n3_bazong_jiayun',
+  age: [26, 40],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  kind: 'bad',
+  text: '白月光忽然召开记者会，含泪暗示怀了厉承烨的孩子，热搜连爆三条，全城的瓜农倾巢而出。',
+  choices: [
+    { text: '直接晒时间线打脸', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { spr: 2 } }, result: '你列出他过去半年的行程——其中四个月在国外陪你。记者会变成她的塌房现场，直播弹幕全是"退票"。', kind: 'good', big: true },
+    { text: '让子弹飞一会儿', effect: { attr: { spr: 1 } }, result: '三天后她的公司股价先崩了——有人比你更沉不住气，直接发了律师函，署名：厉承烨。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_lianyin',
+  age: [28, 44],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  text: '沈家家主亲自登门提亲，想让独子娶你名义上的妹妹——明眼人都看得出，这是要用姻亲把厉家绑上沈家的船。',
+  choices: [
+    { text: '促成，但条款往死里谈', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { mny: 2, int: 1 } }, result: '你把彩礼谈成了港口三成股权。沈家主签字时手在抖："厉夫人，比传闻中难对付。"', kind: 'good', big: true },
+    { text: '先问当事人的意思', effect: { attr: { spr: 2 } }, result: '妹妹红着脸说自己早有心上人——是顾家二公子。你扶额：这剧情，作者是懂对称的。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_zachang',
+  age: [26, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '厉氏新品发布会上，被对家买通的记者连环发难，直播弹幕瞬间被水军淹没。',
+  choices: [
+    { text: '现场拆穿', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { chr: 1, spr: 2 } }, result: '你当场调出该记者的收款记录投到大屏。直播人数翻了三倍——全网都说这发布会比电视剧好看。', kind: 'good', big: true },
+    { text: '冷处理，用产品说话', effect: { attr: { mny: 1, spr: 1 } }, result: '新品首销当天卖断货。水军的通稿还挂在热搜上，评论区全是晒单。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_eyi',
+  age: [30, 46],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  text: '海外财团恶意收购厉氏旗下核心子公司，报价狠辣，白衣骑士迟迟未现。',
+  choices: [
+    { text: '亲自飞过去谈判', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { mny: 2, spr: 2 } }, result: '你用对方母公司的债务漏洞反将一军，收购案变成你的战利品展。下飞机时，厉承烨举着"欢迎董事长凯旋"的牌子——全公司都疯了。', kind: 'good', big: true },
+    { text: '断臂求生，出售止损', effect: { attr: { mny: 1, spr: -1 } }, result: '交割那天你请被裁的员工吃了顿饭，承诺三年内挨个请回来。三年后，你做到了。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_shilian',
+  age: [32, 48],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  text: '股东大会前夜，手握关键一票的小股东突然失联——内线说，他被对家请去南方"度假"了。',
+  choices: [
+    { text: '连夜飞过去找人', cond: { attr: { luk: { gte: 4 } } }, effect: { attr: { mny: 1, spr: 2 } }, result: '你在度假村的麻将桌上找到他，陪打了一宿。天亮时他揉着肩膀："票给你。牌品见人品。"', kind: 'good', big: true },
+    { text: '启动B计划，改组议案', effect: { attr: { int: 1, spr: 1 } }, result: '你连夜把议案拆成三个独立表决项，绕过那一票。散会时对手的脸色，比提案本身精彩。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_daiyan',
+  age: [24, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '顶流代言人深夜塌房，品牌部乱成一锅粥，公关总监的电话烫手。',
+  choices: [
+    { text: '凌晨两点发解约声明', effect: { attr: { int: 2, mny: -1 } }, result: '切割快准狠，被网友称为"教科书级解约"，品牌好感度不降反升。代价是你只睡了三个小时。', kind: 'good', big: true },
+    { text: '再观察一天风向', effect: { attr: { spr: -2 } }, result: '第二天塌得更彻底，你含泪多付了一倍公关费。这学费叫：犹豫就会败北。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_cipai',
+  age: [28, 46],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  text: '慈善拍卖夜，你捐出结婚时的钻石项链。顾太太举牌抬价三次，隔着半个会场冲你挑眉。',
+  choices: [
+    { text: '陪她抬到底', cond: { attr: { mny: { gte: 6 } } }, effect: { attr: { mny: -2, spr: 2 } }, result: '你以十倍估价拍回自己的项链，致辞只一句："慈善无输赢，但今晚确实有。"全场起立鼓掌。', kind: 'good', big: true },
+    { text: '微笑放手', effect: { attr: { spr: 1, int: 1 } }, result: '顾太太高价接盘一条她并不需要的项链，笑容逐渐僵硬。你端着香槟，冲她遥遥致意。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_bazong_jiajia',
+  age: [34, 48],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  text: '你主导的跨国并购收官在即，对方CEO在签约桌上临时加价一成，笃定你骑虎难下。',
+  choices: [
+    { text: '合上文件，起身就走', effect: { attr: { mny: 2, int: 1 } }, result: '你走到电梯口时，对方追出来全盘接受原条件。厉承烨听完汇报沉默良久："还好我们是夫妻，不是对手。"', kind: 'good', big: true },
+    { text: '咬牙接受', effect: { attr: { mny: -2, spr: -1 } }, result: '签完你发现对方财报有粉饰痕迹。这学费，交得肉疼，但你记了一辈子。', kind: 'bad' }
+  ]
+},
+
+// ---- 霸总 · 商战日常与感情拉扯 ----
+
+{
+  id: 'ev_n3_bazong_naicha',
+  age: [24, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '你把奶茶店开进厉氏大厦底层，主打产品"总裁同款冰美式（其实总裁喝热水）"。首月流水让集团CFO沉默了十分钟。',
+  effect: { attr: { mny: 2, spr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_lengzhan',
+  age: [26, 42],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '和厉承烨冷战第三天，家里安静得能听见冰箱制冰。第四天清晨，你床头多了一杯热牛奶和一张字条："认输。下次吵架能不能别超过72小时？胃药要过期了。"',
+  effect: { attr: { spr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_xieshu',
+  age: [26, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  once: true,
+  kind: 'good',
+  text: '你匿名写的小说《和霸总协议结婚的日子》爆火，读者催更催上热搜。打赏榜第一的ID叫"文中男主原型"——你看了看正在厨房煮面的某人，决定装傻。',
+  effect: { attr: { spr: 3, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_zili',
+  age: [26, 44],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '谈判桌上对家老总摆资历："我经商时你还在上学。"你把上季度财报推过去："所以您该庆幸，我上学时您没遇到我。"你的助理憋笑憋出了内伤。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+{
+  id: 'ev_n3_bazong_jiahui',
+  age: [28, 46],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '家族聚会，七大姑八大姨轮番催生孩子、问分红、打听股价。厉承烨全程给你剥虾，用行动堵所有问题——虾堆成小山时，全场识趣地换了话题。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_bazong_pinpai',
+  age: [26, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '你的个人品牌上线首日服务器被挤爆，程序员连夜扩容。庆功宴上你举杯："感谢厉总提供的服务器。"厉承烨纠正："是夫妻共同财产。"',
+  effect: { attr: { mny: 2, spr: 2 } }
+},
+{
+  id: 'ev_n3_bazong_taifeng',
+  age: [28, 44],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '结婚纪念日，厉承烨包下整座海岛，结果台风预警，直升机停飞。两位身价千亿的总裁夫妇被困候机厅吃泡面。你嗦着面说："这纪念日，比包岛难忘。"',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_shamat',
+  age: [28, 44],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '对家买通稿黑你"靠脸上位"，配图是你大学时期的杀马特照片。你反手转发并配文"感谢考古，证明我十年如一日的发量"，热搜画风瞬间跑偏。',
+  effect: { attr: { spr: 1, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_nianhui',
+  age: [26, 46],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '公司年会，你抽中特等奖"与总裁共进晚餐"。全场起哄，厉承烨面不改色地宣布："奖品升级——与总裁共进余生。"土味但有效，当晚集团股价微涨。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_bazong_yanjiang',
+  age: [30, 46],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '母校邀你回校演讲，台下学生提问："嫁入豪门是什么体验？"你答："嫁之前我是豪门，嫁之后我们是豪门。"掌声雷动，当晚这句话传遍全网。',
+  effect: { attr: { chr: 1, spr: 2, int: 1 } }
+},
+{
+  id: 'ev_n3_bazong_dahuo',
+  age: [30, 46],
+  pool: 'novel_bazong',
+  weight: 7,
+  kind: 'bad',
+  text: '供应链核心工厂突发大火，交期在即，违约金是天价。你三天睡了六个小时，终于在备选产线上抢出产能。走出车间时，晨光正好。',
+  effect: { attr: { str: -1, int: 2, mny: 1 } }
+},
+{
+  id: 'ev_n3_bazong_beizhu',
+  age: [26, 42],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '厉承烨学会了新技能：在你开会时送奶茶，备注"厉太太专属"。全公司开始赌总裁明天备注什么，行政部顺势成立了奶茶基金。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_bazong_xiangce',
+  age: [28, 48],
+  pool: 'novel_bazong',
+  weight: 7,
+  once: true,
+  kind: 'good',
+  text: '婆婆六十大寿，你送的礼物是一本相册——她年轻时创业的老照片，你托人一张张修复的。老太太翻到第三页就红了眼眶，拉着你的手坐到了主桌。',
+  effect: { attr: { spr: 3, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_zuokong',
+  age: [32, 48],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '空头机构发布百页做空报告，标题惊悚。你只回了一句话："已阅，建议作者改行写小说——可惜想象力用错了地方。"三天后报告漏洞被逐一拆穿，机构巨亏离场。',
+  effect: { attr: { mny: 2, int: 2 } }
+},
+{
+  id: 'ev_n3_bazong_qingrenjie',
+  age: [24, 40],
+  pool: 'novel_bazong',
+  weight: 8,
+  text: '情人节，全公司收到总裁办通知：今日加班双倍工资，理由是"总裁要约会，各位都是帮凶"。员工纷纷表示这种帮凶可以天天当。',
+  effect: { attr: { spr: 2, mny: -1 } }
+},
+{
+  id: 'ev_n3_bazong_emba',
+  age: [24, 44],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '你报了商学院EMBA，同学一半是冲你人脉来的。结课时你说了句大实话："人脉不是资源，是信任——信任没法共享，只能自己挣。"',
+  effect: { attr: { int: 2, spr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_qiyue2',
+  age: [34, 50],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '整理旧物时你翻出当年那份契约，胶带已经发黄。厉承烨从背后环住你："当年你要是签得干脆点，我们还能多谈两年恋爱。"你把契约锁进了保险柜最里层。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_bazong_banjiang',
+  age: [36, 50],
+  pool: 'novel_bazong',
+  weight: 7,
+  text: '商界年度人物颁奖典礼，你和厉承烨同时入围。主持人问谁更希望对方获奖，你们异口同声："我。"全场大笑——势均力敌的夫妻，连谦让都要卷。',
+  effect: { attr: { spr: 2, chr: 1 } }
+},
+{
+  id: 'ev_n3_bazong_rioluo',
+  age: [38, 50],
+  pool: 'novel_bazong',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '决战前夜，你把手机调成静音，和厉承烨在阳台看完了整场日落。谁都没提明天的董事会，但碰杯的时候，两只杯子的声音都特别稳。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+
+// ---- 末世 · 终局铺垫 ----
+
+{
+  id: 'ev_n3_moshi_bianyi',
+  age: [34, 44],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  kind: 'fate',
+  cond: { flags: ['moshi_power'] },
+  text: '前线侦察连带回坏消息：病毒开始二次变异，新型变异体出现了协作迹象，尸群的移动方向前所未有地一致——全都朝着人类最后的安全区。军医放下报告："留给我们的时间，按天算了。"',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+{
+  id: 'ev_n3_moshi_dongyuan',
+  age: [35, 46],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  cond: { attr: { str: { gte: 18 } } },
+  text: '决战总动员令签署的那个下午，基地广播循环播放战前通告。铁匠铺炉火彻夜不熄，学校提前放假，酒馆老板把存酒全搬了出来："打完这仗我请客——活着的都来。"',
+  choices: [
+    { text: '登台做战前演讲', cond: { attr: { chr: { gte: 5 } } }, effect: { attr: { spr: 2, str: 1 } }, result: '你站上高台只说了三句话，台下的火把连成了海。有人喊你的名字，然后所有人都在喊。', kind: 'good', big: true },
+    { text: '挨个巡查最后一遍防线', effect: { attr: { int: 1, str: 1 } }, result: '你摸黑走完整整十公里城墙，拧紧了七处铁丝网。哨兵们说，你在，大家就睡得着。', kind: 'good' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_dengta',
+  age: [36, 48],
+  pool: 'novel_moshi',
+  weight: 9,
+  once: true,
+  big: true,
+  kind: 'fate',
+  text: '决战前夜，你爬上最高的瞭望塔。探照灯扫过无垠废土，远处是黑压压的尸潮，身后是万家灯火——末世第十年，你守着的早已不是一座基地，是"人类"这两个字。',
+  effect: { attr: { spr: 2, int: 1 } }
+},
+
+// ---- 末世 · 废土风物 lore ----
+
+{
+  id: 'ev_n3_moshi_guangbo',
+  age: [20, 46],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '基地广播站每晚七点开播：寻人启事、失物招领、明日天气（永远是"局部地区有尸潮"）。最火的是点歌台，今晚有人给守夜的兄弟点了首《明天会更好》，全基地跟着哼。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_moshi_nongchang',
+  age: [20, 48],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '地下农场是无土栽培的奇迹：荧光灯管当太阳，营养液当土壤。第一茬草莓成熟那天，全基地按人头分，每人一颗——酸得龇牙咧嘴，甜得眼眶发热。',
+  effect: { attr: { spr: 2, str: 1 } }
+},
+{
+  id: 'ev_n3_moshi_jijie',
+  age: [22, 48],
+  pool: 'novel_moshi',
+  weight: 7,
+  text: '废土上的季节有自己的名字：尸潮季、拾荒季、封冻季，以及所有人最盼的"开春季"。老人说末世前叫四季，名字更好听，可惜没人记得全了。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_moshi_yiwu',
+  age: [20, 46],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '拾荒队带回一批旧世界遗物：咖啡机、游戏手柄、一本婚纱照相册。相册被孩子们传看了三天，最后一页写着一行褪色的字："愿你们的婚纱照，背景不是废墟。"',
+  effect: { attr: { spr: 1 } }
+},
+{
+  id: 'ev_n3_moshi_youxi',
+  age: [20, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '基地的孩子们发明了新游戏"丧尸捉人"，被抓到的人要学丧尸走路。你路过时被一群小丧尸围攻，只好配合地倒下——孩子们的笑声，是这末世最硬的通货。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_moshi_jinianbi',
+  age: [24, 48],
+  pool: 'novel_moshi',
+  weight: 7,
+  text: '基地发行了内部纪念币：正面是瞭望塔，背面刻着建基地那年的日期。老烟鬼把第一枚打孔穿绳挂在脖子上："等重建了，这玩意儿就是文物——证明咱从末世里趟过来了。"',
+  effect: { attr: { spr: 2 } }
+},
+
+// ---- 末世 · 新支线（人性抉择） ----
+
+{
+  id: 'ev_n3_moshi_geli',
+  age: [22, 40],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  text: '巡逻队抓回一名疑似感染者：伤口形状像抓痕，但他坚称是铁丝划的。隔离观察要耗珍贵药品；放人，可能酿成灭顶之灾。',
+  choices: [
+    { text: '隔离，并亲自陪护', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { spr: 2 } }, result: '第三天伤口结痂，不是感染。他出隔离区时对你深深鞠躬——后来成了你最得力的巡逻队长。', kind: 'good', big: true },
+    { text: '驱逐出基地', effect: { attr: { spr: -2 } }, result: '一周后他的尸体出现在路边，死于普通伤口引发的败血症。那晚，你多喝了半斤。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_fenliang',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  text: '冬储粮只够七成人过冬。会议上两种声音吵成一团：按劳分配，还是按人头均分。所有人都在等你拍板。',
+  choices: [
+    { text: '按人头分，干部减半', effect: { attr: { spr: 2, int: 1 } }, result: '方案公布那天没人闹事——因为干部们的饭盆比谁都浅。这个冬天难熬，但没人掉队。', kind: 'good', big: true },
+    { text: '按劳分配，多劳多得', effect: { attr: { mny: 1, spr: -1 } }, result: '粮仓守住了。但开春后你数了数，基地少了三十一张熟悉的面孔。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_junxu',
+  age: [26, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  once: true,
+  kind: 'bad',
+  text: '你最信任的军需官私吞药品倒卖，人赃并获。按基地法，当处决。他跪在地上，说家里老娘还病着。',
+  choices: [
+    { text: '依法处置，但养他母亲终老', effect: { attr: { int: 2, spr: -1 } }, result: '行刑那天全基地默哀。你去接他母亲时，老人拉着你的手："孩子，你做得对——是我没教好他。"', kind: 'good', big: true },
+    { text: '废去职务，留用观察', effect: { attr: { spr: -1, int: -1 } }, result: '半年后他再次倒卖，这次害死了三个伤员。刑前你只说了一句："上次，是我错了。"', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_liulang',
+  age: [22, 42],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '基地外来了三十几个衣衫褴褛的流浪者，为首的女人说他们来自被攻破的北方基地，只求一块遮雪的墙根。',
+  choices: [
+    { text: '开城门收容', effect: { attr: { spr: 2, mny: -1 } }, result: '流浪者里有铁匠、兽医和两个老师。三个月后，你无比庆幸那晚开了门。', kind: 'good', big: true },
+    { text: '给粮放行，不留人', effect: { attr: { spr: -1 } }, result: '他们消失在风雪里。之后每年初雪，城墙上都会多一碗没人动过的热汤——你放的。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_toupiao',
+  age: [26, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  big: true,
+  text: '基地第一次全民投票：是否出兵救援百里外被围的邻盟。赞成票险胜三票。你宣布结果时，反对者也默默背起了枪——废土上的民主，是吵完架还能并肩。',
+  effect: { attr: { spr: 2, int: 1 } },
+  kind: 'good'
+},
+{
+  id: 'ev_n3_moshi_shenpan',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  text: '掠夺团俘虏的审判大会，群情激愤要求全部处决。人群中忽然有个孩子喊："他们抢粮，是不是因为也在挨饿？"全场安静了。',
+  choices: [
+    { text: '愿意归降的，编入劳役队', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { spr: 2 } }, result: '三年后，劳役队成了基地最能打的工程营。当年发问的那个孩子，现在是你的书记员。', kind: 'good', big: true },
+    { text: '全部处决，以儆效尤', effect: { attr: { spr: -3 } }, result: '刑场的血渗进冻土。你赢了威慑，却像输了点什么，说不清。', kind: 'bad' }
+  ]
+},
+{
+  id: 'ev_n3_moshi_xuexiao',
+  age: [26, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '你拍板在基地建一所学校，反对声不小："末世识字有什么用？"你只说了一句："末世会结束，孩子要活在结束之后。"开学那天，三十个孩子齐声念"人之初"，守门的壮汉哭得像个孩子。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_laoren',
+  age: [26, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  text: '基地的老人自发组成"经验队"：认得哪种野菜能吃，记得哪口老井没枯，会接生，会看云识天气。你给他们发了双倍配给——在废土上，记忆本身就是战略物资。',
+  effect: { attr: { int: 1, spr: 1 } }
+},
+{
+  id: 'ev_n3_moshi_yuanzheng',
+  age: [28, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  text: '远征队申请穿越死亡辐射区，寻找传说中的国家种子库。九死一生。全队的请战书按满了红手印。',
+  choices: [
+    { text: '批准，亲自带队', cond: { attr: { str: { gte: 7 } } }, effect: { attr: { spr: 2, str: -1 } }, result: '三个月后你们抬回二十箱种子，队伍少了两个人。播种那天，你用他们的名字命名了两块田。', kind: 'good', big: true },
+    { text: '否决，保存实力', effect: { attr: { spr: -1 } }, result: '那年秋天，"种子库"三个字成了基地里不能提的念想。你不知道这个决定是对是错，只知道是你做的。', kind: 'bad' }
+  ]
+},
+
+// ---- 末世 · 基地建设与人性微光 ----
+
+{
+  id: 'ev_n3_moshi_yiyuan',
+  age: [24, 46],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'good',
+  text: '基地医院落成：三间板房，两台手术灯，一位末世前的外科主任。第一台手术成功的消息传开时，有人放起了珍藏的鞭炮——被巡逻队追了半条街。',
+  effect: { attr: { spr: 2, str: 1 } }
+},
+{
+  id: 'ev_n3_moshi_chengqiang',
+  age: [22, 46],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '城墙二期加固完工：十米高的混凝土墙，瞭望塔装上了探照灯。竣工那天孩子们用炭在墙上画满涂鸦，你没让擦——防线防的是丧尸，不是生活。',
+  effect: { attr: { spr: 2, mny: -1 } }
+},
+{
+  id: 'ev_n3_moshi_maoyizhan',
+  age: [24, 48],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'good',
+  text: '你主导的贸易站开市：三大基地以物易物，晶核结算，规矩刻在门口石碑上。首日成交额超预期三倍，连"铁齿"掠夺团都派人来换药——枪没离手，但生意照做。',
+  effect: { attr: { mny: 2, spr: 1 } }
+},
+{
+  id: 'ev_n3_moshi_diantai',
+  age: [22, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '修复的老电台终于响起人声："这里是曙光基地，频率121.5，有人吗？"沉默十秒后，七个基地先后应答。那晚全基地失眠——原来世界上，还有这么多人活着。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_kuaiji',
+  age: [22, 44],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '新人入伙三个月，管仓库的老王始终不肯交钥匙。你问原因，老王说："他末日前的职业栏写的是会计，可他打算盘的手势不对。"三天后，那人卷了半箱药品跑了。',
+  effect: { attr: { int: 1, spr: -1 } }
+},
+{
+  id: 'ev_n3_moshi_shuijing',
+  age: [20, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'bad',
+  text: '主水井水位骤降，有人夜里偷水浇自家菜地。基地颁布限水令，你家菜地第一个枯了——规矩，得从立规矩的人身上先长出来。',
+  effect: { attr: { spr: -1, int: 1 } }
+},
+{
+  id: 'ev_n3_moshi_xinsheng',
+  age: [24, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'good',
+  text: '基地迎来末世后的第十个新生儿。满月酒上，老烟鬼喝多了，抱着孩子哼起跑调的摇篮曲。啼哭声和跑调声混在一起，是末世最好的交响乐。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_xunluo',
+  age: [20, 44],
+  pool: 'novel_moshi',
+  weight: 9,
+  text: '例行巡逻，你带队绕城墙走一圈：检查铁丝网、补充陷阱、给哨兵送热汤。三年三百趟，一趟都没出事——平安从来不是运气，是走出来的。',
+  effect: { attr: { str: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_moshi_dianying',
+  age: [22, 46],
+  pool: 'novel_moshi',
+  weight: 8,
+  text: '露天电影夜：幕布是床单，放映机是拾荒来的老古董，片子是末世前的合家欢喜剧。放到一半发电机熄火，全场安静三秒，然后有人打着手电把结局讲完了。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_liugan',
+  age: [26, 44],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '一场普通流感在基地蔓延，比尸潮更让人心慌。你把指挥部搬进隔离区，半个月后疫情平息。走出隔离区时你懂了：末世的敌人，从来不止丧尸。',
+  effect: { attr: { str: -1, int: 2 } }
+},
+{
+  id: 'ev_n3_moshi_mujiang',
+  age: [24, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'good',
+  text: '老木匠带徒弟们打出基地第一批课桌椅，刨花香味飘了半条街。他摸着椅背说："十年没打过不装枪托的木头了，手生。"',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_moshi_yanti',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 8,
+  kind: 'bad',
+  text: '侦察排在北边发现军方废弃掩体，墙上的作战地图还标着"最终防线"。日志显示，那道防线在命令下达的第九天失守。你把地图带回作战室——记住失败，比纪念胜利有用。',
+  effect: { attr: { int: 2, spr: -1 } }
+},
+{
+  id: 'ev_n3_moshi_hunli',
+  age: [26, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'good',
+  text: '基地办了场集体婚礼：七对新人，婚纱是窗帘改的，戒指是弹壳磨的。证婚人老烟鬼哽咽着念完祝词，最后一句是："都给我活到金婚！"',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_qiushou',
+  age: [28, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '末世第十年的秋收，田里翻着真正的麦浪。粮仓装不下的部分晒满了广场，孩子们躺在谷堆上打滚。老农抓了把麦粒搓了搓，吹掉壳放进嘴里，嚼了很久很久。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_zhanbao',
+  age: [24, 44],
+  pool: 'novel_moshi',
+  weight: 7,
+  text: '广播站开始播"每日战报"：物资存量、巡逻排班、婴儿出生数。有人问为什么坏消息也播，播音员答："大家一起扛的，就不算坏消息。"',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_moshi_qiangwei',
+  age: [28, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  text: '你发现西墙的裂缝里开了一丛蔷薇，没人种过。卫兵要铲，你拦下了。第二天全基地的孩子都跑来看花，你索性在旁边立了块牌子：观赏区，闲人欢迎。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_moshi_buhuan',
+  age: [26, 46],
+  pool: 'novel_moshi',
+  weight: 7,
+  kind: 'bad',
+  text: '"铁齿"掠夺团送来谈判书：用三车弹药，换你们的医疗教官。你盯着"换"字看了很久，提笔回了四个字："人，不换。"当夜，医疗队驻地加派了双岗。',
+  effect: { attr: { spr: 1, int: 1 } }
+},
+{
+  id: 'ev_n3_moshi_lieji',
+  age: [30, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  big: true,
+  kind: 'good',
+  text: '狩猎季结束：粮仓满、弹药足、城墙无损，阵亡名单十年来第一次空白。庆功宴上你把第一杯酒洒在地上："敬没等到今天的人。"全场安静，然后所有人做了同样的动作。',
+  effect: { attr: { spr: 2 } }
+},
+{
+  id: 'ev_n3_moshi_shuxin',
+  age: [32, 48],
+  pool: 'novel_moshi',
+  weight: 7,
+  once: true,
+  kind: 'fate',
+  text: '一封从南方基地辗转半年送达的信，寄信人是你失散多年的旧友，全文只有一句："我还活着，你撑住。"你把信纸抚平，压在作战室地图的透明板下——每次开会，都看得见。',
+  effect: { attr: { spr: 3 } }
+},
+{
+  id: 'ev_n3_moshi_nianan',
+  age: [36, 48],
+  pool: 'novel_moshi',
+  weight: 6,
+  once: true,
+  kind: 'fate',
+  text: '决战动员的最后一晚，你在基地名册上逐一签字。签到最后一个新生儿时，笔尖顿住了——名字一栏写着"念安"。母亲在旁边轻声说："念着平安，就能平安。"',
+  effect: { attr: { spr: 2, int: 1 } }
 }
 ];

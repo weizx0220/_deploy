@@ -202,6 +202,11 @@ var AudioFX = (function () {
     if (bgmEl) { bgmEl.pause(); bgmEl = null; }
   }
 
+  /* 战斗时压低 BGM 而非中断，结束后恢复 */
+  var ducked = false;
+  function duck() { if (bgmEl && !muted) { bgmEl.volume = 0.12; ducked = true; } }
+  function unduck() { if (bgmEl && ducked) { bgmEl.volume = 0.32; ducked = false; } }
+
   /* ================= 对外接口（与旧版兼容） ================= */
   return {
     pluck: pluck,                                   // 合成拨弦（事件出现等，保持轻量）
@@ -213,6 +218,7 @@ var AudioFX = (function () {
     bgm: bgm,
     startBgm: function () { bgm(bgmKey || 'title'); },   // 兼容旧调用
     stopBgm: stopBgm,
+    duck: duck, unduck: unduck,
     toggleMute: function () {
       muted = !muted;
       if (muted) { stopBgm(); }

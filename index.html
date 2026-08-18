@@ -92,6 +92,7 @@
   <!-- 人生 -->
   <section id="screen-life" class="screen">
     <aside id="life-side">
+      <div id="life-name" class="life-name"></div>
       <div id="life-scene" class="hidden"><img id="life-scene-img" alt=""></div>
       <div id="life-age-big">0</div>
       <div class="life-age-label">岁</div>
@@ -240,8 +241,25 @@
       <button class="overlay-close" data-close="overlay-inv">✕</button>
     </div>
     <div class="overlay-body">
-      <p class="legacy-points">盘缠：<b id="inv-coin">0</b></p>
-      <div id="inv-list"></div>
+      <div class="inv-head">
+        <div class="tab-bar" id="inv-tabs">
+          <button class="tab active" data-itab="equip">装备</button>
+          <button class="tab" data-itab="bag">行囊</button>
+        </div>
+        <span class="legacy-points" style="margin:0">盘缠：<b id="inv-coin">0</b></span>
+      </div>
+      <div id="inv-equip">
+        <div class="eq-circle">
+          <div class="eq-center"><div id="eq-center-name"></div><small>命格</small></div>
+          <div class="eq-slot eq-w" data-slot="weapon"></div>
+          <div class="eq-slot eq-a" data-slot="armor"></div>
+          <div class="eq-slot eq-h" data-slot="head"></div>
+          <div class="eq-slot eq-t" data-slot="trinket"></div>
+          <div class="eq-slot eq-c" data-slot="charm"></div>
+        </div>
+        <div id="eq-detail" class="eq-detail"></div>
+      </div>
+      <div id="inv-bag" class="hidden"><div id="inv-list"></div></div>
     </div>
   </div>
 </div>
@@ -265,6 +283,23 @@
         <button id="cb-endturn" class="ink-btn primary" onclick="CardBattle.endTurn()">结束回合</button>
         <button id="cb-concede" class="ink-btn small" onclick="CardBattle.concede()">认输</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 牌组构筑弹层 -->
+<div id="overlay-deck" class="overlay hidden">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <div class="overlay-title">牌组构筑</div>
+      <button class="overlay-close" data-close="overlay-deck">✕</button>
+    </div>
+    <div class="overlay-body">
+      <p class="legacy-points">底牌 8 张（3打击 3格挡 1电光 1凝神）＋ 自由构筑 <b id="dk-count">0</b>/10</p>
+      <div class="dk-sec">—— 当前构筑 · 点击移除 ——</div>
+      <div id="dk-deck" class="dk-grid"></div>
+      <div class="dk-sec">—— 收藏 · 点击加入构筑 ——</div>
+      <div id="dk-coll" class="dk-grid"></div>
     </div>
   </div>
 </div>

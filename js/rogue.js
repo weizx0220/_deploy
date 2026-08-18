@@ -22,6 +22,7 @@ var Rogue = (function () {
 
   var NODE_TYPES = ['fight', 'fight', 'elite', 'event', 'treasure', 'rest'];
   var NODE_NAMES = { fight: '战斗', elite: '精英', event: '奇遇', treasure: '宝箱', rest: '歇息', boss: '塔主' };
+  var MAX_FLOOR = 12;
 
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -43,7 +44,7 @@ var Rogue = (function () {
     R.hpState.hp = st.maxhp;
     R.hpState.max = st.maxhp;
     $('overlay-rogue').classList.remove('hidden');
-    renderMap('幻境入口雾气缭绕，八层高塔直入云霄。登顶者，可向幻境讨一份造化。');
+    renderMap('幻境入口雾气缭绕，十二层高塔直入云霄。登顶者，可向幻境讨一份造化。');
     AudioFX.bgm('novel');
   }
 
@@ -55,12 +56,12 @@ var Rogue = (function () {
 
   /* ---------- 地图层 ---------- */
   function renderMap(msg) {
-    $('rg-floor').textContent = '第 ' + R.floor + ' 层 / 8';
+    $('rg-floor').textContent = '第 ' + R.floor + ' 层 / ' + MAX_FLOOR;
     bar();
     var wrap = $('rg-nodes');
     wrap.innerHTML = '';
     if (msg) logLine(msg);
-    if (R.floor >= 8) {
+    if (R.floor >= MAX_FLOOR) {
       addNode(wrap, 'boss');
       return;
     }
@@ -161,19 +162,45 @@ var Rogue = (function () {
         if (!win) {
           logLine('你不敌倒地，幻境把你吐回了入口。这一趟到此为止。');
           $('rg-nodes').innerHTML = '';
-          return setTimeout(function () { close(false); }, 1400);
+          return setTimeout(function () { offerEndDraft(function () { close(false); }); }, 1200);
         }
         if (isBoss) {
           logLine('雾王座崩塌，幻境认你为主。');
           Game.onRogueClear();
-          return setTimeout(function () { close(true); }, 1400);
+          return setTimeout(function () { offerEndDraft(function () { close(true); }); }, 1200);
         }
         offerRewards(rewardPicks);
       }
     });
   }
 
-  /* ---------- 三选一抓牌（类杀戮尖塔） ---------- */
+  /* ---------- 战后收益（小补给，卡牌改到爬塔结算抓牌） ---------- */
+  function offerRewards(n) {
+    var wrap = $('rg-nodes');
+    wrap.innerHTML = '';
+    logLine('雾气散开，你稍作整顿：');
+    var opts = [
+      { label: '<b>疗伤</b><small>回复 25% 生命</small>', apply: function () {
+        R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.25));
+      } },
+      { label: '<b>感悟</b><small>体质 +1</small>', apply: function () { R.life.attr.str += 1; } },
+      { label: '<b>财货</b><small>拾取 ' + (30 + R.floor * 15) + ' ' + Game.coinName() + '</small>', apply: function () {
+        Game.addCoin(30 + R.floor * 15);
+      } }
+    ];
+    opts.forEach(function (o) {
+      var b = document.createElement('button');
+      b.className = 'rg-node rg-reward';
+      b.innerHTML = o.label;
+      b.onclick = function () {
+        o.apply();
+        n--; if (n > 0) offerRewards(n); else nextFloor();
+      };
+      wrap.appendChild(b);
+    });
+  }
+
+  /* ---------- 爬塔结算抓牌（无论成败，三选一入册） ---------- */
   function draftCards() {
     var pool = CARDS.filter(function (c) { return c.id !== 'c_strike' && c.id !== 'c_guard' && c.id !== 'c_focus' && c.id !== 'c_spark'; });
     var W = [40, 30, 20, 10];   // 品质权重
@@ -189,29 +216,25 @@ var Rogue = (function () {
     return opts;
   }
 
-  function offerRewards(n) {
+  function offerEndDraft(onDone) {
     var wrap = $('rg-nodes');
     wrap.innerHTML = '';
-    logLine('战利品浮现，择一而取：');
+    logLine('幻境临别赠礼——择一张卡牌收入囊中：');
     draftCards().forEach(function (c) {
       var b = document.createElement('button');
       b.className = 'rg-node rg-reward rg-card';
       b.innerHTML = '<b>' + c.name + '</b><small>' + c.desc + '</small>';
       b.onclick = function () {
-        R.deck.push(c.id);
-        logLine('获得卡牌「' + c.name + '」。');
-        n--; if (n > 0) offerRewards(n); else nextFloor();
+        Game.collectCard(c.id);
+        logLine('「' + c.name + '」已收入你的牌册。');
+        setTimeout(onDone, 900);
       };
       wrap.appendChild(b);
     });
-    // 跳过：回血
     var skip = document.createElement('button');
     skip.className = 'rg-node rg-rest';
-    skip.innerHTML = '<b>放弃抓牌</b><small>回复 15% 生命</small>';
-    skip.onclick = function () {
-      R.hpState.hp = Math.min(R.hpState.max, R.hpState.hp + Math.round(R.hpState.max * 0.15));
-      n--; if (n > 0) offerRewards(n); else nextFloor();
-    };
+    skip.innerHTML = '<b>都不要</b><small>拂袖而去</small>';
+    skip.onclick = function () { setTimeout(onDone, 100); };
     wrap.appendChild(skip);
   }
 

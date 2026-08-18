@@ -17,10 +17,14 @@ var ITEMS = [
   { id: 'it_robe', name: '云纹道袍', slot: 'armor', rarity: 3, desc: '灵丝织就，万法不沾。', def: 18, hp: 120, price: 460 },
   /* 饰品 */
   { id: 'it_ring', name: '幸运戒指', slot: 'trinket', rarity: 1, desc: '戴上它，抽奖手气都好了。', hp: 30, price: 90 },
-  { id: 'it_amulet', name: '护身符', slot: 'trinket', rarity: 1, desc: '庙里求来的，主打一个心安。', def: 4, hp: 30, price: 80 },
-  { id: 'it_jade2', name: '暖玉吊坠', slot: 'trinket', rarity: 2, desc: '温润养人，附带回春之效。', hp: 60, skill: 'sk_heal', price: 220 },
-  { id: 'it_bamboo_hat', name: '旧斗笠', slot: 'trinket', rarity: 2, desc: '斗笠压眉，生人勿近。', def: 6, hp: 60, price: 200 },
-  { id: 'it_crown', name: '荆棘之冠', slot: 'trinket', rarity: 3, desc: '伤人也伤己，攻击力大增。', atk: 10, hp: 80, price: 420 },
+  { id: 'it_amulet', name: '护身符', slot: 'charm', rarity: 1, desc: '庙里求来的，主打一个心安。', def: 4, hp: 30, price: 80 },
+  { id: 'it_jade2', name: '暖玉吊坠', slot: 'charm', rarity: 2, desc: '温润养人，附带回春之效。', hp: 60, skill: 'sk_heal', price: 220 },
+  { id: 'it_bamboo_hat', name: '旧斗笠', slot: 'head', rarity: 2, desc: '斗笠压眉，生人勿近。', def: 6, hp: 60, price: 200 },
+  { id: 'it_crown', name: '荆棘之冠', slot: 'head', rarity: 3, desc: '伤人也伤己，攻击力大增。', atk: 10, hp: 80, price: 420 },
+  /* 头饰 */
+  { id: 'it_headband', name: '束发金冠', slot: 'head', rarity: 1, desc: '束发正冠，气度自生。', def: 3, hp: 35, price: 95 },
+  /* 法宝 */
+  { id: 'it_bell', name: '摄魂铃', slot: 'charm', rarity: 2, desc: '铃音一响，敌胆俱寒。', atk: 6, hp: 40, price: 230 },
   /* 消耗品 */
   { id: 'it_apple', name: '大红苹果', slot: 'use', rarity: 0, desc: '一天一苹果，医生远离我。', price: 15, use: { attr: { str: 1 } } },
   { id: 'it_ginseng', name: '老山参', slot: 'use', rarity: 1, desc: '大补元气。', price: 60, use: { attr: { str: 2 } } },

@@ -1172,4 +1172,1116 @@ var EVENTS_REALITY = [
     { text: '押上全部零花钱', cond: { attr: { luk: { gte: 7 } } }, effect: { coin: -30, items: ['it_ring'], attr: { spr: 2 } }, result: '最后一个圈划出完美弧线，套中角落里的戒指。摊主脸都绿了："小伙子，明天别来了啊。"', kind: 'good' }
   ] }
 
+/* ========== 第三轮扩充：阶段衔接 + 连锁收尾 + 全龄日常（ev_r3_ 前缀） ==========
+   本批新增连锁 flag（仅续用旧 flag，不设新结局依赖）：
+     青梅线续：qm_together 后续日常
+     结拜线续：sworn_gone 和解
+     初恋线续：fl_broken / fl_reunited 余韵
+     健身线续：fit / fit_body 后续
+     写作线续：writer / writer_signed / writer_famous 后续
+     考证线续：r2_cert / r2_cert_pass 后续
+     摆摊线续：r2_stall / r2_stall_master 后续
+     骑行线续：r2_ride / r2_ride_pro 后续
+     养猫线续：r2_cat 日常
+*/
+
+// ---- 人生阶段过渡（once + fate，进一生回望） ----
+,{ id: 'ev_r3_tr_preschool', age: [5, 7], once: true, big: true, kind: 'fate',
+  text: '上小学前的那个夏天，母亲握着你的手教你写自己的名字。开学前夜，新书包端端正正摆在床头，你摸着它睡着，梦里全是上课铃。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_tr_primary_end', age: [11, 13], once: true, big: true, kind: 'fate',
+  text: '小学毕业典礼，校歌唱到一半有人哭了。同学录你写得满满当当，最好看的那一页，留给了最好的朋友。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_tr_middle_first', age: [12, 13], once: true, big: true, kind: 'fate',
+  text: '初中开学，教室搬到了四楼，同桌换成陌生人。你在新课本扉页一笔一划写下名字，像给新生活盖了章。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_tr_after_zhongkao', age: [15, 16], once: true, big: true, kind: 'fate',
+  text: '中考结束，暑假长得像一辈子。你昏睡三天，疯玩一周，然后某个傍晚突然有点想念上学的日子。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_tr_high_first', age: [15, 16], once: true, big: true, kind: 'fate',
+  text: '高中开学第一天，黑板右上角写着"距高考还有1000天"。你觉得遥遥无期。后来才知道，弹指一挥。',
+  effect: { attr: { int: 1 } } },
+{ id: 'ev_r3_tr_after_gaokao', age: [17, 19], once: true, big: true, kind: 'fate',
+  text: '高考后的夏天，蝉鸣得肆无忌惮。你把草稿纸撕了折成飞机，从教学楼顶一架架放飞——十二年的重量，原来轻得像纸。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_tr_leave_home', age: [18, 19], once: true, big: true, kind: 'fate',
+  text: '离家上大学那天，母亲往你包里塞煮鸡蛋，塞到拉链合不上。火车开动时她在站台上挥手，你第一次发现，她那么小。',
+  effect: { attr: { spr: -1, int: 1 } } },
+{ id: 'ev_r3_tr_graduate', age: [21, 23], once: true, big: true, kind: 'fate',
+  text: '大学毕业：拨穗，合影，散伙饭。行李箱轮子的声音在楼道里响了一整天，四年就这么被一个一个拖走了。',
+  effect: { attr: { int: 2, spr: -1 } } },
+{ id: 'ev_r3_tr_first_job', age: [22, 26], once: true, big: true, kind: 'fate',
+  text: '入职第一天，你提前四十分钟到公司楼下，在便利店坐了三首歌的时间。工牌挂上脖子那一刻，学生时代正式杀青。',
+  effect: { attr: { mny: 1, spr: 1 } } },
+{ id: 'ev_r3_tr_job_hop', age: [26, 40], once: true, big: true, kind: 'fate',
+  text: '提离职那天，领导挽留的话术你都能替他说完。抱着纸箱走出写字楼，晚风扑面——世界很大，你想再看看。',
+  effect: { attr: { mny: 1, spr: 2 } } },
+{ id: 'ev_r3_tr_30', age: [30, 30], once: true, big: true, kind: 'fate',
+  text: '三十岁生日，没有想象中的惶恐。二十岁时以为三十岁会拥有一切，真到了才发现：拥有此刻，就够好。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_tr_40', age: [40, 40], once: true, big: true, kind: 'fate',
+  text: '四十岁。吹蜡烛前你想了很久，只许了一个愿：家人健康。愿望变少了，是因为终于懂得什么最贵。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_tr_empty_nest', age: [46, 58], once: true, big: true, kind: 'fate',
+  cond: { flags: ['has_child'] },
+  text: '孩子去外地上大学，家里突然安静得能听见冰箱运行的声音。你做了三个菜，两个人对着一桌子饭，各自多盛了半碗。',
+  effect: { attr: { spr: -1 } } },
+{ id: 'ev_r3_tr_pre_retire', age: [55, 59], once: true, big: true, kind: 'fate',
+  text: '退休倒计时一年。你开始整理三十多年的工作笔记，厚厚一摞，是半辈子的报表和会议，也是半辈子的光阴。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_tr_retire_ceremony', age: [57, 63], once: true, big: true, kind: 'fate',
+  text: '单位为你办了退休仪式：鲜花、掌声、一本烫金纪念册。你上台讲了五分钟，感谢大家，也谢谢那个加了无数班却没掉队的自己。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_tr_60', age: [60, 60], once: true, big: true, kind: 'fate',
+  text: '六十岁，耳顺之年。生日宴上你发表感言：前半生听别人的，后半生听自己的——但血压，听医生的。全场笑倒一片。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_tr_movein', age: [72, 85], once: true, big: true, kind: 'fate',
+  text: '子女劝你搬去同住。老屋住了一辈子，搬与不搬，都是一道大题。',
+  choices: [
+    { text: '搬过去，含饴弄孙', effect: { attr: { spr: 2 } }, result: '热闹是真热闹，就是遥控器永远抢不过小的。', kind: 'good' },
+    { text: '守住老屋，自由万岁', effect: { attr: { spr: 1 } }, result: '子女隔天一个视频，距离产生的美，刚刚好。' }
+  ] },
+
+// ---- 连锁续篇 ----
+{ id: 'ev_r3_qm_home', age: [25, 40], once: true, kind: 'good',
+  cond: { flags: ['qm_together'] },
+  text: '你们搬进了自己的小家。刷墙时他把涂料蹭到你脸上，你反手抹了回去。白墙还没干，日子已经先甜了。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_qm_anniv', age: [28, 50], once: true, kind: 'good',
+  cond: { flags: ['qm_together'] },
+  text: '结婚纪念日，你们回到当年分冰棍的小卖部门口。店早换了主人，冰棍从五毛涨到了五块。你们分着吃了一根，还是当年的味。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_qm_old', age: [60, 85], once: true, big: true, kind: 'good',
+  cond: { flags: ['qm_together'] },
+  text: '傍晚散步，你们还是习惯性地走成并排。从分一根冰棍到互相搀扶，六十年一句话没说过"永远"，却一天都没分开过。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_sworn_help', age: [30, 55], once: true, kind: 'good',
+  cond: { flags: ['sworn'], notFlags: ['sworn_gone'] },
+  text: '你资金周转不开，焦头烂额之际，结拜兄弟二话不说转来一笔钱，附言："当年的辣条不能白吃。"你盯着转账记录看了很久。',
+  effect: { attr: { mny: 2, spr: 2 } } },
+{ id: 'ev_r3_sworn_reconcile', age: [45, 70], once: true, kind: 'fate',
+  cond: { flags: ['sworn_gone'] },
+  text: '医院走廊里，你和多年不来往的结拜兄弟狭路相逢。对视三秒，他先开口："最近……还好吗？"',
+  choices: [
+    { text: '从兜里摸出一根辣条递过去', effect: { delFlags: ['sworn_gone'], setFlags: ['sworn'], attr: { spr: 2 } }, result: '两个老头分着一根辣条，笑得像操场角落里的少年。盟约，续期。', kind: 'good' },
+    { text: '点点头，擦肩而过', effect: { attr: { spr: -1 } }, result: '走出很远你回了次头，他还站在原地。有些门，关上了就难再开。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_sworn_win', age: [35, 60], once: true, big: true, kind: 'good',
+  cond: { flags: ['sworn_partner'], notFlags: ['sworn_gone'] },
+  text: '合伙的生意熬过了最难的三年，终于开始盈利。分红那天你们没去大酒店，蹲在路边摊碰杯：辣条盟约，果然靠谱。',
+  effect: { attr: { mny: 3, spr: 2 } } },
+{ id: 'ev_r3_fl_letter', age: [20, 35], once: true,
+  cond: { flags: ['fl_broken'] },
+  text: '整理旧物，翻出一封当年没送出去的信。字迹青涩，落款郑重。你读了两遍，最后把它重新夹回那本旧书里。',
+  effect: { attr: { spr: -1, int: 1 } } },
+{ id: 'ev_r3_fl_photo', age: [30, 55], once: true,
+  cond: { flags: ['fl_broken'] },
+  text: '同学群有人发了张毕业合影。你和初恋站在最边上，中间隔着三个人。你把照片放大看了很久，笑了，也酸了。',
+  effect: { attr: { spr: -1 } } },
+{ id: 'ev_r3_fl_gift', age: [35, 55], once: true, kind: 'good',
+  cond: { flags: ['fl_reunited'] },
+  text: '收到初恋寄来的包裹：当年你借出去的那块橡皮，被塑封得整整齐齐，附言只有四个字——"物归原主"。你笑了半天，把它摆上了书架。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_fit_plateau', age: [21, 50], once: true,
+  cond: { flags: ['fit'], notFlags: ['fit_body'] },
+  text: '健身第三个月，体重卡在原地一动不动，秤像在嘲笑你。',
+  choices: [
+    { text: '换计划，加餐加练', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { str: 2 } }, result: '一个月后平台期破了。原来身体和人一样，逼一逼才肯往前走。', kind: 'good' },
+    { text: '歇一周再说', effect: { attr: { str: -1, spr: 1 } }, result: '你躺了一周，回来状态反而更好。休息也是训练的一部分——你信了。' }
+  ] },
+{ id: 'ev_r3_fit_mentor', age: [26, 60], once: true, kind: 'good',
+  cond: { flags: ['fit_body'] },
+  text: '健身房新来的小伙子动作不对，你顺手带了带。三个月后他练出了线条，逢人就管你叫师父。你摆摆手：都是汗换的。',
+  effect: { attr: { spr: 2, chr: 1 } } },
+{ id: 'ev_r3_fit_old', age: [55, 80], once: true, big: true, kind: 'good',
+  cond: { flags: ['fit_body'] },
+  text: '健身房给你颁了面锦旗：本店最年长全勤会员。镜子里你白发配肌肉，违和又威风。年轻人们排队跟你合影，喊你"硬核大爷/大妈"。',
+  effect: { attr: { str: 1, spr: 3 } } },
+{ id: 'ev_r3_writer_block', age: [25, 45], once: true,
+  cond: { flags: ['writer'], notFlags: ['writer_famous'] },
+  text: '卡文第三天，文档停在同一句话，光标闪得像在嘲讽你。',
+  choices: [
+    { text: '出门暴走十公里找灵感', effect: { attr: { int: 1, spr: 1 } }, result: '走到第七公里，情节突然自己长出来了。你蹲在路边记了满满一屏备忘录。', kind: 'good' },
+    { text: '硬憋，不信写不出来', effect: { attr: { spr: -1 } }, result: '憋出三千字，第二天早上全删了。写作这事，有时候先认输才赢。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_writer_hater', age: [28, 55], once: true,
+  cond: { flags: ['writer_signed'] },
+  text: '书评区冒出一条千字长评，逐章挑刺，有理有据，字字诛心。',
+  choices: [
+    { text: '认真读完，挑出三分道理', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 2, spr: -1 } }, result: '下一本书的短板全补上了。你在后记里谢了那位读者，虽然不知道他是谁。', kind: 'good' },
+    { text: '拉黑删评，眼不见为净', effect: { attr: { spr: 1 } }, result: '书评区岁月静好。只是偶尔深夜，你还会想起那几句扎心的实话。' }
+  ] },
+{ id: 'ev_r3_writer_film', age: [35, 65], once: true, big: true, kind: 'good',
+  cond: { flags: ['writer_famous'] },
+  text: '你的小说被改编成影视剧，开播那晚你守在屏幕前。弹幕刷过一片"原著党狂喜"，你截了图，发了条仅自己可见的朋友圈。',
+  effect: { attr: { mny: 3, spr: 2 } } },
+{ id: 'ev_r3_cert_group', age: [23, 40], once: true,
+  cond: { flags: ['r2_cert'] },
+  text: '备考群里认识了几个考友，互相打卡，互相泼冷水。有人凌晨发一句"今日刷题200道"，全群垂死病中惊坐起。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_cert_teacher', age: [26, 50], once: true, kind: 'good',
+  cond: { flags: ['r2_cert_pass'] },
+  text: '同事备考你考过的那个证，天天来请教。你把笔记倾囊相授，像看到当年的自己。他考过那天，比你还激动。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_cert_more', age: [30, 55], once: true,
+  cond: { flags: ['r2_cert_pass'] },
+  text: '考证这事有点上瘾，你又盯上了一本含金量更高的。',
+  choices: [
+    { text: '再战一次', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2, mny: 1 } }, result: '又拿下了。书架上的证书排成一列，像你的个人勋章墙。', kind: 'good' },
+    { text: '见好就收', effect: { attr: { spr: 1 } }, result: '你把备考时间换成了晚饭后的散步。证书够用就好，日子也是。' }
+  ] },
+{ id: 'ev_r3_stall_regular', age: [25, 50], once: true, kind: 'good',
+  cond: { flags: ['r2_stall'] },
+  text: '你的摊位有了回头客：阿姨帮你照看生意，加班晚归的年轻人说"就等你出摊"。小摊成了街角的一盏灯。',
+  effect: { attr: { mny: 1, spr: 2 } } },
+{ id: 'ev_r3_stall_rain', age: [25, 50], once: true,
+  cond: { flags: ['r2_stall'] },
+  text: '出摊赶上暴雨，生意泡了汤。隔壁卖烤红薯的大爷默默把大伞挪了一半给你。那晚没赚着钱，但红薯是真甜。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_stall_branch', age: [35, 60], once: true, big: true, kind: 'good',
+  cond: { flags: ['r2_stall_master'] },
+  text: '你在街对面开了第二家分店，交给最得力的老员工打理。开业那天，来捧场的第一批顾客，还是当年地铁口那一拨。',
+  effect: { attr: { mny: 3, spr: 2 } } },
+{ id: 'ev_r3_ride_commute', age: [20, 55], once: true,
+  cond: { flags: ['r2_ride'] },
+  text: '你开始骑车通勤，单程四十分钟。红绿灯都熟了，风也熟了。一个月后，裤腰悄悄松了一格。',
+  effect: { attr: { str: 2, spr: 1 } } },
+{ id: 'ev_r3_ride_race', age: [25, 60], once: true,
+  cond: { flags: ['r2_ride_pro'] },
+  text: '业余自行车公开赛，你咬牙刷了报名费。发令枪响，几百辆车涌出去，像一群出笼的鸽子。',
+  choices: [
+    { text: '跟住第一集团，冲名次', cond: { attr: { str: { gte: 6 } } }, effect: { attr: { str: 2, spr: 2 } }, result: '季军！站上领奖台时腿还在抖。奖牌不大，含金量全是汗水。', kind: 'good' },
+    { text: '安全完赛，突破自我', effect: { attr: { str: 1, spr: 2 } }, result: '完赛成绩比自己最好纪录快了两分钟。赢过昨天的自己，也是赢。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_ride_veteran', age: [50, 70], once: true, big: true, kind: 'good',
+  cond: { flags: ['r2_ride_pro'] },
+  text: '骑行队来了批新人，看见你车架上贴满的里程贴纸，齐喊"老炮"。领骑那天你把他们拉得只剩背影，然后在坡顶停下来等——传承嘛。',
+  effect: { attr: { str: 1, spr: 2 } } },
+{ id: 'ev_r3_cat_video', age: [19, 50], once: true,
+  cond: { flags: ['r2_cat'] },
+  text: '你随手拍的来福视频火了：它一巴掌拍翻你的咖啡，眼神毫无悔意。评论区十万人云吸猫，来福正式出道，你沦为它的经纪人。',
+  effect: { coin: 30, attr: { spr: 2 } } },
+{ id: 'ev_r3_cat_vet', age: [22, 60], once: true,
+  cond: { flags: ['r2_cat'] },
+  text: '来福蔫了两天，不吃不喝，平时抢都抢不走的罐头闻都不闻。',
+  choices: [
+    { text: '连夜送医，砸钱治', effect: { attr: { mny: -2, spr: 1 } }, result: '输液三天，它痊愈出院，回家路上就把脑袋搁在了你胳膊上。', kind: 'good' },
+    { text: '先观察两天', effect: { attr: { spr: -2 } }, result: '你守了它两夜没敢睡。好在只是肠胃炎，你抱着失而复得的它，鼻子发酸。' }
+  ] },
+{ id: 'ev_r3_cat_zen', age: [25, 70], once: true, kind: 'good',
+  cond: { flags: ['r2_cat'] },
+  text: '朋友说你这两年脾气变好了。你想了想：每天下班回家，都有个毛团子蹲在门口等你——被需要，原来是最好的药。',
+  effect: { attr: { spr: 2, chr: 1 } } },
+
+// ---- r3 · 0-9 岁日常 ----
+{ id: 'ev_r3_kid_walk_school', age: [6, 9],
+  text: '第一次自己上学，母亲在阳台上目送。你背着书包走出巷口，觉得全世界都在看你。',
+  choices: [
+    { text: '一路小跑，准点到校', effect: { attr: { spr: 1 } }, result: '你第一个到教室，帮老师发完了全班的作业本。', kind: 'good' },
+    { text: '路上看蚂蚁搬家，迟到了', effect: { attr: { int: 1, spr: -1 } }, result: '被罚站五分钟。但那队蚂蚁搬家的阵型，你记了一辈子。' }
+  ] },
+{ id: 'ev_r3_kid_soy_sauce', age: [5, 9], once: true,
+  text: '母亲第一次派你独自去打酱油，五块钱攥在手心，汗都攥出来了。',
+  choices: [
+    { text: '圆满完成任务', effect: { attr: { spr: 2, int: 1 } }, result: '酱油打回来了，找回的零钱一分不少。晚饭那盘菜，你觉得格外香。', kind: 'good' },
+    { text: '钱买了糖，酱油忘了', effect: { attr: { spr: 1, int: -1 } }, result: '糖是甜的，母亲的脸是黑的。你含着糖挨训，滋味复杂。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_kid_blackout', age: [4, 10],
+  text: '夏夜停电，全家把竹床搬上天台。你躺着数星星，听大人讲古，蒲扇的风一下一下，把夜晚扇得很慢。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_kid_sprout', age: [5, 9],
+  text: '自然课发的黄豆，你天天浇水、写日记。第七天清晨，杯子里的土顶出一点绿。你举着杯子满楼跑，像举着诺贝尔奖。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_kid_injection', age: [4, 9],
+  text: '学校组织打预防针，队伍排得很长，针头在白大褂手里闪着寒光。',
+  choices: [
+    { text: '咬紧牙关不哭', effect: { attr: { str: 1, spr: 1 } }, result: '针扎进去那下你硬是没吭声。老师说你是小男子汉/小女侠，你骄傲了一星期。', kind: 'good' },
+    { text: '哭得惊天动地', effect: { attr: { spr: 1 } }, result: '三层楼都听见了。护士塞给你一颗糖，你挂着眼泪说：糖真甜。' }
+  ] },
+{ id: 'ev_r3_kid_bike_learn', age: [6, 10], once: true,
+  text: '学自行车，父亲在后面扶着后座，喊："别回头，往前看！"',
+  choices: [
+    { text: '蹬！往前看', effect: { attr: { str: 1, spr: 2 } }, result: '骑出二十米你回了头——他早松手了，站在原地鼓掌。那天你学会了骑车，也隐约懂了父爱。', kind: 'good' },
+    { text: '回头确认他还在', effect: { attr: { str: -1, spr: -1 } }, result: '车头一歪摔进花坛。他跑过来先笑够了，才把你扶起来。' }
+  ] },
+{ id: 'ev_r3_kid_piano', age: [5, 10],
+  text: '钢琴考级前夜，你错音连篇，母亲的表情比考级曲目还难弹。',
+  choices: [
+    { text: '突击苦练到深夜', effect: { attr: { int: 1, spr: -1 } }, result: '居然过了。证书到手，你第一时间拿去垫了桌脚——故意的。' },
+    { text: '摆烂，临场即兴', effect: { attr: { spr: 1 } }, result: '考级现场你弹出了自己的风格。考官沉默良久，在评语栏写下：富有创造力。' }
+  ] },
+{ id: 'ev_r3_kid_snow', age: [3, 10],
+  text: '人生第一场大雪。你堆了个歪歪扭扭的雪人，把自己的围巾给它戴上。第二天雪人矮了半截，你跟它说了声：辛苦了。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_kid_lost', age: [4, 8], once: true,
+  text: '商场人挤人，一转头，母亲不见了。广播声、脚步声，全世界的声音都变大了。',
+  choices: [
+    { text: '原地站着不动，等', effect: { attr: { spr: 1 } }, result: '十分钟后母亲疯了一样冲过来抱住你。你记住的守则，救了你一次。', kind: 'good' },
+    { text: '哭着找穿制服的保安', cond: { attr: { int: { gte: 4 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '广播响起："请某某家长速到服务台。"母亲赶到时，你正吃着保安给的饼干。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_kid_cicada', age: [6, 11],
+  text: '午后你粘了一火柴盒知了，视若珍宝。半夜它们集体大合唱，被母亲连盒请出了家门。你在门缝里跟它们道了晚安。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_kid_homework_summer', age: [7, 12],
+  text: '暑假最后一天，两个月的作业摊了一桌。你边哭边写，笔走龙蛇，一夜长大。从此懂了什么叫" deadline 是第一生产力"的童年版。',
+  effect: { attr: { int: 1, spr: -1 } } },
+{ id: 'ev_r3_kid_teacher_praise', age: [6, 11], kind: 'good',
+  cond: { attr: { int: { gte: 5 } } },
+  text: '你的作文被当作范文在全班朗读。你低着头假装谦虚，耳朵尖红得透明，放学路上连蹦了三里地。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_kid_secret_base', age: [5, 10],
+  text: '你和同桌在小区假山后面建了"秘密基地"，藏了一玻璃罐弹珠和半包辣条。你们拉钩约定：谁也不许说出去，包括未来的老婆。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_kid_grandpa_bike', age: [4, 9],
+  text: '外公的二八大杠，你斜坐在横梁上，风从耳边呼呼地过。那是你童年坐过最快的车，比后来所有车都快。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_kid_rain_puddle', age: [3, 9],
+  text: '雨后你专挑水坑踩，水花溅多高，笑声就多大。回家挨了顿骂，新鞋湿透。你觉得值。',
+  effect: { attr: { spr: 2, str: -1 } } },
+{ id: 'ev_r3_kid_report_card', age: [7, 12],
+  text: '期末成绩单发下来了，要家长签字。分数嘛，一言难尽。',
+  choices: [
+    { text: '如实上交，听候发落', effect: { attr: { spr: -1, int: 1 } }, result: '预想中的暴风雨没来。父亲签了字，只说："下次把会的都做对。"' },
+    { text: '模仿签名，技术过关', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: -1, spr: -1 } }, result: '老师一个电话打回家，你的"书法生涯"当天退役，附赠混合双打。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_kid_money', age: [6, 11],
+  text: '这个星期的零花钱到手，五块钱，巨款。怎么花，是个战略问题。',
+  choices: [
+    { text: '存进小猪储蓄罐', effect: { attr: { mny: 1, int: 1 } }, result: '罐子一天比一天沉。你第一次体会到"积少成多"四个字的重量。', kind: 'good' },
+    { text: '全换成干脆面', effect: { attr: { spr: 1 } }, result: '十包干脆面，吃出一张稀有卡。同桌出三倍价钱收购，你理都没理。' },
+    { text: '请同桌吃辣条', effect: { attr: { chr: 1, spr: 1 } }, result: '两包辣条换来的友谊，比辣条还经嚼。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_kid_night', age: [3, 8],
+  text: '今晚要自己睡。灯一关，衣柜的影子像怪兽，窗帘缝里漏的光像眼睛。',
+  choices: [
+    { text: '开小夜灯，战胜恐惧', effect: { attr: { spr: 1, int: 1 } }, result: '后半夜你睡熟了。早上醒来发现：怪兽一晚上都没敢来。', kind: 'good' },
+    { text: '抱被子投奔父母大床', effect: { attr: { spr: 1 } }, result: '父亲被挤到床边睡了一夜。第二天他打着哈欠说：今晚继续自己睡。' }
+  ] },
+{ id: 'ev_r3_kid_perform', age: [5, 9],
+  text: '六一汇演，你在《森林的故事》里扮演一棵树——的第三片叶子。',
+  choices: [
+    { text: '认真演好这片叶子', effect: { attr: { spr: 1, int: 1 } }, result: '你一动不动站了全场，老师说你的叶子最有定力。没有小角色，只有小演员。' },
+    { text: '抢戏：叶子成精了', effect: { attr: { chr: 1, spr: 2 } }, result: '你给自己加了抖叶子的戏，全场爆笑。主角哭了，你火了。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_kid_move', age: [5, 10], once: true, kind: 'fate',
+  text: '搬家的卡车开走那天，你扒着车窗看老房子越变越小。新城市、新学校、新口音，一切从头开始。',
+  effect: { attr: { spr: -1, int: 1 } } },
+{ id: 'ev_r3_kid_cook_egg', age: [7, 12], once: true,
+  text: '趁大人不在，你决定下厨煎个蛋，证明自己的实力。',
+  choices: [
+    { text: '小心翼翼，严格按回忆操作', effect: { attr: { spr: 2, int: 1 } }, result: '蛋边有点糊，但成型了。母亲回来惊喜地拍照发了全家群。', kind: 'good' },
+    { text: '自由发挥', effect: { attr: { spr: 1 } }, result: '蛋壳比蛋多，厨房像战场。父亲收拾残局时说：勇气可嘉，下不为例。' }
+  ] },
+{ id: 'ev_r3_kid_help_bullied', age: [7, 12],
+  text: '同桌被高年级学生抢走了文具盒，趴在桌上不敢吭声。',
+  choices: [
+    { text: '陪他去找老师', effect: { attr: { int: 1, spr: 1 } }, result: '文具盒要回来了。同桌把最喜欢的橡皮送给了你。', kind: 'good' },
+    { text: '拉上全班男生去"谈判"', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { str: 1, spr: 1 } }, result: '十几个人往那儿一站，对方乖乖归还。你悟了：团结就是最大的肌肉。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_kid_firework', age: [4, 10],
+  text: '过年你攒了一把摔炮，往地上一撒，"啪"的一声把自己吓得蹦起来。全家笑翻，你拍拍胸口：我是故意的。',
+  effect: { attr: { spr: 1 } } },
+
+// ---- r3 · 10-19 岁日常 ----
+{ id: 'ev_r3_teen_note', age: [12, 17],
+  text: '上课传纸条，传到第五手时被老师凌空截获。全班屏息，老师展开纸条——',
+  choices: [
+    { text: '一人做事一人当', effect: { attr: { chr: 1, spr: -1 } }, result: '你站起来认了。罚站一节课，但同桌欠你一个人情，记了三年。' },
+    { text: '纸条上写的是解题思路', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '老师看完点点头："思路不错，下课来我办公室讲讲。"虚惊一场，还混了顿表扬。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_teen_military', age: [14, 16],
+  text: '军训一周，晒脱一层皮，正步踢得同手同脚。汇演那天你们班居然拿了第一，教官笑得比谁都灿烂。',
+  effect: { attr: { str: 1, spr: 2 } } },
+{ id: 'ev_r3_teen_phone', age: [13, 17],
+  text: '你拥有了人生第一部手机。全家为此开了个短会，主题是"约法三章"。',
+  choices: [
+    { text: '自觉使用，说到做到', effect: { attr: { int: 1, spr: 1 } }, result: '你成了亲戚圈里"别人家的孩子"——自律版。', kind: 'good' },
+    { text: '半夜被窝里偷偷刷', effect: { attr: { int: -1, spr: 1 } }, result: '快乐了半个月，成绩坐了一次滑梯。母亲没收手机时什么都没说，眼神说明了一切。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_teen_basketball', age: [12, 18],
+  text: '班级篮球赛决赛，最后十秒，落后一分，球传到了你手里。',
+  choices: [
+    { text: '出手！', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { str: 2, spr: 2 } }, result: '哨响球进，压哨绝杀！全场炸锅，你被队友压在人堆最底下，笑得喘不过气。', kind: 'good' },
+    { text: '传给位置更好的队友', effect: { attr: { spr: 2, int: 1 } }, result: '助攻制胜。队友被围在中间，冲你比了个大拇指。有些高光，姓"团队"。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_teen_diary', age: [12, 16], kind: 'bad',
+  text: '母亲收拾房间时"顺便"读了你的日记。晚饭桌上的气氛微妙到能切片。你连夜给日记本配了把锁。',
+  effect: { attr: { spr: -2 } } },
+{ id: 'ev_r3_teen_competition', age: [13, 18],
+  text: '数学奥赛校内选拔，你抱着试一试的心态进了考场。',
+  choices: [
+    { text: '认真作答，冲集训队', cond: { attr: { int: { gte: 6 } } }, effect: { attr: { int: 2, spr: -1 } }, result: '入选了。集训的日子很苦，但你第一次尝到"和高手过招"的瘾。', kind: 'good' },
+    { text: '尽力而为，见见世面', effect: { attr: { int: 1 } }, result: '落选了，但压轴题你解出了一半。天外有天，你记下了。' }
+  ] },
+{ id: 'ev_r3_teen_valentine', age: [14, 19],
+  text: '情人节，课桌抽屉里多了一块巧克力，没留名字。你猜了一星期，问了五个人，谜底至今未解。甜是真的。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_teen_blackout', age: [13, 18],
+  text: '晚自习突然停电，全班欢呼。点起蜡烛后，班主任破天荒不讲题，讲起了他当年的高考。那晚没人舍得提前走。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_teen_dorm', age: [13, 19],
+  text: '住校第一夜，八个陌生人在熄灯后从老家聊到理想，聊到天蒙蒙亮。宿管的手电扫过来时，全宿舍一秒入睡，演技精湛。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_teen_volunteer_fill', age: [17, 19], once: true, big: true,
+  text: '填报志愿那晚，家里开了三次会。热爱的和"好就业的"，在志愿表上打架。',
+  choices: [
+    { text: '听自己的，选热爱的', effect: { attr: { spr: 2 } }, result: '落笔那一刻你心里很静。路是自己挑的，走起来才有劲。', kind: 'good' },
+    { text: '听父母的，选好就业的', effect: { attr: { mny: 2, spr: -1 } }, result: '你妥协了。多年以后你会明白，这不是对错，只是一种人生。' }
+  ] },
+{ id: 'ev_r3_teen_18', age: [18, 18], once: true, big: true, kind: 'fate',
+  text: '十八岁，成人礼。国旗下宣誓时你的声音有点抖。从今天起，法律承认你是个大人了——虽然你觉得自己还不太会装。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_teen_grad_photo', age: [17, 19], once: true,
+  text: '拍毕业照那天阳光刺眼。快门响起的瞬间，有人把校服外套抛上了天。多年后你才明白，被定格的不只是脸，是再也回不去的十七岁。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_teen_first_beer', age: [16, 19], kind: 'bad',
+  text: '毕业散伙饭，你偷喝了人生第一口啤酒，苦得龇牙咧嘴。同桌笑完，幽幽地说："这就是长大的味道。"',
+  effect: { attr: { spr: 1, str: -1 } } },
+{ id: 'ev_r3_teen_tutor', age: [14, 18],
+  text: '邻居请你给他家小孩补课，一小时二十块。你人生中第一次靠脑子挣钱。',
+  choices: [
+    { text: '认真备课，倾囊相授', effect: { coin: 40, attr: { int: 1, spr: 1 } }, result: '小孩月考前进了十五名，家长硬塞给你一箱牛奶。知识变现，真香。', kind: 'good' },
+    { text: '被熊孩子气到怀疑人生', effect: { coin: 30, attr: { spr: -1 } }, result: '他问你"哥/姐，你当年也这么烦人吗"。你竟无言以对。' }
+  ] },
+{ id: 'ev_r3_teen_debate', age: [13, 19],
+  cond: { attr: { int: { gte: 5 } } },
+  text: '校辩论赛决赛，你是四辩。对方三辩咄咄逼人，全场的目光都压了过来。',
+  choices: [
+    { text: '结辩陈词，火力全开', effect: { skills: ['sk_roast'], attr: { int: 1, spr: 2 } }, result: '你一段结辩赢得满堂彩，评委点评"字字诛心，句句讲理"。你仿佛领悟了【儒雅随和】。', kind: 'good' },
+    { text: '稳字当头，守住阵地', effect: { attr: { int: 1, spr: 1 } }, result: '你们以一分惜败，但队长说你是全队的定盘星。' }
+  ] },
+{ id: 'ev_r3_teen_height', age: [12, 17],
+  text: '体检量身高，排到你时你偷偷踮了踮脚。医生头也没抬："脚后跟落地。"全班哄笑。净身高，童叟无欺。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_teen_canteen', age: [12, 19],
+  text: '饭卡丢了，补办要一周。这一周你靠同桌接济度日，你俩的革命友谊深了一米，饭量也同步了一米。',
+  effect: { attr: { spr: 1, mny: -1 } } },
+{ id: 'ev_r3_teen_star_gaze', age: [14, 19],
+  text: '晚自习课间，你和同桌溜上天台看星星，聊着谁也说不清楚未来。风很大，理想比风还大。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_teen_online', age: [13, 18],
+  text: '游戏里认识三年的网友提出面基，地点约在市中心的奶茶店。',
+  choices: [
+    { text: '跟家长报备后去见面', effect: { attr: { spr: 2 } }, result: '对方和你想象的一样沙雕。你们从线上队友变成了线下挚友。', kind: 'good' },
+    { text: '婉拒，江湖再见', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 1 } }, result: '有些友谊适合活在对话框里。你们依然每周开黑，互不越界。' }
+  ] },
+{ id: 'ev_r3_teen_school_anniv', age: [12, 19],
+  text: '校庆恰逢周末回不了家，全宿舍凑钱买了只烤鸭。油污的塑料袋往桌上一铺，就是那晚的满汉全席。',
+  effect: { attr: { spr: 2 } } },
+
+// ---- r3 · 20-29 岁日常 ----
+{ id: 'ev_r3_y20_club', age: [18, 23],
+  text: '社团招新，百团大战，广场热闹得像庙会。你手里攥着三张报名表。',
+  choices: [
+    { text: '话剧社：圆一个舞台梦', effect: { attr: { chr: 2, spr: 1 } }, result: '第一次登台你演了个龙套，谢幕时手心全是汗。灯光亮起那一刻，值了。', kind: 'good' },
+    { text: '辩论队：以理服人', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 2, spr: -1 } }, result: '查资料查到凌晨，赛场上舌战群儒。头发少了，气场强了。', kind: 'good' },
+    { text: '都不报，宿舍躺平', effect: { attr: { spr: 1, str: -1 } }, result: '你的大学社团是"被窝研究会"，你是终身会长。' }
+  ] },
+{ id: 'ev_r3_y20_library', age: [18, 24],
+  text: '期末周的图书馆一座难求。你连续一周六点起床占座，咖啡续命。考完走出考场那一刻，恍如隔世，但成绩是真上去了。',
+  effect: { attr: { int: 2, spr: -1 } } },
+{ id: 'ev_r3_y20_intern', age: [20, 25],
+  text: '第一份实习，入职三周，干的活包括但不限于：复印、订饭、取快递。',
+  choices: [
+    { text: '主动揽活，刷足存在感', effect: { coin: 60, attr: { int: 1 } }, result: '带教老师转正答辩时替你说了句话。打杂不丢人，躺平才丢人。', kind: 'good' },
+    { text: '摸鱼到底，混个证明', effect: { coin: 30, attr: { spr: 1 } }, result: '实习证明到手，照片拍得很好看。至于学到了什么，不提也罢。' }
+  ] },
+{ id: 'ev_r3_y20_thesis', age: [21, 24], once: true,
+  text: '毕业论文提交截止前夜，你的查重率还挂在百分之三十。',
+  choices: [
+    { text: '通宵重写，逐句打磨', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 2, spr: 1 } }, result: '答辩惊艳全场，导师难得地笑了。天亮时的豆浆，是这辈子喝过最香的。', kind: 'good' },
+    { text: '东拼西凑，惊险过关', effect: { attr: { spr: -1 } }, result: '查重率百分之二十九点九，擦线通过。你发誓这辈子再也不赌了。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y20_rent', age: [21, 28], once: true,
+  text: '第一次租房，中介带你看的"朝南主卧精装修"，窗户对着一面墙。',
+  choices: [
+    { text: '签了再说，独立万岁', effect: { attr: { mny: -1, spr: 2 } }, result: '房子不大，但钥匙是你自己的。第一晚你坐在地上吃了顿外卖，觉得特别自由。', kind: 'good' },
+    { text: '再看五家，极限拉扯', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { mny: 1, int: 1 } }, result: '你砍下来两百月租，还薅到一台二手洗衣机。中介说你是他职业生涯的滑铁卢。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y20_salary', age: [22, 28], once: true, big: true,
+  text: '人生第一笔工资到账，短信提示音响起时，你反复数了三遍位数。',
+  choices: [
+    { text: '给父母各转一笔', effect: { attr: { spr: 2 } }, result: '母亲秒回："自己留着花。"然后把截图发遍了所有亲戚群。', kind: 'good' },
+    { text: '买下惦记很久的东西', effect: { attr: { mny: -1, spr: 2 } }, result: '用自己挣的钱买喜欢的东西，拆快递的手都是抖的。', kind: 'good' },
+    { text: '一分不动，全存起来', effect: { attr: { mny: 2 } }, result: '看着余额，你第一次觉得"安全感"三个字有了具体数字。' }
+  ] },
+{ id: 'ev_r3_y20_wedding_peer', age: [24, 32],
+  text: '大学室友结婚，你随了份子还当了伴郎/伴娘。闹洞房的喧嚣里你突然恍惚：什么时候开始，大家都长成大人了。',
+  effect: { attr: { mny: -1, spr: 1 } } },
+{ id: 'ev_r3_y20_cui_hun', age: [24, 34], kind: 'bad',
+  cond: { notFlags: ['married'] },
+  text: '春节回家，三姑问你工资，二姨问你对象，表弟问你游戏段位。你面带微笑，内心弹幕横飞。',
+  effect: { attr: { spr: -1 } } },
+{ id: 'ev_r3_y20_night_metro', age: [22, 32],
+  text: '加完班赶上末班地铁，车厢空荡荡的。对面玻璃映出你的脸：有点累，但眼睛里还有光。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y20_cook', age: [22, 32],
+  text: '外卖吃腻了，账单也看不下去了，你决定自己做饭。',
+  choices: [
+    { text: '照着菜谱一步步来', effect: { attr: { mny: 1, str: 1 } }, result: '三周后你的番茄炒蛋有了妈妈的味道。省下的钱和吃出来的健康，都是赚的。', kind: 'good' },
+    { text: '自由发挥，黑暗料理', effect: { attr: { spr: -1 } }, result: '厨房炸了两次之后，你和外卖平台重归于好。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y20_karaoke', age: [20, 30],
+  text: '部门团建KTV，话筒传到你手上，全场的目光和起哄声一起涌来。',
+  choices: [
+    { text: '拿起话筒就是主场', cond: { attr: { chr: { gte: 5 } } }, effect: { attr: { chr: 2, spr: 2 } }, result: '一首成名曲技惊四座。第二天全公司都知道你会唱歌了。', kind: 'good' },
+    { text: '微笑摆手，守住果盘', effect: { attr: { spr: 1 } }, result: '你吃光了三盘西瓜。深藏功与名，果盘见真情。' }
+  ] },
+{ id: 'ev_r3_y20_pet_fish', age: [20, 35],
+  text: '出租屋添了缸金鱼，三条。你给它们取名：房东、甲方、工资。每天喂鱼的五分钟，是你一天里最治愈的时刻。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y20_grad_trip', age: [21, 26], once: true, big: true,
+  text: '毕业旅行，四个人，绿皮火车，目的地是地图上用圆规画出来的。',
+  choices: [
+    { text: '硬座三十小时，直达', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { spr: 3, str: -1 } }, result: '到站时腿肿了，但在海边看日出的那一刻，你们谁都没说话。青春最贵的一帧，到手了。', kind: 'good' },
+    { text: '穷游变囧途', effect: { attr: { spr: 2, mny: -1 } }, result: '错过车、淋了雨、住错了店，但你们笑了一路。多年后聚会，讲的还是这趟。', kind: 'good' }
+  ] },
+
+// ---- r3 · 30-39 岁日常 ----
+{ id: 'ev_r3_y30_kindergarten', age: [28, 38],
+  cond: { flags: ['has_child'] },
+  text: '孩子第一天上幼儿园，抱着你的腿哭得撕心裂肺，老师在一旁使眼色：快走。',
+  choices: [
+    { text: '狠心扭头就走', effect: { attr: { spr: -1 } }, result: '下午去接，他玩得不肯回家。你在门口又心酸又好笑：小没良心的。' },
+    { text: '扒着栏杆偷看半小时', effect: { attr: { spr: 1 } }, result: '老师发来照片：他已经在积木区称王称霸。你的担心，纯属多余。' }
+  ] },
+{ id: 'ev_r3_y30_parent_meeting', age: [30, 45],
+  cond: { flags: ['has_child'] },
+  text: '家长会，表扬名单里有你家娃的名字。周围的家长纷纷侧目。',
+  choices: [
+    { text: '低调微笑，深藏功与名', effect: { attr: { spr: 2 } }, result: '散会路上你给孩子买了他最爱的蛋糕，只字未提表扬的事，让他自己飘。', kind: 'good' },
+    { text: '当场记笔记，虚心取经', effect: { attr: { int: 1, spr: 1 } }, result: '学霸家长的笔记你看完沉默了：原来别人家也鸡飞狗跳，只是藏得好。' }
+  ] },
+{ id: 'ev_r3_y30_renovation', age: [28, 42],
+  text: '装修第三个月，预算超了四成，工长每天在群里汇报新噩耗。',
+  choices: [
+    { text: '咬牙上最好的材料', effect: { attr: { mny: -3, spr: 1 } }, result: '入住那天光脚踩在地板上，你承认：贵的东西，只有付钱那一刻是疼的。' },
+    { text: '穷装风，能住就行', effect: { attr: { mny: -1, spr: 1 } }, result: '大白墙配二手家具，被你收拾得清清爽爽。家不在贵，在有人等你回。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y30_newboss', age: [28, 45],
+  text: '空降的新领导烧了三把火，办公室人人自危，气氛微妙。',
+  choices: [
+    { text: '主动靠拢，接住机会', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { mny: 2, spr: 1 } }, result: '你递上的方案正中下怀。三个月后部门重组，你是新班子的核心。', kind: 'good' },
+    { text: '静观其变，以不变应万变', effect: { attr: { spr: -1 } }, result: '火没烧到你，风也没吹到你。安全，但有点透明。' }
+  ] },
+{ id: 'ev_r3_y30_peer_layoff', age: [30, 45], kind: 'bad',
+  text: '邻座十年的老同事被"优化"了，纸箱收拾得很慢。你帮他抱着那盆绿萝送到电梯口，一路无话。电梯门关上时，他摆了摆手。',
+  effect: { attr: { spr: -2 } } },
+{ id: 'ev_r3_y30_reunion10', age: [28, 35],
+  text: '毕业十年同学会。当年的学渣开了公司，班花素面朝天带着俩娃。酒过三巡，有人举杯："敬我们都没想到的三十岁。"',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y30_parents_stay', age: [28, 40],
+  text: '父母来小住半个月。母亲接管了厨房，父亲修好了全屋松动的螺丝。他们走后，冰箱是满的，屋子是空的。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y30_checkup', age: [30, 45], kind: 'bad',
+  text: '体检报告上多了三个箭头。你把报告拍照设成手机屏保警示自己，一周后，屏保换成了猫。',
+  effect: { attr: { str: -1 } } },
+{ id: 'ev_r3_y30_hobby', age: [30, 45],
+  text: '你给自己报了个成人兴趣班，每周一次，雷打不动。',
+  choices: [
+    { text: '吉他：指尖起泡也快乐', effect: { attr: { spr: 2, int: 1 } }, result: '三个月后你能弹完整首曲子。深夜阳台，晚风伴奏，邻居居然没投诉。', kind: 'good' },
+    { text: '烘焙：全家一起胖', effect: { attr: { spr: 2, str: -1 } }, result: '你的戚风蛋糕在小区出了名。全家胖了五斤，快乐涨了十斤。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y30_teambuild', age: [25, 40],
+  text: '公司团建：白天爬山，晚上篝火晚会。行政部说这叫"熔炼团队"。',
+  choices: [
+    { text: '冲顶拿第一', cond: { attr: { str: { gte: 5 } } }, effect: { attr: { str: 1, spr: 2 } }, result: '你第一个登顶，赢了奖品保温杯。下山时扶着腿软的领导，这波不亏。', kind: 'good' },
+    { text: '半山腰的凉亭才是归宿', effect: { attr: { spr: 1 } }, result: '你和另外三个"凉亭组"同事聊了一下午。团建的真谛，被你悟到了。' }
+  ] },
+{ id: 'ev_r3_y30_friend_notpay', age: [28, 45], kind: 'bad',
+  text: '三年前借给朋友的钱至今没还，而对方刚在朋友圈晒了新车。',
+  choices: [
+    { text: '开口要，亲兄弟明算账', effect: { attr: { mny: 1, spr: -1 } }, result: '钱要回来了，聊天框从此安静了。你买了个人生道理，七五折。' },
+    { text: '算了，就当认清一个人', effect: { attr: { spr: -2 } }, result: '你屏蔽了他的朋友圈。有些账不算了，是因为人不值了。' }
+  ] },
+{ id: 'ev_r3_y30_kid_sports', age: [30, 45],
+  cond: { flags: ['has_child'] },
+  text: '孩子学校的亲子运动会，家长接力赛，你代表全家出战。',
+  choices: [
+    { text: '拼了，重现当年风采', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { str: 1, spr: 2 } }, result: '你摔了个屁股蹲儿，爬起来反超一人。孩子笑得最大声，也喊得最响。', kind: 'good' },
+    { text: '友谊第一，完赛第二', effect: { attr: { spr: 1 } }, result: '你跑了倒数第一，但孩子说你是他最帅/美的爸爸/妈妈。这奖牌，独一份。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y30_balcony_farm', age: [28, 50],
+  text: '你在阳台种了盆小番茄。三个月后收获十一颗，酸得眯眼，甜得上头。邻居来讨种子，你豪气地分了一半。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y30_housewarm', age: [28, 45], kind: 'good',
+  text: '乔迁之喜，亲戚朋友挤满新房。你掌勺做了十六个菜，累瘫在沙发上时看着满屋子人声，心想：这就是家。',
+  effect: { attr: { mny: -1, spr: 2 } } },
+{ id: 'ev_r3_y30_drive_test', age: [25, 40],
+  text: '科目二，你第五次走进考场。安全员都认识你了，冲你点了点头。',
+  choices: [
+    { text: '深呼吸，第六次出征', effect: { attr: { spr: 2, mny: -1 } }, result: '过了！签字时手都在抖。驾照到手那天，你绕着小区开了十圈。', kind: 'good' },
+    { text: '宣布与方向盘和解', effect: { attr: { spr: 1 } }, result: '从此你是打车软件的高级会员。人生苦短，何必倒库。' }
+  ] },
+{ id: 'ev_r3_y30_blood', age: [25, 50],
+  text: '路过献血车，护士冲你笑："帅哥/美女，了解一下？"',
+  choices: [
+    { text: '挽起袖子', cond: { attr: { str: { gte: 3 } } }, effect: { attr: { spr: 2, str: -1 } }, result: '半个月后收到短信：您的血液已用于临床救治。四百毫升，换来一整天的好心情。', kind: 'good' },
+    { text: '下次一定', effect: { attr: { spr: 1 } }, result: '你默默记下了采血点的位置。善念存着，也是存着。' }
+  ] },
+
+// ---- r3 · 40-49 岁日常 ----
+{ id: 'ev_r3_y40_alma', age: [38, 55], once: true,
+  text: '回母校看老师。班主任头发全白了，却一眼认出你："调皮鬼！"你在办公室坐了一下午，像回了趟青春。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y40_kid_zhongkao', age: [40, 55],
+  cond: { flags: ['has_child'] },
+  text: '孩子中考前夜，全家大气不敢出，电视静音，走路踮脚。',
+  choices: [
+    { text: '炖汤陪读，做好后勤', effect: { attr: { spr: 1 } }, result: '孩子考完说，每天深夜那碗汤，比补品管用。' },
+    { text: '带他出门散步减压', effect: { attr: { spr: 2 } }, result: '路灯下你们聊了一小时废话。后来他考上理想高中，说那晚的风最管用。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y40_career_peak', age: [38, 52], kind: 'good',
+  cond: { attr: { mny: { gte: 6 } } },
+  text: '你负责的项目拿了行业大奖。领奖台上灯光刺眼，你忽然想起二十年前，那个提前四十分钟坐在便利店里的早晨。',
+  effect: { coin: 150, attr: { mny: 2, spr: 2 } } },
+{ id: 'ev_r3_y40_old_injury', age: [38, 55], kind: 'bad',
+  text: '年轻时落下的旧伤开始在阴雨天准时报到，比天气预报还灵。你终于承认：身体是一本账，迟早要对账。',
+  effect: { attr: { str: -1, int: 1 } } },
+{ id: 'ev_r3_y40_quit_drink', age: [38, 58],
+  text: '今晚又有酒局。看着桌上的白酒，你想起体检报告，默默举起了茶杯。',
+  choices: [
+    { text: '"以茶代酒，各位见谅"', effect: { attr: { str: 2, spr: 1 } }, result: '从此酒局你只吃菜。三个月后指标回落，同桌劝酒的人换成了请教养生。', kind: 'good' },
+    { text: '架不住起哄，又来半斤', effect: { attr: { str: -2, spr: 1 } }, result: '当场很尽兴，凌晨很难受。马桶前你发誓戒酒，下周的酒局，另说。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y40_parents_golden', age: [40, 60], once: true, kind: 'good',
+  text: '父母的金婚纪念日，你张罗了一桌菜。二老翻出结婚证，红纸都脆了。五十年，他们也吵，但从没想过散。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_y40_hair_dye', age: [38, 58],
+  text: '白头发越来越多，理发师热情地推荐染黑套餐。',
+  choices: [
+    { text: '染！年轻十岁是十岁', effect: { attr: { chr: 1, spr: 1, mny: -1 } }, result: '镜子里的人年轻了五岁。虽然一个月后发根又白了，但那又怎样。' },
+    { text: '不染，银发是勋章', effect: { attr: { int: 1, spr: 1 } }, result: '你顶着一头花白出了门。小孩子管你叫爷爷/奶奶，你应得中气十足。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y40_relearn', age: [40, 60],
+  text: '公司上线全新系统，年轻人一天上手，你对着界面发懵。',
+  choices: [
+    { text: '熬夜啃教程，不信邪', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 2, spr: 1 } }, result: '一周后你开始反哺新人。他们说：姜还是老的辣，酒还是陈的香。', kind: 'good' },
+    { text: '申请调岗，扬长避短', effect: { attr: { spr: -1 } }, result: '你去了更吃经验的岗位。认输不至于，叫识时务。' }
+  ] },
+{ id: 'ev_r3_y40_neighbor', age: [35, 60],
+  text: '楼上每天深夜拖椅子，咯吱声精准踩在你睡点上。今夜你忍无可忍，上楼敲门。',
+  choices: [
+    { text: '好好沟通，以理服人', effect: { attr: { chr: 1, spr: 1 } }, result: '对方连声道歉，椅子腿全包上了垫。半年后，他成了你的棋友。', kind: 'good' },
+    { text: '吵一架再说', effect: { attr: { spr: -1 } }, result: '吵到物业上门调解。椅子不响了，电梯里遇见了也别扭。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y40_college_friend', age: [38, 60],
+  text: '大学睡你上铺的兄弟出差路过，俩人撸串到凌晨。聊起当年糗事笑得直拍桌子。散场时他拍拍你："都好好的啊。"',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y40_glasses', age: [42, 60], kind: 'bad',
+  text: '最近看手机不自觉越拿越远，胳膊快不够长了。验光师微笑："老花，正常现象。"你配了人生第一副老花镜。',
+  effect: { attr: { spr: -1 } } },
+{ id: 'ev_r3_y40_kid_college', age: [42, 58], once: true, big: true,
+  cond: { flags: ['has_child'] },
+  text: '送孩子去大学报到，你抢着扛最重的箱子，上六楼没歇脚。回程高铁上老伴说你一路没说话。你说：风太大，迷了眼。',
+  effect: { attr: { spr: -1, int: 1 } } },
+{ id: 'ev_r3_y40_old_house', age: [40, 65],
+  text: '老家的房子漏雨了，母亲在电话里说得轻描淡写，你听着心里发沉。',
+  choices: [
+    { text: '出钱彻底翻修，留个根', cond: { attr: { mny: { gte: 5 } } }, effect: { attr: { mny: -2, spr: 2 } }, result: '翻修完你陪父母住了一周。屋檐下听雨，像回到了小时候。', kind: 'good' },
+    { text: '简单补补，常回去看看', effect: { attr: { mny: -1, spr: 1 } }, result: '瓦片换新了，你回去的次数也多了。房子和人一样，经不起等。' }
+  ] },
+{ id: 'ev_r3_y40_gout', age: [38, 60], kind: 'bad',
+  text: '大脚趾半夜疼醒，红肿发亮——痛风。医生看着你的体检单："海鲜配啤酒，挺会享受啊。"从此你和火锅清汤面面相觑。',
+  effect: { attr: { str: -1, spr: -1 } } },
+{ id: 'ev_r3_mountain_road', age: [35, 70], weight: 3, kind: 'bad', once: true, cond: { chance: 0.04 },
+  text: '雨后的盘山公路，你哼着歌转过一道弯，前方的山体轰然滑落，泥浆吞没了一切。',
+  effect: { kill: true, deathText: '自驾游途中遭遇山体滑坡' } },
+{ id: 'ev_r3_y40_anti_fraud_dad', age: [40, 60],
+  text: '父亲差点被"免费领鸡蛋"的讲座骗去买天价保健品，幸好邻居多嘴提了一句。',
+  choices: [
+    { text: '周末回家，给他上防骗课', effect: { attr: { int: 1, spr: 1 } }, result: '你把骗局套路拆给他听。父亲嘴硬："我早看出来了。"但鸡蛋再没去领过。', kind: 'good' },
+    { text: '给他手机装反诈App', effect: { attr: { int: 1, spr: 1 } }, result: '字体调成最大号，预警开到最强。科技这东西，用对了就是孝心。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y40_yoga', age: [38, 60],
+  text: '被同事拉去上瑜伽课，教室里就你一个新手，僵硬得像块木板。',
+  choices: [
+    { text: '咬牙坚持，每周两节', cond: { attr: { str: { gte: 3 } } }, effect: { attr: { str: 2, spr: 1 } }, result: '半年后老腰得救了，你还能劈个横叉吓唬人。', kind: 'good' },
+    { text: '一个下犬式，原地退役', effect: { attr: { spr: 1 } }, result: '你和瑜伽互相放过。教练说"随时欢迎回来"，你们都笑了。' }
+  ] },
+{ id: 'ev_r3_y40_rainbow', age: [35, 60],
+  text: '加班晚归，一场急雨过后，城市上空挂起双彩虹。你把车停在路边看完了全程。回家晚了半小时，值了。',
+  effect: { attr: { spr: 2 } } },
+
+// ---- r3 · 50-59 岁日常 ----
+{ id: 'ev_r3_y50_hiking', age: [48, 65],
+  text: '老同事组了个爬山群，每周六雷打不动拉练，群名就叫"不服老"。',
+  choices: [
+    { text: '次次不落，争当登顶专业户', cond: { attr: { str: { gte: 4 } } }, effect: { attr: { str: 2, spr: 2 } }, result: '半年爬遍周边十座山。站在山顶吼一嗓子，回声都说你还年轻。', kind: 'good' },
+    { text: '去了一次，改报逛公园组', effect: { attr: { spr: 1 } }, result: '你悟了：山的尽头是台阶，公园的尽头是长椅。长椅挺好。' }
+  ] },
+{ id: 'ev_r3_y50_friend_remarry', age: [45, 65],
+  text: '离异多年的老友再婚，婚礼上紧张得直搓手，誓词念得磕磕绊绊。你举杯时想：幸福这事，多晚都不算晚。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y50_downsize', age: [48, 70],
+  text: '家里的东西越堆越多，柜门都开始抗议。你下定决心：断舍离。',
+  choices: [
+    { text: '捐的捐扔的扔，大刀阔斧', effect: { attr: { spr: 2 } }, result: '清出十箱旧物，屋子突然会呼吸了。原来清爽的不只是房间，还有脑子。', kind: 'good' },
+    { text: '收拾三天，扔了一支笔', effect: { attr: { spr: -1 } }, result: '每件东西都"还有用"。你宣布断舍离失败，并下单了一个新收纳柜。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y50_teach_phone', age: [45, 62],
+  text: '老母亲想学视频通话，说想看看你。她戴着老花镜，手指悬在屏幕上不敢点。',
+  choices: [
+    { text: '手把手教，教到会为止', effect: { attr: { spr: 2 } }, result: '教了八遍，她终于会了。现在她一天给你打三个视频，你接得心甘情愿。', kind: 'good' },
+    { text: '画一本图文说明书', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '步骤画成连环画，她照着按，居然通了。屏幕那头她笑得像朵花。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y50_reunion35', age: [48, 60], once: true,
+  text: '毕业三十五年聚会，到场的人比上次少了几个。大家默契地不聊退休金，只聊当年谁抄谁的作业。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y50_peizhen', age: [48, 68], kind: 'good',
+  text: '医院像座迷宫，你帮一对手足无措的老夫妻挂号、缴费、取报告。老太太硬塞给你两个橘子。那天的橘子，甜了一路。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_y50_health_scare', age: [48, 68], once: true, kind: 'fate',
+  text: '体检查出个阴影，复查那两周，你连后事都默默想了一遍。结果出来：虚惊一场。走出医院，你觉得连雾霾都是香的。',
+  effect: { items: ['it_ginseng'], attr: { spr: 2, str: 1 } } },
+{ id: 'ev_r3_y50_consultant', age: [50, 62], kind: 'good',
+  cond: { attr: { mny: { gte: 6 } } },
+  text: '老东家返聘你做顾问，一周到岗两天，喝茶、把关、带新人。年轻人围着你问东问西，你慢悠悠地说："急什么。"',
+  effect: { coin: 100, attr: { spr: 2 } } },
+{ id: 'ev_r3_y50_park_photo', age: [50, 70],
+  text: '你迷上拍鸟，扛着二手长焦在公园蹲了三小时，就为翠鸟入水那一瞬。拍到那天，你请全群摄友喝了奶茶。',
+  effect: { attr: { spr: 2, mny: -1 } } },
+{ id: 'ev_r3_y50_learn_swim', age: [50, 68],
+  text: '五十岁学游泳，泳池里全是你这样的"老学员"，泳姿五花八门，勇气整齐划一。',
+  choices: [
+    { text: '三个月拿下蛙泳', cond: { attr: { str: { gte: 3 } } }, effect: { attr: { str: 2, spr: 2 } }, result: '结业那天你游了来回。五十岁的泳道，照样能劈波斩浪。', kind: 'good' },
+    { text: '改练水中走路', effect: { attr: { str: 1, spr: 1 } }, result: '呛了几口水后你找到了快乐：水里散步。医生说这对关节最好。' }
+  ] },
+{ id: 'ev_r3_y50_handmade', age: [48, 68],
+  text: '你腌的酱菜在小区出了名，邻居拎着水果来换，还有人问卖不卖。',
+  choices: [
+    { text: '收钱？小本生意做起来', effect: { attr: { mny: 1, spr: 2 } }, result: '你挂出收款码，月销三十罐。不为赚钱，就图一句"你腌的菜有人抢"。', kind: 'good' },
+    { text: '只送不卖，交个朋友', effect: { attr: { spr: 2, chr: 1 } }, result: '楼道里的香味替你打了广告，换来一整单元的人情味。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y50_taiji', age: [50, 75],
+  text: '清晨的公园，你加入了太极队。三个月后，下盘稳了，心静了，连跟人拌嘴都慢了半拍，气势反而足了。',
+  effect: { attr: { str: 1, spr: 1 } } },
+{ id: 'ev_r3_y50_old_cd', age: [48, 70],
+  text: '翻出当年的随身听和磁带，装上电池居然还能响。熟悉的旋律一起，你在阳台上站了很久，直到月亮升起来。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y50_sleep_separate', age: [50, 70],
+  cond: { flags: ['married'] },
+  text: '老伴的呼噜声日益雄浑，你们试过各种偏方，最终达成协议：分房睡，早安吻照旧。爱情的形式会变，内容不会。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y50_grand_dog', age: [50, 75],
+  cond: { flags: ['has_child'] },
+  text: '孩子出差，把狗寄养在你家。一周后狗跟你最亲。孩子来接时，狗子三步一回头，尾巴摇成了螺旋桨。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y50_market_bargain', age: [48, 75],
+  text: '早市砍价成了你的新运动。为五毛钱你来我往大战三回合，摊主笑着认输："哥/姐，服了！"省下的五毛，快乐五块。',
+  effect: { attr: { spr: 1, mny: 1 } } },
+{ id: 'ev_r3_y50_reunion_home', age: [48, 70], once: true,
+  text: '阔别多年，你回了一趟小时候的老街。理发店还在，师傅换成了当年的小学徒。你剪了个头，听了一耳朵旧时光。',
+  effect: { attr: { spr: 1, int: 1 } } },
+{ id: 'ev_r3_y50_flu', age: [48, 70], kind: 'bad',
+  text: '一场重感冒把你放倒整整一周。你躺在床上想明白了：年轻时拿命换钱，中年后拿钱换命，不如一开始就好好吃饭。',
+  effect: { attr: { str: -1, int: 1 } } },
+{ id: 'ev_r3_y50_study_degree', age: [50, 65],
+  text: '开放大学老年班招生，专业五花八门。你盯着招生简章，心里有点痒。',
+  choices: [
+    { text: '报名！圆一个大学梦', effect: { attr: { int: 2, spr: 2 } }, result: '开学第一课你坐第一排。五十岁的学生证，含金量一点不打折。', kind: 'good' },
+    { text: '在家自学网课', effect: { attr: { int: 1, spr: 1 } }, result: '没有文凭，但有学问。你的笔记本比年轻人的还工整。' }
+  ] },
+{ id: 'ev_r3_y50_partner_check', age: [48, 70],
+  cond: { flags: ['married'] },
+  text: '你和老伴成了体检搭子，每年相约同一天，报告互查，异常项互相监督。爱情到了这个年纪，变成了"你血压多少"。',
+  effect: { attr: { spr: 1, str: 1 } } },
+{ id: 'ev_r3_y50_letter_self', age: [50, 70], once: true,
+  text: '一个安静的下午，你决定给十年后的自己写封信。',
+  choices: [
+    { text: '认真写完，封进抽屉', effect: { attr: { spr: 2 } }, result: '落款你写：愿你还在热爱。封好那一刻，心里莫名踏实。', kind: 'good' },
+    { text: '写了一半，笑场了', effect: { attr: { spr: 1 } }, result: '生活哪有剧本。你把信纸折成飞机，从阳台放飞了。' }
+  ] },
+
+// ---- r3 · 60-69 岁日常 ----
+{ id: 'ev_r3_y60_first_pension', age: [58, 65], once: true, kind: 'good',
+  text: '第一笔退休金到账。数字不算惊人，但你盯着短信看了三遍——从此每个月的这一天，国家准时请你吃饭。',
+  effect: { attr: { mny: 2, spr: 2 } } },
+{ id: 'ev_r3_y60_travel_group', age: [58, 75],
+  text: '老年旅行团，云南八日游，行程单上写着含六个"文化体验点"——你懂，购物点。',
+  choices: [
+    { text: '玩得尽兴，捂紧钱包', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { spr: 2, mny: -1 } }, result: '风景看了个够，导游的套路一个没接。同行的阿姨向你取经，你倾囊相授。', kind: 'good' },
+    { text: '没忍住，抱回一只玉镯', effect: { attr: { mny: -2, spr: 1 } }, result: '回来一鉴定：玻璃的。但你戴着挺好看，就当买了个高兴。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y60_chess', age: [58, 80],
+  text: '公园棋摊，你和老对手杀得难解难分，观战的比下棋的还急。一盘棋下一下午，输赢都尽兴。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_y60_garden', age: [58, 80],
+  text: '小区开辟共享菜园，你起了个大早，抢到一块向阳的好地。',
+  choices: [
+    { text: '精耕细作，科学种植', effect: { items: ['it_apple'], attr: { spr: 2, str: 1 } }, result: '秋天收获满满一兜，你挨家挨户送。全楼都吃上了你种的果子。', kind: 'good' },
+    { text: '随缘种植，听天由命', effect: { attr: { int: 1, spr: 1 } }, result: '菜被虫子吃了大半，但你收获了经验、邻居的笑声，和两条虫子的尊重。' }
+  ] },
+{ id: 'ev_r3_y60_health_talk', age: [58, 80],
+  text: '社区健康讲座，专家讲得声情并茂，结尾照例开始卖货。但来都来了——听完还送一桶油。',
+  choices: [
+    { text: '只听不买，油照领', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { spr: 1 } }, result: '你拎着油第一个离场。知识免费，油也免费，只花了两小时。', kind: 'good' },
+    { text: '被说动，买台理疗仪', effect: { attr: { mny: -2, spr: -1 } }, result: '用了两次，落灰至今。那桶油，是这台仪器唯一的产出。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y60_old_boss_funeral', age: [58, 80], once: true, kind: 'bad',
+  text: '老领导的追悼会上，当年的同事聚齐了，头发都白了。散场时大家约好过段时间聚聚——都明白，这话约等于再见。',
+  effect: { attr: { spr: -2 } } },
+{ id: 'ev_r3_y60_grand_tooth', age: [55, 75],
+  cond: { flags: ['has_child'] },
+  text: '小孙子掉了第一颗牙，郑重其事地交给你保管。你收进小盒时忽然想起：他爸爸掉牙那年，也是这样交给你的。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_fish_zero', age: [55, 80],
+  text: '钓鱼一整天，颗粒无收。收竿时隔壁大爷分你两条鲫鱼："拿回去熬汤，别空手回家。"钓鱼佬的情谊，比鱼获实在。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_bus_card', age: [60, 70], once: true,
+  text: '你领到了老年卡，公交免费。第一天你就琢磨着：把这座生活了一辈子的城市，重新逛一遍。',
+  choices: [
+    { text: '挑条陌生线路，从头坐到尾', effect: { attr: { spr: 2 } }, result: '城市的另一面，不要钱。你在终点站吃了碗没吃过的面，像出了趟远门。', kind: 'good' },
+    { text: '每天坐两站去买菜', effect: { attr: { spr: 1, str: 1 } }, result: '从此菜场的最新行情，你比子女知道得都早。' }
+  ] },
+{ id: 'ev_r3_y60_knee', age: [60, 80],
+  text: '膝盖疼得走不了远路，医生看完片子，给出了两个方案。',
+  choices: [
+    { text: '置换手术，一步到位', effect: { attr: { mny: -2, str: 1, spr: 1 } }, result: '半年后你健步如飞，爬山群的你又回来了。现代医学，不服不行。', kind: 'good' },
+    { text: '保守理疗，慢慢养着', effect: { attr: { str: -1, spr: -1 } }, result: '疼了忍，忍习惯了。只是看见楼梯，心里先怯三分。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y60_ruby', age: [60, 70], once: true, big: true, kind: 'good',
+  cond: { flags: ['married'] },
+  text: '结婚四十周年，红宝石婚。孩子们起哄问秘诀，老伴抢答："忍。"你补充："忍不住，也得忍。"满堂哄笑，桌下你们的手一直牵着。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_y60_lib_volunteer', age: [58, 80], kind: 'good',
+  text: '你在社区图书馆当志愿者，整理书架、教孩子找书。有个孩子说你像故事里的"图书管理员爷爷/奶奶"，你美了一整天。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_grand_sleepover', age: [58, 80],
+  cond: { flags: ['has_child'] },
+  text: '孙辈周末来住，缠着你讲故事。你讲了三个，他睡着了你还在讲。掖被角的时候你觉得，所谓传承，就是这样。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_old_bike', age: [58, 80], once: true,
+  text: '你翻出锈迹斑斑的老自行车，除锈、上油、换胎。骑上街那天，风还是四十年前那个方向。',
+  effect: { attr: { str: 1, spr: 2 } } },
+{ id: 'ev_r3_y60_market_friend', age: [58, 80],
+  text: '早市豆腐摊的大姐记得你的口味："老样子，两块嫩的。"今天她还多舀了一勺豆花送你。',
+  choices: [
+    { text: '明天带自家酱菜回礼', effect: { attr: { spr: 2 } }, result: '一来二去，你们成了早市搭子。被一座城市记住口味，也算一种归属感。', kind: 'good' },
+    { text: '道谢收下，心里记下', effect: { attr: { spr: 1 } }, result: '人情像豆腐，趁热才香。你决定明天还来。' }
+  ] },
+{ id: 'ev_r3_y60_bird_feed', age: [60, 85],
+  text: '你在窗台撒了把小米，从此麻雀天天来打卡。最胖的那只你起名叫"局长"，因为它总是最后一个到，到了先吃。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_photo_fix', age: [60, 85],
+  text: '老照片泛黄卷边，父亲在照片里还是年轻的模样。你决定给它们做个"手术"。',
+  choices: [
+    { text: '找人精修，裱起来', effect: { attr: { mny: -1, spr: 2 } }, result: '照片挂上墙，一屋子的人都年轻了。客人来了，你能讲一下午。', kind: 'good' },
+    { text: '扫描存档，建家庭云相册', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '全家都能随时翻看。远方的孩子发来消息：爸/妈，看哭了。' }
+  ] },
+{ id: 'ev_r3_y60_hoard_bag', age: [58, 85],
+  text: '你囤的塑料袋占领了一整个抽屉。子女要扔，你急了。后来你想通了：留下十个，其余放手。囤的不是袋子，是过过苦日子的自己——那就留下十个，够了。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y60_nap', age: [58, 85],
+  text: '午后雷打不动的半小时午觉，是你的日课。阳光斜过窗台，鸟在叫，世界很吵，你很安静。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_relearn_instrument', age: [58, 80],
+  text: '老年大学二胡班招生，你零基础报了名，同班同学最年轻的五十五。',
+  choices: [
+    { text: '勤学苦练，目标《赛马》', cond: { attr: { int: { gte: 4 } } }, effect: { attr: { int: 1, spr: 2 } }, result: '一年后社区汇演，你的《赛马》赢得满堂彩。琴弓一收，抱拳谢幕。', kind: 'good' },
+    { text: '改练口琴，邻里友好', effect: { attr: { spr: 1 } }, result: '二胡练了仨月，邻居投诉三次。口琴好多了，至少像音乐。' }
+  ] },
+{ id: 'ev_r3_y60_reunion50', age: [60, 80], once: true,
+  text: '老同学建了个群，五十年的名字一个个亮起来。有人发了张黑白毕业照，你们对着照片认了一晚上自己。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y60_doctor_family', age: [58, 80],
+  text: '签约家庭医生后，每月有人上门量血压。小姑娘嘴甜，你总多留她喝杯水。儿女不在身边的日子，多了个惦记你的人。',
+  effect: { attr: { spr: 1, str: 1 } } },
+
+// ---- r3 · 70-79 岁日常 ----
+{ id: 'ev_r3_y70_reunion_last', age: [70, 85], once: true, kind: 'fate',
+  text: '同学聚会的人一年比一年少。今年到场的八个人约定：谁都不许先走。碰杯的声音很轻，情意很重。',
+  effect: { attr: { spr: -1, int: 1 } } },
+{ id: 'ev_r3_y70_rattan', age: [70, 90],
+  text: '阳台的藤椅是你的王座：上午晒太阳，下午打盹，傍晚看楼下小孩疯跑。一天不长，刚好装满。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_grand_college', age: [68, 85], once: true, big: true, kind: 'good',
+  cond: { flags: ['has_child'] },
+  text: '孙辈考上大学的电话打来，你举着听筒手直抖。挂了电话你就翻出压箱底的红包——距开学还有半年，你已经准备好了。',
+  effect: { attr: { mny: -1, spr: 3 } } },
+{ id: 'ev_r3_y70_false_alarm', age: [68, 85], once: true,
+  text: '体检报告上写着"建议复查"，你忐忑了半个月。复查结果：一切正常。你在医院门口吃了碗牛肉面，庆祝重生。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_hand_letter', age: [68, 90], once: true,
+  text: '你给远方的老战友写了封手写信，字抖得厉害。半个月后收到回信，第一句是："老伙计，字还是那么丑。"你笑出了眼泪。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_radio', age: [70, 95],
+  text: '那台老收音机还能响。午后你拧开旋钮，戏曲频道正唱着《锁麟囊》。',
+  choices: [
+    { text: '泡壶茶，听完这一出', effect: { attr: { spr: 2 } }, result: '主持人换了三代，戏还是那出戏。茶喝完，戏散了，心里满满的。', kind: 'good' },
+    { text: '拨到新闻频道听听动静', effect: { attr: { int: 1, spr: 1 } }, result: '天下大事听了个遍。饭桌上讲给孙辈听，他们说你比热搜还全。' }
+  ] },
+{ id: 'ev_r3_y70_fall_scare', age: [70, 90],
+  text: '菜市场门口脚下一滑，整个人晃了出去——',
+  choices: [
+    { text: '一把扶住栏杆', cond: { attr: { str: { gte: 3 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '站稳了。第二天你给自己买了根体面的拐杖，防滑鞋也安排上。服老，是智慧。' },
+    { text: '摔坐在地', effect: { attr: { str: -1, spr: 1 } }, result: '三位好心人同时伸手扶你。你道谢道了一路：这世上，还是好人多。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y70_old_recipe', age: [68, 90],
+  cond: { flags: ['married'] },
+  text: '你复刻老伴的拿手菜，试了五次，今天终于对了味。老伴尝了一口说"还差点"，转身又盛了一碗。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_choir', age: [65, 85],
+  text: '公园合唱团招新，大爷大妈们精神抖擞，排练厅里歌声嘹亮。',
+  choices: [
+    { text: '报名，亮一嗓子', effect: { attr: { spr: 2, chr: 1 } }, result: '你被分到了低声部。第一次合唱，你眼眶就热了——和声这东西，一个人唱不出来。', kind: 'good' },
+    { text: '当忠实听众，场场第一排', effect: { attr: { spr: 1 } }, result: '你带头鼓掌，团员们都认得你。捧场也是一门艺术。' }
+  ] },
+{ id: 'ev_r3_y70_teach_chess', age: [68, 90],
+  cond: { flags: ['has_child'] },
+  text: '你教孙辈下象棋，小家伙输了就耍赖要悔棋。你故意让了半子，看他欢呼的样子，想起五十年前，也有人这么让你。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_id_photo', age: [70, 90],
+  text: '拍新证件照，摄影师说"看这里，笑一个"。照片出来你端详半天：这慈祥的老头/老太太是谁？哦，是我。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y70_queue_doctor', age: [68, 90],
+  text: '专家号凌晨放号，儿子帮你抢。候诊三小时，看病五分钟。医嘱不长，就三条。',
+  choices: [
+    { text: '严格执行，一条不落', effect: { attr: { str: 1, spr: 1 } }, result: '三个月后指标好看了。那张医嘱你折好收着，像一张作战地图。', kind: 'good' },
+    { text: '听一半忘一半', effect: { attr: { str: -1 } }, result: '药吃吃停停，下次复诊医生直摇头。身体这本账，糊弄不了。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y70_old_watch', age: [68, 95], once: true,
+  text: '戴了半辈子的老手表停了，修表师傅摇摇头：零件不好找了。',
+  choices: [
+    { text: '再难也要修好', cond: { attr: { mny: { gte: 4 } } }, effect: { attr: { mny: -1, spr: 2 } }, result: '老师傅托人从外地淘来零件。表针重新走动，像一位老朋友回来了。', kind: 'good' },
+    { text: '收进抽屉，留个念想', effect: { attr: { spr: 1 } }, result: '表停了，它陪你的那些年没停。你把它和奖状放在了一起。' }
+  ] },
+{ id: 'ev_r3_y70_winter_sun', age: [70, 95],
+  text: '冬日午后，你和老邻居们在墙根排排坐晒太阳。没人说话，也不需要说话。阳光把一排影子晒得暖烘烘的。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_travel_scam', age: [65, 85],
+  text: '"免费夕阳红一日游"的大巴停在小区门口，传单印得花团锦簇。',
+  choices: [
+    { text: '识破套路，劝下邻居', cond: { attr: { int: { gte: 5 } } }, effect: { attr: { int: 1, spr: 1 } }, result: '你三言两语拆穿话术，还拉了个防骗互助群。群主，非你莫属。', kind: 'good' },
+    { text: '免费的，去就去', effect: { attr: { mny: -1, spr: -1 } }, result: '景点二十分钟，听课一整天。回来的路上你悟了：免费的，最贵。', kind: 'bad' }
+  ] },
+{ id: 'ev_r3_y70_grand_wedding', age: [70, 90], once: true, big: true, kind: 'good',
+  cond: { flags: ['has_child'] },
+  text: '孙辈结婚，你被请上主桌。新人敬茶时，你颤巍巍递上红包，只说了三个字："好好过。"那是你一生的经验。',
+  effect: { attr: { mny: -1, spr: 3 } } },
+{ id: 'ev_r3_y70_night_light', age: [70, 95],
+  text: '子女给家里装了感应夜灯，人一走近就亮。你半夜起床，看着脚边那小片光，觉得晚年也被温柔地对待着。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y70_knit', age: [68, 90],
+  cond: { gender: 'F' },
+  text: '你织的毛衣全家都有份。针脚不如从前密了，但每一件都被抢着穿。线团滚来滚去，滚进去的都是心意。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_whittle', age: [68, 90],
+  cond: { gender: 'M' },
+  text: '你迷上了木工，给重孙做了把小木枪，砂纸磨了三遍，比当年做任何报表都认真。小家伙抱着不撒手，睡觉都搂着。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_y70_dentist', age: [70, 90],
+  text: '牙掉了好几颗，医生给出建议：种牙，晚年干饭才有保障。',
+  choices: [
+    { text: '种！干饭自由不容妥协', effect: { attr: { mny: -2, str: 1, spr: 1 } }, result: '恢复期一过，你啃了根排骨庆祝。七老八十，牙口第一。', kind: 'good' },
+    { text: '活动假牙，凑合用', effect: { attr: { mny: -1, spr: -1 } }, result: '假牙泡在杯子里，像你的另一个自己。吃饭不香，但也饿不着。' }
+  ] },
+{ id: 'ev_r3_y70_first_snow', age: [70, 95],
+  text: '今冬第一场雪，你让人推你到楼下。雪花落在手背上，六十年前那个冬天，好像也下过这样一场。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y70_old_unit', age: [70, 90], once: true,
+  text: '老单位组织退休人员回厂参观，车间早已改成了文创园。你在自己当年的工位前站了很久——那里现在是一家咖啡店。',
+  effect: { attr: { spr: 1, int: 1 } } },
+{ id: 'ev_r3_y70_pillow', age: [70, 95],
+  text: '睡惯的老枕头塌了，新枕头怎么睡都不对劲。最后还是把旧的拍松继续用。人到晚年，认的不是理，是旧。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y70_legacy_talk', age: [70, 90], once: true, kind: 'fate',
+  text: '一个寻常的晚饭后，你把子女叫到跟前，认真地谈起了身后事。',
+  choices: [
+    { text: '说完心里松快了', effect: { attr: { spr: 2, int: 1 } }, result: '子女红着眼说您想太远。你摆摆手：这不叫晦气，这叫通透。', kind: 'good' },
+    { text: '被岔开话题，改天再说', effect: { attr: { spr: 1 } }, result: '饭桌上谁都没再接话，但那晚的汤，每个人都多喝了一碗。' }
+  ] },
+
+// ---- r3 · 80-89 岁日常 ----
+{ id: 'ev_r3_y80_85', age: [85, 85], once: true, big: true,
+  text: '八十五岁生日，吹蜡烛前你郑重宣布："从今天起，我也是有老资格的人了。"全家鼓掌，蛋糕上的奶油都在笑。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_wheelchair', age: [80, 95],
+  text: '坐上轮椅后，你发现世界变低了：孩子的脸近了，花也近了。护士推你经过长廊，你数完了所有窗户，也数完了所有阳光。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y80_names', age: [80, 98], kind: 'good',
+  text: '全家几十口人的名字和生日，你张口就来，连晚辈的期末分数都记得。大脑这块硬盘，最亲的文件夹从不丢。',
+  effect: { attr: { int: 1, spr: 1 } } },
+{ id: 'ev_r3_y80_candy_pocket', age: [80, 100],
+  text: '你的口袋永远装着糖，专发给来看你的小孩。孩子们都喊你"糖果爷爷/奶奶"。这个职称，你非常满意。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_old_song', age: [80, 100],
+  text: '收音机里响起六十年前的那首歌，你手里的蒲扇停住了。',
+  choices: [
+    { text: '跟着哼完，一字不差', cond: { attr: { int: { gte: 4 } } }, effect: { attr: { spr: 2, int: 1 } }, result: '词都没忘。记忆这东西，该走的走了，该留的一个没走。', kind: 'good' },
+    { text: '让孙辈搜出歌词，全家合唱', effect: { attr: { spr: 2 } }, result: '五音不全的一家人唱得荒腔走板，却把你唱红了眼眶。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y80_mirror', age: [80, 100],
+  text: '照镜子时你愣了愣：这张脸，皱纹比平坦的地方多。',
+  choices: [
+    { text: '再看一眼，道道都有来历', effect: { attr: { spr: 1, int: 1 } }, result: '你跟镜子里的老人点了点头。这张脸，是岁月一锤一锤雕出来的。', kind: 'good' },
+    { text: '让孙女给拍张美颜的', effect: { attr: { spr: 1, chr: 1 } }, result: '照片磨皮磨得发光，你设成了头像。老伙伴们纷纷打听用的什么软件。' }
+  ] },
+{ id: 'ev_r3_y80_nurse', age: [80, 100],
+  text: '护工小张总把"爷爷/奶奶今天真精神"挂在嘴边。你知道是职业话术，可还是每天都盼着这一句。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_family_photo', age: [80, 98], once: true, big: true, kind: 'good',
+  text: '补拍全家福，四代人换了三次队形才站下。快门按下的瞬间你喊了声"茄子"，全家笑场——成片反而最好。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_y80_love_letter', age: [80, 100], once: true,
+  cond: { flags: ['married'] },
+  text: '整理箱子底，翻出一沓发黄的信——是老伴当年写给你的。',
+  choices: [
+    { text: '戴上老花镜，重读一遍', effect: { attr: { spr: 2 } }, result: '字迹淡了，心意没淡。老伴凑过来看了两行，耳朵红了。', kind: 'good' },
+    { text: '让孙子录成语音，慢慢听', effect: { attr: { spr: 2 } }, result: '夜里你们一人一只耳机，听六十年前的人，说六十年前的情话。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y80_hospital_escape', age: [80, 95], once: true,
+  text: '住院第三天，你溜出医院买了根糖葫芦。护士急得满楼找，你举着糖葫芦认错："就想尝尝甜的。"全病房笑倒。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_flower', age: [80, 100],
+  text: '窗台的月季又开了，是你五十岁那年亲手种下的。',
+  choices: [
+    { text: '剪一枝，插在床头', effect: { attr: { spr: 2 } }, result: '夜里翻身能闻到香。你记不太清昨天吃了什么，但记得它开花的样子。', kind: 'good' },
+    { text: '拍下来发到家族群', effect: { attr: { spr: 1 } }, result: '晚辈们排队点赞。重孙问这花几岁了，你答：四十啦，比你还大。' }
+  ] },
+{ id: 'ev_r3_y80_memoir', age: [80, 100], once: true,
+  text: '社区想给你做口述史，说你这一辈子，就是一部活的年代剧。',
+  choices: [
+    { text: '讲！三天三夜讲不完', effect: { attr: { int: 1, spr: 2 } }, result: '你的故事存进了档案馆。录音结束那天，志愿者小姑娘说：谢谢您，像读了十年书。', kind: 'good' },
+    { text: '摆手：都在心里', effect: { attr: { spr: 1 } }, result: '有些故事只讲给懂的人。你还是留给了饭桌上的孩子们。' }
+  ] },
+{ id: 'ev_r3_y80_hand_warm', age: [80, 100],
+  cond: { flags: ['married'] },
+  text: '冬天你和老伴互相焐手，焐了一辈子。今年他的手比你的凉，你攥得比往年都紧。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_old_neighbor', age: [80, 98], once: true, kind: 'good',
+  text: '养老院隔壁床住进一位老人，一聊——竟是五十年前的老邻居。你们把整条老街的人名对了三天，一个都没落下。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_cake', age: [80, 100],
+  text: '半夜馋蛋糕，你摸黑去厨房挖了一勺，被值夜的护工逮个正着。俩人分着吃了，约定不告诉医生。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_doctor_words', age: [80, 100], kind: 'good',
+  text: '复查完，年轻医生看着片子直摇头："这心脏，比我爷爷的都结实。"你把这句话当奖状，逢人复述了一个月。',
+  effect: { attr: { spr: 2, str: 1 } } },
+{ id: 'ev_r3_y80_last_trip', age: [78, 92], once: true, big: true,
+  text: '你让子女带你回了趟出生地。老屋没了，村口的老槐树还在。你摸了摸粗糙的树皮，像跟八十年前的自己，握了握手。',
+  effect: { attr: { spr: 2, int: 1 } } },
+{ id: 'ev_r3_y80_hearing_aid', age: [78, 98],
+  text: '耳朵越来越背，子女劝你配助听器。',
+  choices: [
+    { text: '配上，世界重新高清', effect: { attr: { str: 1, spr: 1 } }, result: '戴上第一晚，你听了一宿虫鸣。原来安静了这么多年，是错过了这么多。', kind: 'good' },
+    { text: '拒绝，安静的频道挺好', effect: { attr: { spr: -1 } }, result: '世界对你调低了音量。好在家人的笑，看得见。' }
+  ] },
+{ id: 'ev_r3_y80_great_school', age: [80, 98],
+  cond: { flags: ['has_child'] },
+  text: '重孙上学了，书包比他上半身还大。你拄着拐送到巷口，就像很多年前，送他的爷爷那样。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y80_nap_dream', age: [80, 100],
+  text: '午梦里故人都来了，还都是年轻时的模样。醒来你不难过——能在梦里常聚，是岁月给的福利。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y80_rain', age: [80, 100],
+  text: '雨夜，你靠在床头听雨。八十多年了，雨声一点没变，听雨的人换了一茬又一茬。',
+  effect: { attr: { spr: 1, int: 1 } } },
+{ id: 'ev_r3_y80_ac', age: [80, 100],
+  text: '三十八度的天你也舍不得开空调，子女在手机上远程给你打开了。凉风一起你直嘟囔浪费，身体却很诚实地往风口挪了挪。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y80_gift', age: [80, 100], once: true,
+  cond: { flags: ['has_child'] },
+  text: '你想给重孙留点什么，比钱更经得起时间的东西。',
+  choices: [
+    { text: '写下家传菜谱和家训', effect: { attr: { spr: 2, int: 1 } }, result: '薄薄一本，孩子们双手接过去。你说：味道会淡，道理不会。', kind: 'good' },
+    { text: '每年录一段生日视频', effect: { attr: { spr: 2 } }, result: '镜头里的你一年比一年慢，说的"好好长大"一年比一年重。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_winter_cold', age: [82, 100], weight: 4, kind: 'bad', once: true, cond: { chance: 0.05 },
+  text: '这个冬天特别冷，暖气烧得很足，窗外落着雪。某个安静的深夜，你在睡梦中停止了呼吸。',
+  effect: { kill: true, deathText: '没能熬过这个滴水成冰的冬天' } },
+
+// ---- r3 · 90-100 岁日常 ----
+{ id: 'ev_r3_y90_95', age: [95, 95], once: true, big: true,
+  text: '九十五岁生日，蛋糕上的数字蜡烛快摆不下了。你许愿的声音很小，只有蛋糕听见了。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_record', age: [90, 100], once: true, kind: 'good',
+  text: '你刷新了家族的长寿纪录。家族群里晚辈排队"接寿气"，你挨个发红包，备注统一写着：都给我好好活。',
+  effect: { attr: { mny: -1, spr: 2 } } },
+{ id: 'ev_r3_y90_candy2', age: [90, 100],
+  text: '兜里揣糖的习惯一辈子没改掉。来做志愿者的孩子们围着你，一人一颗。糖不稀奇，稀奇的是发糖的人九十多了。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_letter_future', age: [90, 100], once: true,
+  text: '一个念头冒出来：给一百年后的人写封信。',
+  choices: [
+    { text: '提笔写完，封进铁盒', cond: { attr: { int: { gte: 4 } } }, effect: { attr: { spr: 2, int: 1 } }, result: '开头你写：见字如面，来自一百年前。铁盒交给重孙，使命必达。', kind: 'good' },
+    { text: '写不动，口述给重孙记', effect: { attr: { spr: 2 } }, result: '小家伙记了满满三页，错别字不少，诚意满分。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y90_old_tree', age: [90, 100],
+  text: '小区那棵老银杏，据说是和你同岁栽下的。秋风里你们一个坐在轮椅上，一个站在原地，谁也没催谁。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_reporter', age: [92, 100],
+  text: '又有媒体来采访长寿秘诀。这次你说："别学我，我年轻时熬夜干活那会儿，你们还没出生。"全场笑翻，这段又没播成。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_memory_piece', age: [90, 100], kind: 'bad',
+  text: '有些日子开始从日历上脱落。你把最重要的名字写在卡片上随身带着——忘了全世界，也不能忘了他们。',
+  effect: { attr: { spr: -1 } } },
+{ id: 'ev_r3_y90_hold_great', age: [90, 100], kind: 'good',
+  cond: { flags: ['has_child'] },
+  text: '你又抱了抱最小的那个重孙。他软得像团云，你抖得像片叶。相隔近一个世纪的两个生命，碰了碰鼻尖。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_y90_recipe', age: [90, 100],
+  text: '你的事迹上了新闻，全网都在求你的长寿食谱。',
+  choices: [
+    { text: '公开：杂粮粥配好心态', effect: { attr: { spr: 2 } }, result: '食谱转发百万。有人评论：道理都懂，就是活不到用上的那天——先好好活。', kind: 'good' },
+    { text: '保密：家家有本难念的经', effect: { attr: { spr: 1 } }, result: '你笑而不语。真正的秘方你心里有数：熬得住，看得开。' }
+  ] },
+{ id: 'ev_r3_y90_last_photo', age: [90, 100], once: true, kind: 'fate',
+  text: '春节前拍全家福，你被簇拥在正中间。摄影师喊"看镜头"，你却挨个看了看身边的每一个人——他们，才是你的镜头。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_sun_move', age: [90, 100],
+  text: '午后，你在阳台上追着太阳挪椅子，挪一次，打一个盹。',
+  choices: [
+    { text: '跟太阳赛到底', effect: { attr: { spr: 2 } }, result: '太阳下山时你宣布：今日战平，明天接着赛。', kind: 'good' },
+    { text: '裹上毯子直接睡', effect: { attr: { spr: 2, str: 1 } }, result: '一觉睡到晚饭香。护工说你打呼的声音，像只满足的老猫。' }
+  ] },
+{ id: 'ev_r3_y90_milk_name', age: [90, 100],
+  text: '九十多岁了，母亲喊你乳名的声音还常在耳边。家族聚会上重孙问"太爷爷/太奶奶小名叫什么"，你笑而不答。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y90_arm_wrestle', age: [90, 100],
+  text: '隔壁床九十九岁的老伙计找你掰手腕。两只枯瘦的手较了三分钟劲，不分胜负，倒把护工吓白了头。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_winter_count', age: [90, 100],
+  text: '你数着，这是人生第九十几个冬天。暖气很足，茶很热。窗外下不下雪，都不打紧了。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y90_quiet', age: [90, 100],
+  text: '一个无所事事的午后：没人来访，没有安排。你慢慢喝完一盏茶，觉得这样的空白，也是人生的正文。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_party_prep', age: [96, 99], once: true,
+  text: '全家偷偷筹备你的百岁宴，名单列了三页。你假装不知道，每天多吃半碗饭——得给他们留足准备时间。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_tablet', age: [90, 100],
+  text: '重孙教你用平板电脑，你的手指在屏幕上戳得小心翼翼。',
+  choices: [
+    { text: '学会视频通话，天天查岗', effect: { attr: { spr: 2, int: 1 } }, result: '现在你每天和五个城市的家人视频。九十岁的网瘾老人，上线。', kind: 'good' },
+    { text: '用它听戏，足矣', effect: { attr: { spr: 1 } }, result: '平板成了随身戏台。科技的尽头，对你来说是一出《贵妃醉酒》。' }
+  ] },
+{ id: 'ev_r3_y90_nurse_birthday', age: [90, 100],
+  text: '护工小姑娘过生日，你让子女送来一块蛋糕。她愣住了："您怎么知道？"你说：惦记人这件事，我练了九十年。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_hum', age: [90, 100],
+  text: '你哼着年轻时的小调给重孙催眠。他睡着了，你还哼着。曲子里有煤油灯、绿皮车，和一整个远去的年代。',
+  effect: { attr: { spr: 1 } } },
+{ id: 'ev_r3_y90_regret_none', age: [90, 100], once: true,
+  text: '重孙趴在你膝头问：太爷爷/太奶奶，你这辈子后悔吗？',
+  choices: [
+    { text: '"后悔没早点想开"', effect: { attr: { spr: 2 } }, result: '他把这句话写进了作文，老师给了满分，评语：好一位哲学家。', kind: 'good' },
+    { text: '"后悔的事，都成了故事"', effect: { attr: { spr: 2, int: 1 } }, result: '一句话，够他琢磨很多年。你摸摸他的头：慢慢琢磨，不急。', kind: 'good' }
+  ] },
+{ id: 'ev_r3_y90_town_gift', age: [92, 100], once: true, kind: 'good',
+  text: '镇上送来一块"期颐之瑞"的寿匾，扎着红绸花。你让挂在堂屋正中，进门先看见——这是岁月发的军功章。',
+  effect: { attr: { spr: 3 } } },
+{ id: 'ev_r3_y90_clock', age: [90, 100],
+  text: '老座钟走了一个甲子，钟摆不紧不慢。今天它忽然慢了五分钟。',
+  choices: [
+    { text: '戴上老花镜，亲自调准', effect: { attr: { int: 1, spr: 1 } }, result: '调准了。你拍拍钟壳：老伙计，谁也不许先认输。', kind: 'good' },
+    { text: '随它去，慢就慢吧', effect: { attr: { spr: 1 } }, result: '慢五分钟的世界，也不耽误什么。到了这把年纪，最富余的就是时间。' }
+  ] },
+{ id: 'ev_r3_y90_dream_young', age: [90, 100],
+  text: '梦里你变回了七岁，在田埂上疯跑，母亲在村口喊你回家吃饭。醒来枕头是暖的，嘴角是翘的。',
+  effect: { attr: { spr: 2 } } },
+{ id: 'ev_r3_y90_stars', age: [90, 100],
+  text: '夜里睡不着，你让人推你看星星。银河还是那条银河。小时候你替爷爷数过，现在，轮到重孙替你数了。',
+  effect: { attr: { spr: 2 } } }
+
 ];

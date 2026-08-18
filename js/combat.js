@@ -37,7 +37,10 @@ var Combat = (function () {
       if (!it) return;
       if (it.slot === 'use') return;
       if (life.equip[it.slot] !== id) return;   // 只算已装备
-      atk += it.atk || 0; def += it.def || 0; hp += it.hp || 0;
+      var fm = (typeof Game !== 'undefined' && Game.forgeMult) ? Game.forgeMult(id) : 1;
+      atk += Math.round((it.atk || 0) * fm);
+      def += Math.round((it.def || 0) * fm);
+      hp += Math.round((it.hp || 0) * fm);
       if (it.skill && !seen[it.skill]) { seen[it.skill] = 1; skills.push(it.skill); }
     });
     (life.skills || []).forEach(function (sid) { if (!seen[sid]) { seen[sid] = 1; skills.push(sid); } });
@@ -198,6 +201,7 @@ var Combat = (function () {
     btn.className = 'ink-btn primary';
     btn.textContent = win ? '凯旋' : '撤退';
     btn.onclick = function () {
+      AudioFX.unduck();
       $('overlay-battle').classList.add('hidden');
       var cb = S.onEnd, hpState = S.hpState;
       if (hpState) hpState.hp = Math.max(1, S.hp);
@@ -229,6 +233,7 @@ var Combat = (function () {
     };
     if (S.hpState) S.hpState.max = st.maxhp;
     $('overlay-battle').classList.remove('hidden');
+    AudioFX.duck();
     $('bt-log').innerHTML = '';
     log(opts.enemies[0].intro || (opts.enemies[0].name + ' 出现了！'));
     render();
