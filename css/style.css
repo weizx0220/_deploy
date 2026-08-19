@@ -728,7 +728,7 @@ html, body {
 .mini-toast {
   position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
   z-index: 75; pointer-events: none;
-  background: rgba(42,42,46,0.88); color: var(--paper);
+  background: rgba(42,42,46,0.88); color: #f4eddb;
   font-size: 14px; letter-spacing: 2px; padding: 8px 20px; border-radius: 20px;
   animation: fadeIn .25s ease;
   transition: opacity .5s ease;

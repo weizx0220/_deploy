@@ -460,7 +460,8 @@
       Save.save();
     }
     G.phase = 'life';
-    document.body.dataset.world = w.id;   // 世界主题画风
+    if (w.id === 'life') delete document.body.dataset.world;   // 都市保持浅色宣纸主题
+    else document.body.dataset.world = w.id;   // 其他世界：深色主题画风
     UI.showScreen('life');
     AudioFX.bgm(w.id === 'xiuxian' ? 'xiuxian' : (w.pool === 'life' ? 'life' : 'novel'));
     // 选项框若被上一世拖进了时间轴，先挪回安全位置，避免被清空时间轴时销毁
