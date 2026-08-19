@@ -1762,3 +1762,22 @@ body[data-world] #overlay-map .overlay-head, body[data-world] #overlay-social .o
   box-shadow: 0 10px 30px rgba(0,0,0,0.55);
   max-height: 196px;
 }
+
+/* ---------- SVG 美术资源集成 ---------- */
+/* 标题 Logo */
+.title-logo { width: min(460px, 84vw); margin: 6px 0 2px; }
+/* 全屏界面四角云纹 */
+#overlay-inv .overlay-panel, #overlay-map .overlay-panel, #overlay-social .overlay-panel {
+  position: relative;
+}
+#overlay-inv .overlay-panel::before, #overlay-map .overlay-panel::before, #overlay-social .overlay-panel::before,
+#overlay-inv .overlay-panel::after, #overlay-map .overlay-panel::after, #overlay-social .overlay-panel::after {
+  content: ""; position: absolute; width: 96px; height: 96px; z-index: 1; pointer-events: none;
+  background: url("../assets/ui/corner.svg") no-repeat center / contain; opacity: 0.5;
+}
+#overlay-inv .overlay-panel::before, #overlay-map .overlay-panel::before, #overlay-social .overlay-panel::before {
+  left: 6px; bottom: 6px; transform: scaleY(-1);
+}
+#overlay-inv .overlay-panel::after, #overlay-map .overlay-panel::after, #overlay-social .overlay-panel::after {
+  right: 6px; bottom: 6px; transform: scale(-1);
+}

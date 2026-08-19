@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="220" viewBox="0 0 640 220">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e3a8"/>
+      <stop offset="0.45" stop-color="#d4a94e"/>
+      <stop offset="0.75" stop-color="#9a6f23"/>
+      <stop offset="1" stop-color="#e8c97a"/>
+    </linearGradient>
+    <linearGradient id="goldStroke" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a6420"/>
+      <stop offset="0.5" stop-color="#f0d489"/>
+      <stop offset="1" stop-color="#8a6420"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <!-- 底部云气 -->
+  <g stroke="url(#goldStroke)" fill="none" stroke-width="2" opacity="0.75">
+    <path d="M60 168 q40 -14 70 0 q30 12 60 -2"/>
+    <path d="M450 170 q35 -12 65 0 q28 10 55 -2"/>
+    <path d="M240 178 q40 10 80 2 q40 -8 80 0" opacity="0.5"/>
+  </g>
+  <!-- 主标题 -->
+  <g filter="url(#soft)">
+    <text x="320" y="130" text-anchor="middle"
+      font-family="STKaiti, KaiTi, 'Kaiti SC', serif" font-size="118" font-weight="bold"
+      fill="url(#gold)" stroke="#7a5a18" stroke-width="1.6"
+      letter-spacing="18" filter="url(#glow)">浮生若梦</text>
+  </g>
+  <!-- 两侧如意点 -->
+  <g fill="url(#gold)" opacity="0.9">
+    <circle cx="72" cy="110" r="4"/><circle cx="92" cy="110" r="2.4"/>
+    <circle cx="568" cy="110" r="4"/><circle cx="548" cy="110" r="2.4"/>
+  </g>
+</svg>
