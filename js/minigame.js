@@ -3,9 +3,22 @@
 var MiniGame = (function () {
   function $(id) { return document.getElementById(id); }
 
+  /* 跳过机制：每个游戏开局注册中止函数，点「跳过」按 1 倍结算退出 */
+  var abortFn = null;
+  function setAbort(fn) { abortFn = fn; }
+  function abort() { if (abortFn) { var f = abortFn; abortFn = null; f(); } }
+  /* 包装回调：正常结算时注销跳过 */
+  function wrapCb(cb) { return function (m) { abortFn = null; cb(m); }; }
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = $('mini-skip');
+    if (b) b.onclick = function () { abort(); };
+  });
+
   /* ================= 速算 2.0：连击 + 限时 + 爆分 ================= */
   function math(cb) {
+    cb = wrapCb(cb);
     var qi = 0, correct = 0, combo = 0, maxCombo = 0, timer = null;
+    setAbort(function () { clearInterval(timer); $('overlay-mini').classList.add('hidden'); cb(1); });
     function question() {
       var a = 3 + Math.floor(Math.random() * 15), b = 3 + Math.floor(Math.random() * 15);
       var op = ['+', '-', '×'][Math.floor(Math.random() * 3)];
@@ -58,6 +71,8 @@ var MiniGame = (function () {
 
   /* ================= 画符（Canvas 描迹） ================= */
   function fu(cb) {
+    cb = wrapCb(cb);
+    setAbort(function () { MiniCore.close(); cb(1); });
     var path = [], trail = [], drawing = false, TIME = 14, t0 = 0;
     // 生成符箓曲线（三段贝塞尔）
     var pts = [];
@@ -137,6 +152,8 @@ var MiniGame = (function () {
 
   /* ================= 投壶（Canvas 物理） ================= */
   function pot(cb) {
+    cb = wrapCb(cb);
+    setAbort(function () { MiniCore.close(); cb(1); });
     var throws = 0, hits = 0, power = 0, charging = false, ball = null, POT_X = 480;
     MiniCore.open({
       title: '投壶雅戏',
@@ -208,22 +225,26 @@ var MiniGame = (function () {
 
   /* ================= 下落音游（Phaser 引擎） ================= */
   function beat(cb) {
+    cb = wrapCb(cb);
+    // 先开弹层给反馈（Phaser 1.2MB，弱网加载有延迟）
+    $('mini-title').textContent = '律动韶华';
+    $('mini-body').innerHTML = '<div style="padding:48px 0;color:var(--ink-faint)">曲谱展开中……</div>';
+    $('overlay-mini').classList.remove('hidden');
+    setAbort(function () { $('overlay-mini').classList.add('hidden'); cb(1); });
     // Phaser 未加载则动态加载；失败回退提示 1 倍结算
     if (typeof Phaser === 'undefined') {
       var s = document.createElement('script');
       s.src = 'js/vendor/phaser.min.js';
       s.onload = function () { beat(cb); };
-      s.onerror = function () { cb(1); };
+      s.onerror = function () { $('overlay-mini').classList.add('hidden'); cb(1); };
       document.head.appendChild(s);
       return;
     }
     var notes = [], score = 0, combo = 0, spawned = 0, TOTAL = 24, ended = false;
     var LANES = 3, LW = 130, TOP = 20, HIT_Y = 270, SPEED = 150;
 
-    $('mini-title').textContent = '律动韶华';
     $('mini-body').innerHTML = '<div id="phaser-host"></div>' +
       '<div id="mg-sub" style="margin-top:6px;font-size:13px;color:var(--ink-faint)">音符落到金线时点击对应音轨（键盘 1/2/3 亦可）</div>';
-    $('overlay-mini').classList.remove('hidden');
 
     var game = new Phaser.Game({
       type: Phaser.AUTO,
@@ -269,6 +290,8 @@ var MiniGame = (function () {
               score += perfect ? 2 : 1;
               combo++;
               sc.textCombo.setText('连击 ' + combo);
+              var bi = notes.indexOf(best);   // 击中后必须从队列移除，否则结束条件永不满足
+              if (bi >= 0) notes.splice(bi, 1);
               best.destroy();
               AudioFX.pluck([392, 440, 523][lane] * (perfect ? 2 : 1), 0.12);
               sc.hitGfx.fillStyle(perfect ? 0xb8862f : 0x3d6b5e, 0.6);
@@ -322,6 +345,8 @@ var MiniGame = (function () {
         }
       }
     });
+    // 游戏创建后，跳过需连引擎一起销毁
+    setAbort(function () { try { game.destroy(true); } catch (e) {} $('overlay-mini').classList.add('hidden'); cb(1); });
   }
 
   /* 兼容旧接口：节奏健身改用音游 */
