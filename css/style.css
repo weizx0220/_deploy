@@ -1844,3 +1844,48 @@ body[data-world="xiuxian"] { --corner-url: url("../assets/ui/corner_xiuxian.svg"
   font-size: 15px; vertical-align: middle;
 }
 .biz-lv { color: var(--gold); font-size: 13px; margin-left: 4px; }
+
+/* ---------- 全屏行囊：内容放大 ---------- */
+#overlay-inv .overlay-body { max-width: 1200px; }
+#overlay-inv .inv-head { padding: 14px 22px; font-size: 17px; }
+#overlay-inv .tab { font-size: 20px; padding: 6px 16px; }
+#overlay-inv .eq-circle { width: 560px; height: 480px; margin-top: 24px; }
+#overlay-inv .eq-center { width: 150px; height: 150px; }
+#overlay-inv .eq-center #eq-center-name { font-size: 24px; }
+#overlay-inv .eq-center small { font-size: 13px; }
+#overlay-inv .eq-slot {
+  width: 170px; min-height: 108px; padding: 10px 8px; border-radius: 12px;
+}
+#overlay-inv .eq-slot small { font-size: 13px; }
+#overlay-inv .eq-slot b { font-size: 16px; }
+#overlay-inv .eq-slot .eq-ico { width: 60px; height: 60px; border-radius: 10px; }
+#overlay-inv .eq-w { margin-top: -54px; }
+#overlay-inv .eq-a { margin-top: -54px; }
+#overlay-inv .eq-h { margin-left: -85px; }
+#overlay-inv .eq-t { left: 10%; }
+#overlay-inv .eq-c { right: 10%; }
+#overlay-inv .eq-detail {
+  max-width: 640px; font-size: 16px; padding: 16px 22px; margin-top: 22px;
+}
+#overlay-inv .eq-actions .ink-btn.small { font-size: 15px; padding: 8px 16px; }
+#overlay-inv #inv-list .map-act { padding: 16px 20px; margin-bottom: 12px; border-radius: 12px; }
+#overlay-inv #inv-list .mini-ico { width: 56px; height: 56px; border-radius: 10px; }
+#overlay-inv #inv-list .l-name { font-size: 19px; }
+#overlay-inv #inv-list .l-desc { font-size: 14px; margin-top: 5px; }
+#overlay-inv #inv-list .ink-btn.small { font-size: 15px; padding: 8px 16px; }
+#overlay-inv .bag-cats .cat { font-size: 15px; padding: 6px 14px; }
+
+/* 手机端保持紧凑 */
+@media (max-width: 768px) {
+  #overlay-inv .eq-circle { width: 320px; height: 290px; margin-top: 8px; }
+  #overlay-inv .eq-center { width: 110px; height: 110px; }
+  #overlay-inv .eq-center #eq-center-name { font-size: 17px; }
+  #overlay-inv .eq-slot { width: 96px; min-height: 62px; padding: 6px 4px; }
+  #overlay-inv .eq-slot .eq-ico { width: 40px; height: 40px; }
+  #overlay-inv .eq-slot small { font-size: 10.5px; }
+  #overlay-inv .eq-slot b { font-size: 13px; }
+  #overlay-inv .eq-h { margin-left: -48px; }
+  #overlay-inv .eq-w, #overlay-inv .eq-a { margin-top: -31px; }
+  #overlay-inv #inv-list .mini-ico { width: 42px; height: 42px; }
+  #overlay-inv #inv-list .l-name { font-size: 15px; }
+}
