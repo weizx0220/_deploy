@@ -86,8 +86,8 @@ var MapX = (function () {
       SHARED[0], SHARED[1], SHARED[2], ROGUE
     ],
     novel_wuxian: [
-      { id: 'train', name: '刷自由副本', desc: '战斗历练（35 体力）', cost: 1 },
-      { id: 'dungeon', name: '高难度副本', desc: '组队挑战（40 体力）', cost: 1 },
+      { id: 'train', name: '刷自由副本', desc: '战斗历练（35 体力）', cost: 35 },
+      { id: 'dungeon', name: '高难度副本', desc: '组队挑战（40 体力）', cost: 40 },
       { id: 'training2', name: '强化训练', desc: '体质 +1', cost: 40, attr: { str: 1 },
         texts: ['重力室里又是充实的一天。', '虚拟实战舱里死了十七次，进步肉眼可见。'] },
       { id: 'intel', name: '情报分析', desc: '智力 +1，两成概率快乐 +1', cost: 40, attr: { int: 1 }, chanceAttr: { attr: 'spr', p: 0.2 },
@@ -107,16 +107,16 @@ var MapX = (function () {
         texts: ['私教课上得汗流浃背，线条更利落了。'] },
       { id: 'emba', name: '进修学习', desc: '智力 +1，速算优异翻倍', cost: 40, minigame: 'math', attr: { int: 1 },
         texts: ['商学院的案例课，笔记记了满满三页。'] },
-      { id: 'beauty', name: '形象管理', desc: '颜值 +1（3 年冷却）', cost: 1, cd: 3, attr: { chr: 1 },
+      { id: 'beauty', name: '形象管理', desc: '颜值 +1（25 体力，3 年冷却）', cost: 25, cd: 3, attr: { chr: 1 },
         texts: ['高定西装上身，气场两米八。'] },
-      { id: 'dungeon', name: '商战风云', desc: '商场如战场（40 体力）', cost: 1 },
+      { id: 'dungeon', name: '商战风云', desc: '商场如战场（40 体力）', cost: 40 },
       { id: 'biz', name: '产业经营', desc: '投资并购，资本滚雪球（不耗体力）', cost: 0 },
       { id: 'luck_wheel', name: '年会抽奖', desc: '10 现金一抽，大奖拿到手软（不耗体力）', cost: 0 },
       SHARED[0], SHARED[1], SHARED[2], ROGUE
     ],
     novel_moshi: [
-      { id: 'train', name: '外出拾荒', desc: '危险与收获并存（35 体力）', cost: 1 },
-      { id: 'dungeon', name: '禁区探索', desc: '深入危险区域（40 体力）', cost: 1 },
+      { id: 'train', name: '外出拾荒', desc: '危险与收获并存（35 体力）', cost: 35 },
+      { id: 'dungeon', name: '禁区探索', desc: '深入危险区域（40 体力）', cost: 40 },
       { id: 'trainbody', name: '体能训练', desc: '体质 +1', cost: 40, attr: { str: 1 },
         texts: ['扛着沙袋绕围墙跑了二十圈。', '和守卫队对练到脱力。'] },
       { id: 'research', name: '研究样本', desc: '智力 +1', cost: 40, attr: { int: 1 },
@@ -128,8 +128,8 @@ var MapX = (function () {
       SHARED[0], SHARED[1], SHARED[2], ROGUE
     ],
     xiuxian: [
-      { id: 'train', name: '外出历练', desc: '斩妖除魔，历练道心（35 体力）', cost: 1 },
-      { id: 'dungeon', name: '秘境探险', desc: '洞天福地，危机四伏（40 体力）', cost: 1 },
+      { id: 'train', name: '外出历练', desc: '斩妖除魔，历练道心（35 体力）', cost: 35 },
+      { id: 'dungeon', name: '秘境探险', desc: '洞天福地，危机四伏（40 体力）', cost: 40 },
       { id: 'biguan', name: '闭关苦修', desc: '体质 +1、智力 +1（画符圆满则翻倍）', cost: 40, minigame: 'fu', attr: { str: 1, int: 1 },
         texts: ['闭关数月，灵力又浑厚了几分。', '枯坐蒲团，道心澄明。'] },
       { id: 'alchemy', name: '炼丹制药', desc: '盘缠 +25~50（家境加成），两成概率得老山参', cost: 25, coin: [25, 50], chanceItem: { id: 'it_ginseng', p: 0.2 },
