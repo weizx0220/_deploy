@@ -391,7 +391,7 @@ var CardBattle = (function () {
       el.className = 'cb-card ' + c.type + ' r' + c.rarity + (c.cost > S.energy || S.busy || S.over ? ' disabled' : '');
       el.innerHTML =
         '<div class="cb-cost">' + c.cost + '</div>' +
-        icon(c.icon, c.type === 'atk' ? '#a5281b' : '#3d6b5e') +
+        '<img class="cb-art" src="' + (typeof Assets !== 'undefined' ? Assets.url(c.id + '.png') : '') + '" onerror="this.remove()">' +
         '<div class="cb-cname">' + c.name + '</div>' +
         '<div class="cb-cdesc">' + c.desc + '</div>';
       el.onclick = function () { playCard(i); };
