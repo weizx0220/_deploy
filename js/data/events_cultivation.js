@@ -4,12 +4,6 @@
  */
 var EVENTS_CULTIVATION = [
 
-  /* ========== 契约开盒事件（life 池） ========== */
-  { id: 'ev_c_open_box', age: [100, 120], pool: 'life', once: true, big: true, kind: 'fate',
-    cond: { flags: ['has_box'], notFlags: ['box_opened'] },
-    text: '百岁生辰这夜，那只尘封的小盒子忽然自行开启——没有机关，没有声响，只有一缕清气升腾而起。盒中是一本无字道经与一枚温热灵种。你枯寂百年的血脉，重新滚烫起来。',
-    effect: { setFlags: ['box_opened', 'immortal_body'], setPool: 'xiuxian', setRoute: 'xiuxian', attr: { str: 50, int: 15 } } },
-
   /* ========== 开盒后灵根判定 ========== */
   { id: 'ev_c_linggen', age: [100, 105], pool: 'xiuxian', once: true, big: true, kind: 'fate',
     cond: { flags: ['box_opened'], notFlags: ['linggen_good', 'linggen_normal', 'linggen_poor'] },

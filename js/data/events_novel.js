@@ -1,93 +1,6 @@
 // 书中界（小说穿越）事件：武侠 / 无限流 / 霸总 / 末世
 var EVENTS_NOVEL = [
 
-// ========== 入界事件（pool: life） ==========
-
-{
-  id: 'ev_n_wuxia_in1',
-  age: [16, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_wuxia'] },
-  text: '你熬夜追一本武侠小说，看到主角跳崖时一口气没上来，眼前一黑。再睁眼，你躺在崖底，手边一本泛黄的《太玄经》，脑子里多了一段不属于你的记忆。',
-  effect: { setPool: 'novel_wuxia', setRoute: 'novel', setAge: 16, setFlags: ['world_wuxia'], spr: 2 }
-},
-{
-  id: 'ev_n_wuxia_in2',
-  age: [16, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_wuxia'] },
-  text: '一场车祸后，你在一阵唢呐声中醒来，发现自己成了武林世家里那个"活不过三章"的病弱少爷。既来之，则练之。',
-  effect: { setPool: 'novel_wuxia', setRoute: 'novel', setAge: 16, setFlags: ['world_wuxia'] }
-},
-{
-  id: 'ev_n_wuxian_in1',
-  age: [18, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_wuxian'] },
-  text: '深夜，手机弹出一行血红的字："想明白生命的意义吗？想真正地……活着吗？"你鬼使神差点了"是"，白光闪过，你已站在一片纯白空间里。',
-  effect: { setPool: 'novel_wuxian', setRoute: 'novel', setAge: 18, setFlags: ['world_wuxian'] }
-},
-{
-  id: 'ev_n_wuxian_in2',
-  age: [18, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_wuxian'] },
-  text: '电梯在五楼和六楼之间停住了，灯灭了三秒。灯再亮时，电梯里多了七个陌生人，广播响起："欢迎各位玩家进入副本。"',
-  effect: { setPool: 'novel_wuxian', setRoute: 'novel', setAge: 18, setFlags: ['world_wuxian'] }
-},
-{
-  id: 'ev_n_bazong_in1',
-  age: [18, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_bazong'] },
-  text: '你发帖吐槽某霸总文"狗血淋头、逻辑喂狗"，当晚被一道雷劈中。醒来时，管家恭敬地递上黑卡："夫人，总裁让您别再用体温给文件升温了。"',
-  effect: { setPool: 'novel_bazong', setRoute: 'novel', setAge: 22, setFlags: ['world_bazong'] }
-},
-{
-  id: 'ev_n_moshi_in1',
-  age: [18, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_moshi'] },
-  text: '睡前你还在看末世文吐槽主角囤粮太慢，醒来时窗外传来嘶吼，新闻里主持人话说到一半就开始变异。你摸了摸床头的棒球棍，还好，不是手无寸铁。',
-  effect: { setPool: 'novel_moshi', setRoute: 'novel', setAge: 20, setFlags: ['world_moshi'] }
-},
-{
-  id: 'ev_n_moshi_in2',
-  age: [18, 45],
-  pool: 'life',
-  weight: 1,
-  once: true,
-  big: true,
-  kind: 'fate',
-  cond: { chance: 0.12, notFlags: ['has_box', 'world_moshi'] },
-  text: '你在丧尸口中咽气，再睁眼竟回到末世爆发前三天。这一世，你熟读剧情，知道每一波尸潮的时间——以及超市哪排货架的罐头最值钱。',
-  effect: { setPool: 'novel_moshi', setRoute: 'novel', setAge: 20, setFlags: ['world_moshi'], int: 1, mny: 1 }
-},
-
 // ========== 武侠世界（novel_wuxia，16-46岁） ==========
 
 {
@@ -431,7 +344,7 @@ var EVENTS_NOVEL = [
   text: '最终副本通关。主神罕见地亲自现身："你是本空间有史以来评分最高的玩家。许愿吧——留在主神空间执掌规则，或者，带着全部强化回归现实。"',
   choices: [
     { text: '留下，成为新的主神', effect: { setFlags: ['wuxian_win'], kill: true, deathText: '通关最终副本，化身主神空间新的执掌者' }, result: '你接过光球，从此端坐空间中央。无数玩家的生死副本里，都藏着一双温柔注视的眼睛。', kind: 'good', big: true },
-    { text: '回归现实，人间值得', effect: { setFlags: ['wuxian_win'], setPool: 'life', setAge: 18, attr: { str: 2, int: 2, luk: 1 } }, result: '白光散去，你回到穿越前那部电梯里，时间只过了三秒。但你的眼神、体魄和胆识，都已脱胎换骨。', kind: 'good', big: true }
+    { text: '回归人间，万家灯火', effect: { setFlags: ['wuxian_win'], attr: { str: 2, int: 2, luk: 1 } }, result: '你拒绝了权柄，选择回到人间烟火里。主神躬身送你离开，空间里从此流传着一个拒绝成神的传说。', kind: 'good', big: true }
   ]
 },
 
@@ -784,7 +697,7 @@ var EVENTS_NOVEL = [
   text: '血清量产，尸群退去，安全区的烟囱重新冒起了炊烟。末世纪元终于要翻篇了。只是某夜，你在废土上看到一道熟悉的裂缝——它在邀请你回家。',
   choices: [
     { text: '留下，看着他们重建文明', effect: { setFlags: ['moshi_win'], kill: true, deathText: '末世终结者，在新世界的朝阳里安详离世' }, result: '你留了下来，把余生交给这片土地。多年后雕像落成，碑文只有一句："他/她让世界重新有了明天。"', kind: 'good', big: true },
-    { text: '踏入裂缝，回归现实', effect: { setFlags: ['moshi_win'], setPool: 'life', setAge: 24, attr: { str: 2, int: 2, spr: 1 } }, result: '裂缝那头是你穿越前的出租屋，桌上的泡面还冒着热气。你拉开窗帘，阳光好得让人想哭。', kind: 'good', big: true }
+    { text: '踏入裂缝，走向新生', effect: { setFlags: ['moshi_win'], attr: { str: 2, int: 2, spr: 1 } }, result: '你踏入裂缝，走向重建后的新世界。那里有炊烟，有书声，有你亲手挣来的明天。', kind: 'good', big: true }
   ]
 },
 

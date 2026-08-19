@@ -171,7 +171,7 @@
 
   /* 天赋卡上的具体效果说明 */
   var FLAG_TAGS = {
-    has_box: '百岁开盒 · 踏入仙途',
+    has_box: '小盒护体 · 镇命回春',
     cthulhu_touched: '隐藏路线 · 诡秘',
     jade_pendant: '隐藏路线 · 魂修',
     biz_mind: '隐藏路线 · 商途',
@@ -1078,9 +1078,6 @@
       L.wound--;
       if (L.wound === 0) UI.miniToast('伤势痊愈，又可以大展拳脚了');
     }
-    // 人际：结识新缘与关系衰减
-    Social.checkMeet();
-    Social.yearTick();
     // 家境生财：每年按家境产生盘缠收入
     if (L.attr.mny > 0) L.coin += Math.floor(L.attr.mny / 3);
     // 职业年薪与晋升
@@ -1090,8 +1087,15 @@
         if (L.age < 60) {
           var sal = cs.salary[L.career.level];
           L.coin += sal;
+          UI.miniToast('💰 ' + cs.titles[L.career.level] + ' 年薪入账 +' + sal + ' ' + coinName());
+          // 职业历练：每 3 年主属性 +1（在职沉淀）
+          var mainKey0 = Object.keys(cs.need)[0];
+          if (L.age % 3 === 0) {
+            L.attr[mainKey0] = (L.attr[mainKey0] || 0) + 1;
+            UI.miniToast('📈 职业历练：' + Engine.ATTR_NAMES[mainKey0] + ' +1');
+          }
           // 晋升检查：主属性达标
-          var mainKey = Object.keys(cs.need)[0];
+          var mainKey = mainKey0;
           var needLv = cs.need[mainKey] + (L.career.level + 1) * 4;
           if (L.career.level < 3 && (L.attr[mainKey] || 0) >= needLv) {
             L.career.level++;
@@ -1354,7 +1358,6 @@
       AudioFX.tick(); MapX.open();
     };
     $('btn-inv').onclick = function () { AudioFX.tick(); MapX.openInventory(); };
-    $('btn-social').onclick = function () { AudioFX.tick(); Social.openPanel(); };
     $('btn-auto').onclick = toggleAuto;
     $('auto-speed').onchange = function () {
       if (G.auto) { stopAuto(); toggleAuto(); }
