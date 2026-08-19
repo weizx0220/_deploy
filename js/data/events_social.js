@@ -1,0 +1,106 @@
+/* NPC 专属剧情链：cond 挂在 met_<npcId> / spouse_<npcId> flag 上（由 social.js 设置）。
+   每个 NPC 3-4 条：初识后续 → 关系深化 → 高潮事件 */
+var EVENTS_SOCIAL = [
+  /* ===== 林小满（青梅竹马） ===== */
+  { id: 'ev_soc_lin1', age: [8, 14], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_lin'] },
+    text: '林小满把她的秘密基地钥匙塞给你——老槐树树洞里藏着她攒的玻璃弹珠和半本漫画。"只给你看哦。"',
+    effect: { attr: { spr: 2 } } },
+  { id: 'ev_soc_lin2', age: [14, 20], once: true, weight: 8,
+    cond: { flags: ['met_np_lin'] },
+    text: '毕业照那天，林小满站在你旁边，手指偷偷比了个耶。洗出来才发现，她一直在看你。',
+    effect: { attr: { spr: 1, chr: 1 } } },
+  { id: 'ev_soc_lin3', age: [20, 35], once: true, big: true, kind: 'fate',
+    cond: { flags: ['met_np_lin'] },
+    text: '多年后的同学会上，林小满端着杯子坐到你旁边："其实那年树洞里的漫画，我只给你一个人看过。"',
+    choices: [
+      { text: '牵起她的手', effect: { attr: { spr: 3 } }, result: '她愣了一下，然后笑得像当年巷口的夏天。', kind: 'good' },
+      { text: '笑着碰杯', effect: { attr: { spr: 1 } }, result: '有些事不说破，也是一辈子的温柔。' }
+    ] },
+  /* ===== 周野（损友） ===== */
+  { id: 'ev_soc_zhou1', age: [14, 22], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_zhou'] },
+    text: '周野翘课被抓，硬说你是同谋。班主任面前他挤眉弄眼，你俩一起罚站了一下午，笑得比谁都开心。',
+    effect: { attr: { spr: 2 } } },
+  { id: 'ev_soc_zhou2', age: [18, 30], once: true, weight: 8,
+    cond: { flags: ['met_np_zhou'] },
+    text: '周野失恋，半夜把你叫出来撸串，喝了八瓶啤酒之后抱着电线杆痛哭："兄弟，还是你好。"',
+    choices: [
+      { text: '陪他喝到天亮', effect: { attr: { spr: 2, str: -1 } }, result: '第二天他宿醉躺尸，你宿醉上班。但有些东西就是在这晚焊死的。', kind: 'good' },
+      { text: '给他讲道理', effect: { attr: { int: 1 } }, result: '他骂你扫兴，然后哭得更凶了。' }
+    ] },
+  { id: 'ev_soc_zhou3', age: [25, 45], once: true, big: true,
+    cond: { flags: ['met_np_zhou'] },
+    text: '周野要创业，找你借钱。他眼神里少有的认真："赚了分你，赔了算我的。"',
+    choices: [
+      { text: '把钱给他', cond: { attr: { mny: { gte: 5 } } }, effect: { attr: { mny: -2 }, setFlags: ['zhou_loan'] }, result: '你把积蓄拍在桌上。他红着眼眶说了一声"谢了"。' },
+      { text: '劝他从长计议', effect: { attr: { spr: -1 } }, result: '他挠挠头："也是，那我再攒攒。"' }
+    ] },
+  /* ===== 苏教授（恩师） ===== */
+  { id: 'ev_soc_su1', age: [18, 28], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_su'] },
+    text: '苏教授把你叫到办公室，丢给你一本她批注得密密麻麻的旧书："别人我舍不得给。"',
+    effect: { attr: { int: 2 } } },
+  { id: 'ev_soc_su2', age: [24, 40], once: true, weight: 8,
+    cond: { flags: ['met_np_su'] },
+    text: '师门聚餐，苏教授罕见地喝了点酒，拍着桌子说："我这辈子最得意的作品，就是你们几个。"',
+    effect: { attr: { spr: 2, int: 1 } } },
+  { id: 'ev_soc_su3', age: [40, 70], once: true, big: true, kind: 'bad',
+    cond: { flags: ['met_np_su'] },
+    text: '苏教授退休了。欢送会上她把你的论文初稿还给你——扉页写着："青出于蓝，吾道不孤。"你鼻子一酸。',
+    effect: { attr: { spr: 2, int: 1 } } },
+  /* ===== 老陈（棋友） ===== */
+  { id: 'ev_soc_chen1', age: [24, 75], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_chen'] },
+    text: '老陈教你"当头炮"的开局，输了你三局之后摆摆手："学棋先学输。明天继续。"',
+    effect: { attr: { int: 1, spr: 1 } } },
+  { id: 'ev_soc_chen2', age: [30, 80], once: true, weight: 8,
+    cond: { flags: ['met_np_chen'] },
+    text: '老陈住院了。你拎着水果去看他，他躺在病床上还在摆残局："来，这步你怎么看？"',
+    effect: { attr: { spr: -1, int: 1 } } },
+  /* ===== 阿May（同事） ===== */
+  { id: 'ev_soc_may1', age: [23, 38], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_may'] },
+    text: '阿May靠她的情报网提前给你透了晋升名单的风。你在名单上。她眨眨眼："晚上请我喝奶茶。"',
+    effect: { attr: { spr: 2 }, coin: 40 } },
+  { id: 'ev_soc_may2', age: [25, 45], once: true, weight: 8,
+    cond: { flags: ['met_np_may'] },
+    text: '公司团建分组，阿May一把拽住你的胳膊："他跟我一组！"那天你们队拿了第一。',
+    effect: { attr: { spr: 2 } } },
+  /* ===== 韩笑（网友） ===== */
+  { id: 'ev_soc_han1', age: [15, 32], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_han'] },
+    text: '韩笑寄来一个包裹：他亲手做的机械键盘，键帽上刻着你的ID。附言："别嫌丑。"',
+    effect: { attr: { spr: 2 } } },
+  { id: 'ev_soc_han2', age: [20, 40], once: true, weight: 8,
+    cond: { flags: ['met_np_han'] },
+    text: '韩笑忽然上线说他在你城市出差。两个在网上互喷多年的人，在大排档碰了杯。',
+    effect: { attr: { spr: 2 } } },
+  /* ===== 秦姨（邻居） ===== */
+  { id: 'ev_soc_qin1', age: [4, 60], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_qin'] },
+    text: '秦姨包的荠菜饺子端过来了，还热乎。她说："一个人在外，别总吃外卖。"',
+    effect: { attr: { spr: 2, str: 1 } } },
+  { id: 'ev_soc_qin2', age: [30, 70], once: true, weight: 8,
+    cond: { flags: ['met_np_qin'] },
+    text: '秦姨的孙女满月，她被全家围着笑。她拉着你的手说："看着你长大，跟我自己的孩子一样。"',
+    effect: { attr: { spr: 2 } } },
+  /* ===== 严教练 ===== */
+  { id: 'ev_soc_yan1', age: [17, 50], once: true, weight: 8, kind: 'good',
+    cond: { flags: ['met_np_yan'] },
+    text: '严教练把你这三个月的训练记录摔在桌上，咧嘴一笑："不错。下周开始加重量。"',
+    effect: { attr: { str: 2 } } },
+  { id: 'ev_soc_yan2', age: [20, 55], once: true, big: true,
+    cond: { flags: ['met_np_yan'] },
+    text: '你破了健身房的硬拉纪录。严教练破天荒拍了拍你的肩："我没看走眼。"',
+    effect: { attr: { str: 1, spr: 2 } } },
+  /* ===== 伴侣专属 ===== */
+  { id: 'ev_soc_spouse1', age: [25, 80], once: true, weight: 6, kind: 'good',
+    cond: { flags: ['married'] },
+    text: '深夜回家，客厅留着一盏灯和一张字条："饭在锅里。"你站在门口笑了半天。',
+    effect: { attr: { spr: 2 } } },
+  { id: 'ev_soc_spouse2', age: [30, 85], once: true, weight: 6, kind: 'good',
+    cond: { flags: ['married'] },
+    text: '结婚纪念日，你们翻出老照片互相吐槽对方当年的发型。笑到肚子疼。',
+    effect: { attr: { spr: 2 } } }
+];

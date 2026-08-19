@@ -4,6 +4,7 @@ var ALL_EVENTS = [].concat(
   typeof EVENTS_CULTIVATION !== 'undefined' ? EVENTS_CULTIVATION : [],
   typeof EVENTS_NOVEL !== 'undefined' ? EVENTS_NOVEL : [],
   typeof EVENTS_HIDDEN !== 'undefined' ? EVENTS_HIDDEN : [],
+  typeof EVENTS_SOCIAL !== 'undefined' ? EVENTS_SOCIAL : [],
   typeof EVENTS_SUDDEN !== 'undefined' ? EVENTS_SUDDEN : []
 );
 

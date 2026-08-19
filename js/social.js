@@ -15,6 +15,7 @@ var Social = (function () {
       if (m.attr && !Engine.condPass({ attr: m.attr }, life)) return;
       if (Math.random() >= m.chance) return;
       life.npcs[n.id] = { favor: 5, lastYear: life.age, chatYear: -1 };
+      life.flags['met_' + n.id] = true;   // 供事件 cond 使用
       Game.addCard('<div class="event-card good"><b>结识 · ' + n.name + '</b><br>' + n.intro + '</div>');
       UI.miniToast('结识了新朋友：' + n.name);
       AudioFX.stamp();
