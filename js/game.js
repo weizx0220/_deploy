@@ -140,6 +140,7 @@
     var grid = $('world-grid');
     grid.innerHTML = '';
     WORLDS.forEach(function (w) {
+      if (w.id !== 'life' && w.id !== 'xiuxian') return;   // 当前只开放现实都市与修仙界
       var card = document.createElement('div');
       card.className = 'world-card';
       var u = (typeof Assets !== 'undefined') ? Assets.url(w.img) : null;
@@ -929,7 +930,13 @@
     var w = worldDef(L.world);
     if (!w.mainline) return;
     var q = w.mainline[L.quest.stage];
+    // 分支阶段：不属于本世志向的阶段直接跳过
+    while (q && q.branch && !L.flags['branch_' + q.branch]) {
+      L.quest.stage++;
+      q = w.mainline[L.quest.stage];
+    }
     while (q && Engine.condPass(q.cond, L)) {
+      var done = q;
       L.quest.stage++;
       if (q.reward) {
         var rw = q.reward;
@@ -941,6 +948,10 @@
       UI.sealToast('主线 · ' + q.name, q.toast || '');
       AudioFX.stamp();
       q = w.mainline[L.quest.stage];
+      while (q && q.branch && !L.flags['branch_' + q.branch]) {
+        L.quest.stage++;
+        q = w.mainline[L.quest.stage];
+      }
     }
   }
 

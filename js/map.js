@@ -18,25 +18,45 @@ var MapX = (function () {
   var ROGUE = { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（100 体力，耗尽全年）', cost: 100 };
   var WORLD_ACTIONS = {
     life: [
-      { id: 'career', name: '职场打拼', desc: '入职/转行/晋升：年年领薪，每 3 年属性沉淀（不耗体力）', cost: 0 },
-      { id: 'study', name: '学习充电', desc: '智力 +1，速算挑战优异则 +2', cost: 40, minigame: 'math', attr: { int: 1 },
-        texts: ['啃完了一整块知识硬骨头。', '图书馆泡了一天，笔记记了半本。', '刷完一套网课，脑子焕然一新。'] },
-      { id: 'gym', name: '健身撸铁', desc: '体质 +1，音游手感好则 +2', cost: 40, minigame: 'beat', attr: { str: 1 },
-        texts: ['深蹲硬拉卧推，一套下来人精神了。', '汗水砸在瑜伽垫上，多巴胺拉满。'] },
-      { id: 'parttime', name: '兼职打工', desc: '盘缠 +25~55（家境越好挣得越多）', cost: 25, coin: [25, 55],
+      /* 幼年 0-6 */
+      { id: 'earlyedu', name: '早教启蒙', desc: '智力 +1（识字卡与积木，40 体力）', cost: 40, age: [0, 6], attr: { int: 1 },
+        texts: ['认了一整盒识字卡片，奶声奶气念给全家听。', '积木搭出了奇怪的塔，妈妈拍照发了朋友圈。'] },
+      { id: 'play', name: '玩耍嬉戏', desc: '快乐 +1，两成概率体质 +1（15 体力）', cost: 15, age: [0, 14], attr: { spr: 1 }, chanceAttr: { attr: 'str', p: 0.2 },
+        texts: ['在小区里疯跑了一下午，膝盖擦破了也不哭。', '和小伙伴玩了一整天过家家。'] },
+      { id: 'pocketmoney', name: '要零花钱', desc: '盘缠 +5~15，爸妈的腰包最可靠（5 体力）', cost: 5, age: [3, 15], coin: [5, 15],
+        texts: ['撒娇打滚三板斧，零花钱到手。', '考了双百，爸爸爽快地掏了钱。'] },
+      /* 学生时代 7-22 */
+      { id: 'school', name: '上学读书', desc: '智力 +1，随堂测验优异则 +2（40 体力）', cost: 40, age: [7, 22], minigame: 'math', attr: { int: 1 },
+        texts: ['今天课堂上举手回答了问题，被老师表扬了。', '课本上的知识慢慢在脑子里连成网。'] },
+      { id: 'cram', name: '补习班', desc: '智力 +1，但三成概率快乐 -1（35 体力）', cost: 35, age: [10, 22], attr: { int: 1 }, chanceDown: { attr: 'spr', p: 0.3 },
+        texts: ['周末的补习班排到下午，卷子做了一套又一套。', '同桌在补习班睡着了，你替他记了笔记。'] },
+      { id: 'club', name: '社团活动', desc: '快乐 +1，三成概率颜值 +1（25 体力）', cost: 25, age: [13, 22], attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
+        texts: ['篮球社的友谊赛打满全场。', '文艺汇演的舞台上，你弹了一曲吉他。'] },
+      { id: 'parttime', name: '兼职打工', desc: '盘缠 +25~55（家境加成，25 体力）', cost: 25, age: [16, 45], coin: [25, 55],
         texts: ['发了三天传单，腿肚子转筋但钱包鼓了。', '咖啡店兼职，拉花技术进步神速。', '接了个私活，熬夜交付，尾款到账。'] },
-      { id: 'social', name: '社交应酬', desc: '快乐 +1，三成概率颜值 +1（可投壶助兴翻倍）', cost: 20, minigame: 'pot', attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
+      /* 成年 18+ */
+      { id: 'career', name: '职场打拼', desc: '入职/转行/晋升：年年领薪，每 3 年属性沉淀（不耗体力）', cost: 0, age: [18, 60] },
+      { id: 'study', name: '学习充电', desc: '智力 +1，速算挑战优异则 +2（40 体力）', cost: 40, age: [18, 99], minigame: 'math', attr: { int: 1 },
+        texts: ['啃完了一整块知识硬骨头。', '图书馆泡了一天，笔记记了半本。', '刷完一套网课，脑子焕然一新。'] },
+      { id: 'gym', name: '健身撸铁', desc: '体质 +1，音游手感好则 +2（40 体力）', cost: 40, age: [14, 99], minigame: 'beat', attr: { str: 1 },
+        texts: ['深蹲硬拉卧推，一套下来人精神了。', '汗水砸在瑜伽垫上，多巴胺拉满。'] },
+      { id: 'social', name: '社交应酬', desc: '快乐 +1，三成概率颜值 +1（20 体力）', cost: 20, age: [16, 99], attr: { spr: 1 }, chanceAttr: { attr: 'chr', p: 0.3 },
         texts: ['饭局上推杯换盏，认识了不少人。', '剧本杀局上当了一晚上戏精。', 'livehouse 里蹦到散场。'] },
-      { id: 'beauty', name: '形象管理', desc: '颜值 +1（3 年冷却）', cost: 25, cd: 3, attr: { chr: 1 },
+      { id: 'beauty', name: '形象管理', desc: '颜值 +1（25 体力，3 年冷却）', cost: 25, age: [16, 60], cd: 3, attr: { chr: 1 },
         texts: ['换了发型做了皮肤管理，镜中人焕然一新。', '穿搭博主没白关注，衣品肉眼可见地涨。'] },
-      { id: 'invest', name: '投资理财', desc: '家境≥8 稳健获利且随家境放大，否则小赌怡情', cost: 15, special: 'invest',
+      { id: 'invest', name: '投资理财', desc: '家境≥8 稳健获利且随家境放大，否则小赌怡情（15 体力）', cost: 15, age: [22, 99], special: 'invest',
         texts: [] },
-      { id: 'stroll', name: '城市漫步', desc: '随机小奇遇（盘缠/心情/小物）', cost: 15, special: 'stroll',
+      { id: 'biz', name: '产业经营', desc: '买产业收租，滚雪球式财富（不耗体力）', cost: 0, age: [20, 99] },
+      { id: 'stroll', name: '城市漫步', desc: '随机小奇遇（盘缠/心情/小物，15 体力）', cost: 15, age: [6, 99], special: 'stroll',
         texts: [] },
-      { id: 'biz', name: '产业经营', desc: '买产业收租，滚雪球式财富（不耗体力）', cost: 0 },
-      { id: 'luck_wheel', name: '庙会转盘', desc: '10 铜钱一转，手气定乾坤（不耗体力）', cost: 0 },
-      { id: 'luck_scratch', name: '刮刮乐', desc: '5 铜钱一张，即开即中（不耗体力）', cost: 0 },
-      SHARED[0], SHARED[1], SHARED[2], ROGUE
+      { id: 'taiji', name: '公园养生', desc: '体质 +1、快乐 +1，太极遛鸟岁月静好（20 体力）', cost: 20, age: [55, 99], attr: { str: 1, spr: 1 },
+        texts: ['清晨的公园，一套太极拳打得行云流水。', '和老伙计们杀了两盘棋，遛了半天的鸟。'] },
+      { id: 'grandkid', name: '含饴弄孙', desc: '快乐 +2，儿孙绕膝福满堂（15 体力）', cost: 15, age: [50, 99], attr: { spr: 2 },
+        texts: ['小孙子骑在脖子上喊驾，你笑得像个孩子。', '给孙辈讲你年轻时的故事，他们眼睛瞪得溜圆。'] },
+      { id: 'luck_wheel', name: '庙会转盘', desc: '10 铜钱一转，手气定乾坤（不耗体力）', cost: 0, age: [6, 99] },
+      { id: 'luck_scratch', name: '刮刮乐', desc: '5 铜钱一张，即开即中（不耗体力）', cost: 0, age: [18, 99] },
+      SHARED[0], SHARED[1], SHARED[2],
+      { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（100 体力，耗尽全年）', cost: 100, age: [18, 99] }
     ],
     novel_wuxia: [
       { id: 'train', name: '行侠仗义', desc: '出山历练，或遇敌或遇缘（35 体力）', cost: 35 },
@@ -109,14 +129,15 @@ var MapX = (function () {
   /* 地点定义：每个世界的行动按场所归组（借鉴未来人生的场景制） */
   var PLACES = {
     life: [
-      { name: '学校 · 图书馆', icon: '学', acts: ['study'] },
-      { name: '写字楼', icon: '职', acts: ['career'] },
-      { name: '健身房', icon: '体', acts: ['gym'] },
+      { name: '家中', icon: '宅', acts: ['rest', 'pocketmoney'] },
+      { name: '早教中心', icon: '幼', acts: ['earlyedu', 'play'] },
+      { name: '学校 · 图书馆', icon: '学', acts: ['school', 'cram', 'study'] },
+      { name: '中央广场', icon: '聚', acts: ['club', 'social', 'stroll', 'luck_wheel'] },
+      { name: '健身房', icon: '体', acts: ['gym', 'taiji'] },
       { name: '商业街', icon: '商', acts: ['parttime', 'shop', 'luck_scratch'] },
-      { name: '中央广场', icon: '聚', acts: ['social', 'stroll', 'luck_wheel'] },
       { name: '美容院', icon: '颜', acts: ['beauty'] },
+      { name: '写字楼', icon: '职', acts: ['career'] },
       { name: '金融街', icon: '投', acts: ['invest', 'biz'] },
-      { name: '家中', icon: '宅', acts: ['rest'] },
       { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
       { name: '随身', icon: '囊', acts: ['deck'] }
     ],
@@ -182,14 +203,17 @@ var MapX = (function () {
     places.forEach(function (p) {
       var block = document.createElement('div');
       block.className = 'map-place';
-      var imgName = ({"学校 · 图书馆":"place_school","写字楼":"place_office","健身房":"place_gym","商业街":"place_shop","中央广场":"place_plaza","美容院":"place_beauty","金融街":"place_finance","家中":"place_home","虚空裂隙":"place_rift","随身":"place_bag","客栈":"place_home","市集":"place_shop","坊市":"place_shop","集市":"place_shop","演武场":"place_gym","训练舱":"place_gym","训练场":"place_gym","私教工作室":"place_gym","秘境":"place_rift","副本大厅":"place_rift","山门静室":"place_home","静室":"place_home","休息舱":"place_home","安全屋":"place_home","公寓":"place_home","洞府":"place_home","丹房":"place_home","情报屋":"place_office","研究室":"place_office","集团总部":"place_office","商学院":"place_school","自由广场":"place_plaza","废土":"place_rift","山门之外":"place_rift","形象中心":"place_beauty","名流会所":"place_plaza"})[p.name];
+      var imgName = ({"学校 · 图书馆":"place_school","早教中心":"place_school","写字楼":"place_office","健身房":"place_gym","商业街":"place_shop","中央广场":"place_plaza","美容院":"place_beauty","金融街":"place_finance","家中":"place_home","虚空裂隙":"place_rift","随身":"place_bag","客栈":"place_home","市集":"place_shop","坊市":"place_shop","集市":"place_shop","演武场":"place_gym","训练舱":"place_gym","训练场":"place_gym","私教工作室":"place_gym","秘境":"place_rift","副本大厅":"place_rift","山门静室":"place_home","静室":"place_home","休息舱":"place_home","安全屋":"place_home","公寓":"place_home","洞府":"place_home","丹房":"place_home","情报屋":"place_office","研究室":"place_office","集团总部":"place_office","商学院":"place_school","自由广场":"place_plaza","废土":"place_rift","山门之外":"place_rift","形象中心":"place_beauty","名流会所":"place_plaza"})[p.name];
       var imgHtml = imgName ? '<img class="place-thumb" src="' + (typeof Assets !== 'undefined' ? Assets.url(imgName + '.png') : '') + '" onerror="this.remove()">' : '';
       var head = '<div class="place-head">' + imgHtml + '<span class="place-icon">' + p.icon + '</span>' + p.name + '</div>';
       var rows = '';
+      var visible = 0;
       p.acts.forEach(function (aid) {
         var a = null;
         for (var i = 0; i < defs.length; i++) if (defs[i].id === aid) a = defs[i];
         if (!a) return;
+        if (a.age && (L.age < a.age[0] || L.age > a.age[1])) return;   // 年龄段限定
+        visible++;
         var disabled = '', btnTxt = '前往';
         if (L.ap < a.cost) { disabled = ' disabled'; btnTxt = '需体力 ' + a.cost; }
         if (a.id === 'rest' && L.restYear === L.age) { disabled = ' disabled'; btnTxt = '今年已歇过'; }
@@ -201,6 +225,7 @@ var MapX = (function () {
           '<div><div class="l-name">' + a.name + '</div><div class="l-desc">' + a.desc + '</div></div>' +
           '<button class="ink-btn small" data-act="' + a.id + '"' + disabled + '>' + btnTxt + '</button></div>';
       });
+      if (visible === 0) return;   // 整组超龄则隐藏
       block.innerHTML = head + rows;
       wrap.appendChild(block);
     });
@@ -285,6 +310,10 @@ var MapX = (function () {
       if (a.coinFixed) {
         var cf = Math.round(a.coinFixed * mult) + Math.round((L.attr.mny || 0) * 3);
         Game.addCoin(cf); msgs.push(Game.coinName() + '+' + cf);
+      }
+      if (a.chanceDown && Math.random() < a.chanceDown.p) {
+        L.attr[a.chanceDown.attr] = (L.attr[a.chanceDown.attr] || 0) - 1;
+        msgs.push(Engine.ATTR_NAMES[a.chanceDown.attr] + '-1');
       }
       if (a.chanceAttr && Math.random() < a.chanceAttr.p * mult) {
         L.attr[a.chanceAttr.attr] = (L.attr[a.chanceAttr.attr] || 0) + 1;

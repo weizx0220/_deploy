@@ -4030,4 +4030,20 @@ var EVENTS_REALITY = [
 { id: 'ev_r4_y90_sugar_figurine', age: [90, 100],
   text: '庙会上的糖画摊，你站着看了半小时。最后你买了条"龙"，不吃，就举着。回家后插在了花瓶里，像件艺术品。',
   effect: { attr: { spr: 1 } } },
+// ========== 18 岁 · 人生方向抉择（主线分支） ==========
+{ id: 'ev_r_branch_choice', age: [18, 18], once: true, big: true, kind: 'fate',
+  text: '十八岁的夏夜，你坐在天台吹风。往后余生，要往哪个方向走？心里有个声音越来越清晰。',
+  choices: [
+    { text: '商海弄潮——搞钱，搞大钱', effect: { setFlags: ['branch_biz'], attr: { mny: 2 }, coin: 50 },
+      result: '你眼里燃起了对数字的敏感。从摆摊到开公司，商海的每一步你都想去试试。', kind: 'good', big: true },
+    { text: '学而优则仕——知识改变命运', effect: { setFlags: ['branch_scholar'], attr: { int: 2 } },
+      result: '你决定把书读到底。图书馆的灯将为你亮到深夜，直到你也成为照亮别人的那盏。', kind: 'good', big: true },
+    { text: '星光舞台——让世界看见我', effect: { setFlags: ['branch_star'], attr: { chr: 2 } },
+      result: '你天生属于聚光灯。从今天起，形象管理是你的必修课，舞台是你的目的地。', kind: 'good', big: true },
+    { text: '强身健体——更高更快更强', effect: { setFlags: ['branch_athlete'], attr: { str: 2 } },
+      result: '你爱上了汗水砸地的声音。跑道、球场、杠铃——身体是你最忠诚的伙伴。', kind: 'good', big: true },
+    { text: '佛系躺平——开心最大', effect: { setFlags: ['branch_flat'], attr: { spr: 3 } },
+      result: '功名利禄皆是浮云，快乐才是硬道理。你决定把日子过成段子。', kind: 'good', big: true }
+  ]
+},
 ];
