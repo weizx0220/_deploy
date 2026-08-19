@@ -13,7 +13,15 @@ var MapX = (function () {
   var SHARED = [
     { id: 'deck', name: '牌组', desc: '查看卡牌收藏，调整幻境牌组（不耗体力）', cost: 0 },
     { id: 'shop', name: '商店', desc: '逛逛摊位，补给装备卡牌（不耗体力）', cost: 0 },
-    { id: 'rest', name: '休息', desc: '泡澡搓背：体质+2、快乐+1、重伤静养（20 体力，每年限一次）', cost: 20 }
+    {
+      id: 'rest', name: '休息', desc: '歇一歇：体质+2、快乐+1、重伤静养（20 体力，每年限一次）', cost: 20,
+      textsByAge: [
+        [0, ['午睡睡到自然醒，梦里还在追蝴蝶。', '听完第三个睡前故事，你抱着小熊睡着了。']],
+        [7, ['写完作业瘫在床上，天花板的纹路都看熟了。', '周末一觉睡到中午，被饭香叫醒。']],
+        [18, ['泡澡搓背加按脚，通体舒泰。', '关掉闹钟睡到自然醒，成年人的小确幸。']],
+        [55, ['摇椅吱呀，收音机里放着戏，不知不觉打了个盹。', '阳台上一壶茶一份报，日头慢慢挪。']]
+      ]
+    }
   ];
   var ROGUE = { id: 'rogue', name: '幽冥幻境', desc: '肉鸽爬塔：十二层试炼，结算必得卡牌；败北只会重伤，不丢性命（100 体力，耗尽全年）', cost: 100 };
   var WORLD_ACTIONS = {
@@ -23,7 +31,7 @@ var MapX = (function () {
         texts: ['认了一整盒识字卡片，奶声奶气念给全家听。', '积木搭出了奇怪的塔，妈妈拍照发了朋友圈。'] },
       { id: 'play', name: '玩耍嬉戏', desc: '快乐 +1，两成概率体质 +1（15 体力）', cost: 15, age: [0, 14], attr: { spr: 1 }, chanceAttr: { attr: 'str', p: 0.2 },
         texts: ['在小区里疯跑了一下午，膝盖擦破了也不哭。', '和小伙伴玩了一整天过家家。'] },
-      { id: 'pocketmoney', name: '要零花钱', desc: '盘缠 +5~15，爸妈的腰包最可靠（5 体力）', cost: 5, age: [3, 15], coin: [5, 15],
+      { id: 'pocketmoney', name: '要零花钱', desc: '盘缠 +5~15，爸妈的腰包最可靠（15 体力，每年限两次）', cost: 15, age: [3, 15], coin: [5, 15], usesPerYear: 2,
         texts: ['撒娇打滚三板斧，零花钱到手。', '考了双百，爸爸爽快地掏了钱。'] },
       /* 学生时代 7-22 */
       { id: 'school', name: '上学读书', desc: '智力 +1，随堂测验优异则 +2（40 体力）', cost: 40, age: [7, 22], minigame: 'math', attr: { int: 1 },
@@ -53,6 +61,12 @@ var MapX = (function () {
         texts: ['清晨的公园，一套太极拳打得行云流水。', '和老伙计们杀了两盘棋，遛了半天的鸟。'] },
       { id: 'grandkid', name: '含饴弄孙', desc: '快乐 +2，儿孙绕膝福满堂（15 体力）', cost: 15, age: [50, 99], attr: { spr: 2 },
         texts: ['小孙子骑在脖子上喊驾，你笑得像个孩子。', '给孙辈讲你年轻时的故事，他们眼睛瞪得溜圆。'] },
+      { id: 'shoot', name: '打靶练枪', desc: '体质 +1，神枪手翻倍（25 体力）', cost: 25, age: [14, 60], minigame: 'shoot', attr: { str: 1 },
+        texts: ['靶场上一组速射，虎口微微发麻。', '教练说你的站姿有天赋。'] },
+      { id: 'fish', name: '河边垂钓', desc: '快乐 +1，连杆爆护翻倍（20 体力）', cost: 20, age: [6, 99], minigame: 'fish', attr: { spr: 1 },
+        texts: ['一竿一线一世界，烦恼随水而去。', '鱼没钓几条，云看了半天。'] },
+      { id: 'mow', name: '社区除草', desc: '盘缠 +15~40，除得干净翻倍（25 体力）', cost: 25, age: [10, 60], minigame: 'mow', coin: [15, 40],
+        texts: ['社区组织除草劳动，你推着割草机上了。', '草丛里还翻出俩钢镚。'] },
       { id: 'luck_wheel', name: '庙会转盘', desc: '10 铜钱一转，手气定乾坤（不耗体力）', cost: 0, age: [6, 99] },
       { id: 'luck_scratch', name: '刮刮乐', desc: '5 铜钱一张，即开即中（不耗体力）', cost: 0, age: [18, 99] },
       SHARED[0], SHARED[1], SHARED[2],
@@ -133,11 +147,13 @@ var MapX = (function () {
       { name: '早教中心', icon: '幼', acts: ['earlyedu', 'play'] },
       { name: '学校 · 图书馆', icon: '学', acts: ['school', 'cram', 'study'] },
       { name: '中央广场', icon: '聚', acts: ['club', 'social', 'stroll', 'luck_wheel'] },
-      { name: '健身房', icon: '体', acts: ['gym', 'taiji'] },
-      { name: '商业街', icon: '商', acts: ['parttime', 'shop', 'luck_scratch'] },
+      { name: '健身房', icon: '体', acts: ['gym'] },
+      { name: '商业街', icon: '商', acts: ['parttime', 'shop', 'mow', 'luck_scratch'] },
       { name: '美容院', icon: '颜', acts: ['beauty'] },
       { name: '写字楼', icon: '职', acts: ['career'] },
       { name: '金融街', icon: '投', acts: ['invest', 'biz'] },
+      { name: '游乐场', icon: '玩', acts: ['shoot'] },
+      { name: '滨河公园', icon: '钓', acts: ['fish', 'taiji', 'grandkid'] },
       { name: '虚空裂隙', icon: '幻', acts: ['rogue'] },
       { name: '随身', icon: '囊', acts: ['deck'] }
     ],
@@ -217,6 +233,10 @@ var MapX = (function () {
         var disabled = '', btnTxt = '前往';
         if (L.ap < a.cost) { disabled = ' disabled'; btnTxt = '需体力 ' + a.cost; }
         if (a.id === 'rest' && L.restYear === L.age) { disabled = ' disabled'; btnTxt = '今年已歇过'; }
+        if (a.usesPerYear) {
+          var us = (L.actionUses || {})[a.id];
+          if (us && us.year === L.age && us.n >= a.usesPerYear) { disabled = ' disabled'; btnTxt = '今年次数用完了'; }
+        }
         if (a.cd) {
           var cdLeft = (L.actionCd[a.id] || L.age) - L.age;
           if (cdLeft > 0) { disabled = ' disabled'; btnTxt = cdLeft + ' 年后再来'; }
@@ -254,7 +274,11 @@ var MapX = (function () {
         Game.toast(L.wound > 0 ? '卧床静养，伤势大减（还需 ' + L.wound + ' 年），心情 +1' : '悉心调养，伤势痊愈，心情 +1！');
       } else {
         L.attr.str += 2; L.attr.spr += 1;
-        Game.toast('泡澡搓背加按脚，通体舒泰：体质 +2，快乐 +1。');
+        var rt = '泡了个热水澡，通体舒泰：体质 +2，快乐 +1。';
+        if (L.age <= 6) rt = '睡了个香甜的午觉，体质 +2，快乐 +1。';
+        else if (L.age <= 17) rt = '美美补了一觉，体质 +2，快乐 +1。';
+        else if (L.age >= 55) rt = '摇椅上晒着太阳打了个盹，体质 +2，快乐 +1。';
+        Game.toast(rt);
       }
       Game.refresh();
       return render();
@@ -289,8 +313,18 @@ var MapX = (function () {
   function runAction(a) {
     var L = Game.life();
     if (L.ap < a.cost) return;
+    if (a.usesPerYear) {
+      if (!L.actionUses) L.actionUses = {};
+      var us0 = L.actionUses[a.id];
+      if (us0 && us0.year === L.age && us0.n >= a.usesPerYear) return;
+    }
     L.ap -= a.cost;
     if (a.cd) L.actionCd[a.id] = L.age + a.cd;
+    if (a.usesPerYear) {
+      var us1 = L.actionUses[a.id];
+      if (!us1 || us1.year !== L.age) L.actionUses[a.id] = { year: L.age, n: 1 };
+      else us1.n++;
+    }
     Game.countAction(a.id);
     persistSafe();
 
@@ -346,7 +380,13 @@ var MapX = (function () {
         else if (roll < 0.85) { L.attr.chr += 1; msgs.push('颜值+1'); }
         else msgs.push('一无所获但心情舒畅');
       }
-      var flavor = a.texts && a.texts.length ? a.texts[Engine.rnd(a.texts.length)] : '';
+      var poolT = a.texts;
+      if (a.textsByAge) {
+        for (var ta = a.textsByAge.length - 1; ta >= 0; ta--) {
+          if (L.age >= a.textsByAge[ta][0]) { poolT = a.textsByAge[ta][1]; break; }
+        }
+      }
+      var flavor = poolT && poolT.length ? poolT[Engine.rnd(poolT.length)] : '';
       Game.toast(flavor + (msgs.length ? '（' + msgs.join('，') + '）' : ''));
       Game.refresh();
       persistSafe();

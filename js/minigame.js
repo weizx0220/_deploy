@@ -352,5 +352,204 @@ var MiniGame = (function () {
   /* 兼容旧接口：节奏健身改用音游 */
   function rhythm(cb) { beat(cb); }
 
-  return { math: math, rhythm: rhythm, fu: fu, pot: pot, beat: beat };
+  return { math: math, rhythm: rhythm, fu: fu, pot: pot, beat: beat, _wrap: wrapCb, _abort: setAbort, abort: abort };
+})();
+
+/* ================= 追加：打靶 / 垂钓 / 除草（都市小游戏） ================= */
+(function () {
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- 打靶场：限时点靶 ---------- */
+  function shoot(cb) {
+    cb = MiniGame._wrap(cb); MiniGame._abort(function () { MiniCore.close(); cb(1); });
+    var targets = [], score = 0, shots = 0, hits = 0, spawnT = 0, TIME = 25, api0 = null;
+    MiniCore.open({
+      title: '打靶场',
+      sub: '靶子一冒头就点！小的快的分高（25 秒）',
+      init: function (api) { api0 = api; },
+      onDown: function (p) {
+        var api = api0;
+        shots++; AudioFX.tick(0.08);
+        for (var i = targets.length - 1; i >= 0; i--) {
+          var t = targets[i];
+          var d = Math.hypot(p.x - t.x, p.y - t.y);
+          if (d < t.r * t.grow + 8) {
+            score += t.score; hits++;
+            api.burst(t.x, t.y, '#a5281b', 14);
+            api.float('+' + t.score, t.x, t.y, '#a5281b');
+            AudioFX.pluck(520 + t.score * 3, 0.1);
+            targets.splice(i, 1);
+            return;
+          }
+        }
+        api.float('脱靶', p.x, p.y, '#8a8778');
+      },
+      update: function (dt, api) {
+        spawnT -= dt;
+        if (spawnT <= 0 && api.t() < TIME - 2) {
+          spawnT = 0.65 + Math.random() * 0.5;
+          var fast = Math.random() < 0.3;
+          var r = 16 + Math.random() * 16;
+          targets.push({
+            x: 60 + Math.random() * 480, y: 55 + Math.random() * 220, r: r, grow: 0,
+            life: fast ? 1.4 : 2.2,
+            vx: fast ? (Math.random() < 0.5 ? -70 : 70) : 0,
+            score: Math.round(34 - (r - 16) + (fast ? 15 : 0))
+          });
+        }
+        for (var i = targets.length - 1; i >= 0; i--) {
+          var t = targets[i];
+          t.grow = Math.min(1, t.grow + dt * 5);
+          t.life -= dt; t.x += t.vx * dt;
+          if (t.life <= 0) { targets.splice(i, 1); api.float('溜了', t.x, t.y, '#8a8778'); }
+        }
+        if (api.t() >= TIME) {
+          var acc = hits / Math.max(1, shots);
+          var mult = (score >= 200 && acc >= 0.65) ? 2 : score >= 120 ? 1.5 : score >= 60 ? 1 : 0.5;
+          api.finish('命中 ' + hits + ' 靶 · ' + score + ' 分', acc >= 0.65 ? '神枪手，名不虚传！' : '枪法还得练。', mult, cb);
+        }
+      },
+      draw: function (ctx, api) {
+        ctx.strokeStyle = 'rgba(42,42,46,0.12)';
+        for (var g = 0; g < 5; g++) { ctx.beginPath(); ctx.moveTo(0, 60 + g * 60); ctx.lineTo(600, 60 + g * 60); ctx.stroke(); }
+        targets.forEach(function (t) {
+          var r = t.r * t.grow;
+          if (r < 2) return;
+          ctx.beginPath(); ctx.arc(t.x, t.y, r, 0, 7); ctx.fillStyle = '#a5281b'; ctx.fill();
+          ctx.beginPath(); ctx.arc(t.x, t.y, r * 0.66, 0, 7); ctx.fillStyle = '#f8f3e6'; ctx.fill();
+          ctx.beginPath(); ctx.arc(t.x, t.y, r * 0.33, 0, 7); ctx.fillStyle = '#a5281b'; ctx.fill();
+        });
+      }
+    });
+  }
+
+  /* ---------- 河边垂钓：咬钩时机 + 收线张力 ---------- */
+  function fish(cb) {
+    cb = MiniGame._wrap(cb); MiniGame._abort(function () { MiniCore.close(); cb(1); });
+    var phase = 'wait', waitT = 1 + Math.random() * 3, biteT = 0;
+    var prog = 0, tension = 0, holding = false, caught = 0, tries = 0, MAXTRY = 4, api0 = null;
+    function reset() { phase = 'wait'; waitT = 1 + Math.random() * 3; prog = 0; tension = 0; holding = false; }
+    MiniCore.open({
+      title: '河边垂钓',
+      sub: '浮标猛沉就按住收线，张力条别爆红！（4 次机会）',
+      init: function (api) { api0 = api; },
+      onDown: function (p) {
+        var api = api0;
+        if (phase === 'wait') { /* 点早了惊鱼 */ if (waitT > 0.4) { api.float('惊着鱼了……', 300, 150, '#a5281b'); waitT = 1 + Math.random() * 3; } }
+        else if (phase === 'bite') { phase = 'reel'; holding = true; AudioFX.pluck(660, 0.1); api.burst(300, 210, '#3d6b5e', 10); }
+        else if (phase === 'reel') holding = true;
+      },
+      onUp: function () { holding = false; },
+      update: function (dt, api) {
+        if (phase === 'wait') {
+          waitT -= dt;
+          if (waitT <= 0) { phase = 'bite'; biteT = 0.7; AudioFX.pluck(880, 0.12); }
+        } else if (phase === 'bite') {
+          biteT -= dt;
+          if (biteT <= 0) { api.float('脱钩了……', 300, 150, '#a5281b'); tries++; if (tries >= MAXTRY) return fin(api); reset(); }
+        } else if (phase === 'reel') {
+          var struggle = Math.sin(api.t() * 6) * 8 + Math.random() * 6;
+          if (holding) { prog += dt * 26; tension += dt * (34 + struggle); }
+          else { prog -= dt * 6; tension -= dt * 42; }
+          tension = Math.max(0, tension);
+          if (tension >= 100) { tries++; api.float('线断了！', 300, 150, '#a5281b'); AudioFX.tick(0.1); if (tries >= MAXTRY) return fin(api); reset(); }
+          else if (prog >= 100) {
+            caught++; tries++;
+            api.burst(300, 200, '#3d6b5e', 20);
+            api.float('上鱼了！', 300, 140, '#3d6b5e');
+            AudioFX.stamp();
+            if (tries >= MAXTRY) return fin(api);
+            reset();
+          }
+        }
+      },
+      draw: function (ctx, api) {
+        // 水面
+        ctx.fillStyle = 'rgba(61,107,94,0.15)'; ctx.fillRect(0, 200, 600, 140);
+        // 浮标
+        var by = phase === 'bite' ? 218 : 200 + Math.sin(api.t() * 2) * 3;
+        ctx.beginPath(); ctx.arc(300, by, 9, 0, 7);
+        ctx.fillStyle = phase === 'bite' ? '#a5281b' : '#d4a94e'; ctx.fill();
+        ctx.strokeStyle = '#2a2a2e'; ctx.stroke();
+        if (phase === 'bite') {
+          ctx.font = 'bold 18px KaiTi,serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#a5281b';
+          ctx.fillText('咬钩了！快收线！', 300, 100);
+        }
+        if (phase === 'reel') {
+          // 进度条
+          ctx.fillStyle = 'rgba(42,42,46,0.15)'; ctx.fillRect(160, 60, 280, 14);
+          ctx.fillStyle = '#3d6b5e'; ctx.fillRect(160, 60, 280 * Math.max(0, prog) / 100, 14);
+          // 张力条
+          ctx.fillStyle = 'rgba(42,42,46,0.15)'; ctx.fillRect(160, 84, 280, 10);
+          ctx.fillStyle = tension > 75 ? '#a5281b' : '#d4a94e';
+          ctx.fillRect(160, 84, 280 * tension / 100, 10);
+          ctx.font = '12px KaiTi,serif'; ctx.textAlign = 'left'; ctx.fillStyle = '#55554f';
+          ctx.fillText('收线', 120, 72); ctx.fillText('张力', 120, 94);
+        }
+        // 渔获
+        ctx.font = '13px KaiTi,serif'; ctx.textAlign = 'left'; ctx.fillStyle = '#55554f';
+        ctx.fillText('已钓 ' + caught + ' 条 · 剩 ' + (MAXTRY - tries) + ' 次机会', 16, 24);
+      }
+    });
+    function fin(api) {
+      var mult = caught >= 3 ? 2 : caught === 2 ? 1.5 : caught === 1 ? 1 : 0.5;
+      api.finish('钓获 ' + caught + ' 条', caught >= 3 ? '连杆爆护，钓圣附体！' : caught >= 1 ? '小有收获。' : '空军了……下次带秘制饵料。', mult, cb);
+    }
+  }
+
+  /* ---------- 社区除草：拖动割草机除草 ---------- */
+  function mow(cb) {
+    cb = MiniGame._wrap(cb); MiniGame._abort(function () { MiniCore.close(); cb(1); });
+    var tufts = [], cut = 0, spawnT = 0, TIME = 30;
+    var mx = 300, my = 170, down = false;
+    for (var i = 0; i < 26; i++) tufts.push({ x: 30 + Math.random() * 540, y: 40 + Math.random() * 270, g: 1 });
+    MiniCore.open({
+      title: '社区除草',
+      sub: '按住拖动割草机，把疯长的杂草都剃平（30 秒）',
+      onDown: function (p) { down = true; mx = p.x; my = p.y; },
+      onMove: function (p) { if (down) { mx = p.x; my = p.y; } },
+      onUp: function () { down = false; },
+      update: function (dt, api) {
+        spawnT -= dt;
+        if (spawnT <= 0 && tufts.length < 46) { spawnT = 0.8; tufts.push({ x: 30 + Math.random() * 540, y: 40 + Math.random() * 270, g: 0.2 }); }
+        tufts.forEach(function (t) { t.g = Math.min(1, t.g + dt * 0.25); });
+        for (var i = tufts.length - 1; i >= 0; i--) {
+          var t = tufts[i];
+          if (t.g > 0.55 && Math.hypot(mx - t.x, my - t.y) < 30) {
+            tufts.splice(i, 1); cut++;
+            api.burst(t.x, t.y, '#4a7a3a', 6);
+            if (cut % 10 === 0) api.float('已除 ' + cut, 300, 40, '#4a7a3a');
+          }
+        }
+        if (api.t() >= TIME) {
+          var mult = cut >= 55 ? 2 : cut >= 40 ? 1.5 : cut >= 22 ? 1 : 0.5;
+          api.finish('除草 ' + cut + ' 丛', cut >= 55 ? '草坪像被熨斗烫过！' : cut >= 22 ? '勉强交差。' : '这草除得稀稀拉拉……', mult, cb);
+        }
+      },
+      draw: function (ctx, api) {
+        ctx.fillStyle = 'rgba(74,122,58,0.08)'; ctx.fillRect(0, 0, 600, 340);
+        tufts.forEach(function (t) {
+          ctx.strokeStyle = 'rgba(58,90,44,' + (0.4 + t.g * 0.6) + ')';
+          ctx.lineWidth = 2;
+          var h = 6 + t.g * 12;
+          for (var b = -1; b <= 1; b++) {
+            ctx.beginPath();
+            ctx.moveTo(t.x + b * 4, t.y);
+            ctx.quadraticCurveTo(t.x + b * 5, t.y - h * 0.6, t.x + b * 7, t.y - h);
+            ctx.stroke();
+          }
+        });
+        // 割草机
+        ctx.fillStyle = '#a5281b'; ctx.fillRect(mx - 16, my - 12, 32, 24);
+        ctx.fillStyle = '#2a2a2e'; ctx.fillRect(mx - 10, my - 22, 6, 12);
+        ctx.beginPath(); ctx.arc(mx - 9, my + 13, 5, 0, 7); ctx.fillStyle = '#2a2a2e'; ctx.fill();
+        ctx.beginPath(); ctx.arc(mx + 9, my + 13, 5, 0, 7); ctx.fill();
+        ctx.strokeStyle = 'rgba(42,42,46,0.3)'; ctx.strokeRect(mx - 16, my - 12, 32, 24);
+      }
+    });
+  }
+
+  MiniGame.shoot = shoot;
+  MiniGame.fish = fish;
+  MiniGame.mow = mow;
 })();
