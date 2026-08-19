@@ -256,6 +256,18 @@ var Combat = (function () {
       opts: opts
     };
     if (S.hpState) S.hpState.max = st.maxhp;
+    // 战场美术：世界背景 + 敌人立绘
+    if (typeof Assets !== 'undefined') {
+      var wbg = $('bt-arena-bg');
+      if (wbg) { wbg.src = Assets.url('battle_' + (life.world || 'life') + '.png'); wbg.onerror = function () { this.style.display = 'none'; }; wbg.style.display = ''; }
+      var mimg = $('bt-arena-mob');
+      if (mimg) {
+        var mn = opts.enemies[0].name || '';
+        var mb = /虚无/.test(mn) ? 'boss_xuwu' : /执念/.test(mn) ? 'boss_zhinian' : /饕餮/.test(mn) ? 'boss_taotie' : /心魔|另一个你/.test(mn) ? 'boss_xinmo' : /软泥|史莱姆|锈怪/.test(mn) ? 'slime' : /幽灵|游魂|魂|魅|影/.test(mn) ? 'ghost' : /骑士|守卫|典狱长|铠甲/.test(mn) ? 'knight' : /兽|犬|鼠|狼|蜂|妖兽/.test(mn) ? 'beast' : /王|主|母|魔/.test(mn) ? 'boss' : 'human';
+        mimg.src = Assets.url('mob_' + mb + '.png');
+        mimg.onerror = function () { this.style.display = 'none'; }; mimg.style.display = '';
+      }
+    }
     $('overlay-battle').classList.remove('hidden');
     AudioFX.duck();
     $('bt-log').innerHTML = '';

@@ -474,9 +474,10 @@ var MapX = (function () {
       var it = Game.item(iid);
       if (!it) return;
       var div = document.createElement('div');
-      div.className = 'map-act';
+      div.className = 'map-act shop-item rar' + (it.rarity || 0);
       var pv = itemPreview(it);
-      div.innerHTML = '<div class="l-name">' + it.name + ' <small style="color:var(--gold)">' + it.price + ' ' + Game.coinName() + '</small></div>' +
+      var ico = (typeof Assets !== 'undefined') ? '<img class="mini-ico" src="' + Assets.url(it.id + '.png') + '" onerror="this.remove()">' : '';
+      div.innerHTML = '<div class="l-name">' + ico + it.name + ' <small style="color:var(--gold)">' + it.price + ' ' + Game.coinName() + '</small></div>' +
         '<div class="l-desc">' + it.desc + (pv ? '<br><span style="color:var(--jade)">' + pv + '</span>' : '') + '</div>';
       var btn = document.createElement('button');
       btn.className = 'ink-btn small';
@@ -500,8 +501,9 @@ var MapX = (function () {
       if (c) {
         var price = 60 + c.rarity * 60;
         var cdiv = document.createElement('div');
-        cdiv.className = 'map-act';
-        cdiv.innerHTML = '<div class="l-name">卡牌·' + c.name + ' <small style="color:var(--gold)">' + price + ' ' + Game.coinName() + '</small></div>' +
+        cdiv.className = 'map-act shop-item rar' + (c.rarity || 0);
+        var cico = (typeof Assets !== 'undefined') ? '<img class="mini-ico" src="' + Assets.url(c.id + '.png') + '" onerror="this.remove()">' : '';
+        cdiv.innerHTML = '<div class="l-name">' + cico + '卡牌·' + c.name + ' <small style="color:var(--gold)">' + price + ' ' + Game.coinName() + '</small></div>' +
           '<div class="l-desc">' + c.desc + '</div>';
         var cbtn = document.createElement('button');
         cbtn.className = 'ink-btn small';

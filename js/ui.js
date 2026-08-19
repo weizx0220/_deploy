@@ -316,3 +316,43 @@ var UI = (function () {
     ripple(e.clientX, e.clientY);
   }, { passive: true });
 })();
+
+/* ---------- 背景金尘粒子（动态氛围） ---------- */
+(function () {
+  var cv = document.getElementById('bg-fx');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+  var motes = [], W = 0, H = 0;
+  function resize() {
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  for (var i = 0; i < 34; i++) {
+    motes.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: 0.8 + Math.random() * 2.2,
+      vx: (Math.random() - 0.5) * 0.16, vy: -0.08 - Math.random() * 0.2,
+      a: 0.12 + Math.random() * 0.3, tw: Math.random() * 6.28
+    });
+  }
+  (function loop() {
+    if (!document.hidden) {
+      ctx.clearRect(0, 0, W, H);
+      var t = Date.now() / 1000;
+      for (var i = 0; i < motes.length; i++) {
+        var m = motes[i];
+        m.x += m.vx; m.y += m.vy;
+        if (m.y < -8) { m.y = H + 8; m.x = Math.random() * W; }
+        if (m.x < -8) m.x = W + 8; if (m.x > W + 8) m.x = -8;
+        var a = m.a * (0.6 + 0.4 * Math.sin(t * 1.4 + m.tw));
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r, 0, 7);
+        ctx.fillStyle = 'rgba(214,168,76,' + a.toFixed(3) + ')';
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+})();

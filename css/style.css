@@ -1628,3 +1628,137 @@ body[data-world] #inv-list .map-act { background: rgba(255,255,255,0.05); border
 .tap-ripple {
   background: radial-gradient(circle, rgba(214,168,76,0.65) 0%, rgba(184,134,47,0.3) 50%, transparent 70%);
 }
+
+/* ---------- 卡牌卡面修复：上图下文，深色文字 ---------- */
+.cb-card { color: #2a2a2e; overflow: hidden; justify-content: flex-start; }
+.cb-card .cb-cname { color: #2a2a2e; }
+.cb-card .cb-cdesc { color: #55554f; }
+.cb-card .cb-cost { background: #2a2a2e; color: #f4eddb; }
+.cb-art {
+  width: calc(100% + 12px); margin: -8px -6px 4px; height: 52px;
+  object-fit: cover; object-position: center 30%;
+  border-radius: 6px 6px 0 0; flex-shrink: 0;
+  border-bottom: 1px solid rgba(42,42,46,0.2); background: #1c1c22;
+}
+@media (max-width: 768px) {
+  .cb-art { width: calc(100% + 8px); margin: -6px -4px 3px; height: 38px; }
+}
+
+/* ============================================================
+   界面全面升级：全屏独立界面 + 渐变 + 动效
+   ============================================================ */
+
+/* ---------- 行动 / 人际 全屏独立界面（同行囊） ---------- */
+#overlay-map, #overlay-social { background: linear-gradient(160deg, #f4eddb 0%, #ece2c8 55%, #e6dbc2 100%); }
+#overlay-map .overlay-panel, #overlay-social .overlay-panel {
+  width: 100%; height: 100%; max-height: none; border-radius: 0; border: none;
+  background: transparent; box-shadow: none;
+}
+#overlay-map .overlay-head, #overlay-social .overlay-head {
+  padding: 16px 26px; background: rgba(255,252,244,0.75);
+  border-bottom: 2px solid rgba(42,42,46,0.14);
+  backdrop-filter: blur(6px);
+}
+#overlay-map .overlay-body, #overlay-social .overlay-body {
+  flex: 1; max-width: 980px; width: 100%; margin: 0 auto; padding: 20px 26px 40px;
+}
+body[data-world] #overlay-map, body[data-world] #overlay-social {
+  background: linear-gradient(160deg, rgba(16,16,22,0.97), rgba(24,24,34,0.97));
+}
+body[data-world] #overlay-map .overlay-head, body[data-world] #overlay-social .overlay-head {
+  background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12);
+}
+
+/* ---------- 地点卡：缩略图升级为横幅大图 ---------- */
+.place-head { flex-wrap: wrap; }
+.place-thumb {
+  width: 100%; height: 96px; order: -1; margin: -10px -14px 10px;
+  width: calc(100% + 28px); border-radius: 0; border: none;
+  border-bottom: 1px solid rgba(42,42,46,0.15);
+}
+.map-place { overflow: hidden; border-radius: 10px; }
+
+/* ---------- 人际：头像放大 + 好感条渐变 ---------- */
+.soc-avatar { width: 88px; height: 88px; border-width: 3px; box-shadow: 0 4px 14px rgba(0,0,0,0.28); }
+#soc-list .map-act { padding: 14px 16px; }
+.soc-favor { height: 8px; border-radius: 4px; background: rgba(42,42,46,0.12); overflow: hidden; margin-top: 6px; }
+.soc-favor-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #3d6b5e, #b8862f, #a5281b);
+  transition: width .5s ease;
+}
+
+/* ---------- 商店：图标 + 品质光晕 ---------- */
+.shop-item .mini-ico {
+  width: 42px; height: 42px; border-radius: 8px; object-fit: cover;
+  border: 1px solid rgba(42,42,46,0.18); margin-right: 10px; vertical-align: middle;
+  background: #26262c;
+}
+.shop-item.rar1 { border-left: 3px solid var(--jade); }
+.shop-item.rar2 { border-left: 3px solid #6b4d8f; box-shadow: 0 0 10px rgba(107,77,143,0.15); }
+.shop-item.rar3 {
+  border-left: 3px solid var(--gold);
+  animation: rarGlow 2.4s ease-in-out infinite;
+}
+@keyframes rarGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(184,134,47,0.15); }
+  50% { box-shadow: 0 0 18px rgba(184,134,47,0.4); }
+}
+
+/* ---------- 战斗界面：战场大图 ---------- */
+#overlay-battle { background: rgba(12,12,16,0.88); }
+#overlay-battle .overlay-panel { background: linear-gradient(170deg, #1c1e26, #14161c); border-color: rgba(184,134,47,0.3); }
+#bt-arena {
+  position: relative; height: 230px; border-radius: 10px; overflow: hidden;
+  margin-bottom: 12px; background: #101218;
+  border: 1px solid rgba(184,134,47,0.25);
+}
+#bt-arena-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.75;
+}
+#bt-arena-mob {
+  position: relative; display: block; margin: 0 auto; max-height: 210px; max-width: 70%;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+  animation: mobBreath 3s ease-in-out infinite;
+}
+@keyframes mobBreath {
+  0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); }
+}
+#overlay-battle .bt-foe-name { color: #f4eddb; }
+#overlay-battle .bt-foe-intro { color: rgba(244,237,219,0.6); }
+.bt-fill { transition: width .4s ease; }
+.bt-fill.foe { background: linear-gradient(90deg, #a5281b, #d4553a); }
+.bt-fill.me { background: linear-gradient(90deg, #3d6b5e, #5d9b8a); }
+
+/* ---------- 标题金线动效 ---------- */
+.overlay-title { position: relative; }
+.overlay-title::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; height: 2px; width: 100%;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: titleSweep 3.2s ease-in-out infinite;
+}
+@keyframes titleSweep {
+  0%, 100% { transform: scaleX(0.3); opacity: 0.4; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+/* ---------- 主按钮渐变升级 ---------- */
+.ink-btn.primary {
+  background: linear-gradient(135deg, #3a3a40, #1e1e24);
+  color: #f4eddb; border-color: var(--gold);
+  box-shadow: 0 3px 10px rgba(184,134,47,0.25);
+}
+.ink-btn.primary:hover { box-shadow: 0 5px 18px rgba(184,134,47,0.45); }
+
+/* ---------- 背景金尘粒子画布 ---------- */
+#bg-fx {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.55;
+}
+
+/* 战斗怪物立绘加画框 */
+#bt-arena-mob {
+  border-radius: 10px; border: 2px solid rgba(184,134,47,0.45);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  max-height: 196px;
+}
