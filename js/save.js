@@ -12,7 +12,8 @@ var Save = (function () {
       talentSlots: 3,      // 天赋槽 3→5
       attrBonus: 0,        // 初始属性点加成
       unlocks: [],         // 已解锁的稀有天赋入池 id
-      extras: []           // 轮回殿增益 id 列表
+      extras: [],          // 轮回殿增益 id 列表
+      inherit: 0         // 前世遗产（税后，下一世开局继承）
     },
     stats: {
       lives: 0, maxAge: 0, bestGrade: null

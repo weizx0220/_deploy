@@ -234,7 +234,7 @@ var UI = (function () {
     { id: 'coin_start', name: '万贯家财', desc: '出生盘缠 +150', cost: 30, extra: true },
     { id: 'item_start', name: '传家宝', desc: '出生自带一件随机良品以上装备', cost: 40, extra: true },
     { id: 'skill_start', name: '武学启蒙', desc: '出生随机习得一个战斗技能', cost: 35, extra: true },
-    { id: 'ap_plus', name: '只争朝夕', desc: '行动点回复加快：每 2 年 +1（原 3 年）', cost: 50, extra: true },
+    { id: 'ap_plus', name: '只争朝夕', desc: '体力上限提升：每年 100 → 130', cost: 50, extra: true },
     { id: 'atk_plus', name: '天生神力', desc: '战斗攻击 +5', cost: 45, extra: true },
     { id: 'hp_plus', name: '百炼之躯', desc: '战斗生命上限 +60', cost: 45, extra: true },
     { id: 'legend_up', name: '天命所归', desc: '天品天赋出率翻倍', cost: 60, extra: true },

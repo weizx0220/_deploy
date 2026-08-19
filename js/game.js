@@ -405,7 +405,7 @@
       route: w.setRoute || '',
       world: w.id,
       coin: tpl ? (tpl.coin || 0) : 30,
-      ap: 3,
+      ap: 100,
       wound: 0,               // 重伤剩余年数
       inventory: [],
       equip: { weapon: null, armor: null, head: null, trinket: null, charm: null },
@@ -451,6 +451,14 @@
     if (hasExtra('skill_start')) {
       learnSkill(SKILLS[Engine.rnd(SKILLS.length)].id);
     }
+    // 前世遗产继承（已缴遗产税）
+    var inherit = Save.data.legacy.inherit || 0;
+    if (inherit > 0) {
+      G.life.coin += inherit;
+      Save.data.legacy.inherit = 0;
+      G.life._inheritNote = inherit;
+      Save.save();
+    }
     G.phase = 'life';
     document.body.dataset.world = w.id;   // 世界主题画风
     UI.showScreen('life');
@@ -463,6 +471,10 @@
     updateScene.current = null;
     renderSide();
     addTimeline('<div class="event-card fate">' + (w.intro || '') + '</div>');
+    if (G.life._inheritNote) {
+      addTimeline('<div class="event-card fate">前世尘埃落定，遗产税讫。你带着 <b>' + G.life._inheritNote + '</b> ' + Game.coinName() + ' 的继承降生此世——上一世的汗水，是这一世的底气。</div>');
+      delete G.life._inheritNote;
+    }
     if (tpl) {
       addTimeline('<div class="event-card fate">这一世，你是 <b>' + tpl.name + '</b>。' + (tpl.birthText || '') + '</div>');
     } else {
@@ -1022,7 +1034,7 @@
       questCheck();
     },
     questCheck: questCheck,
-    apInterval: function () { return hasExtra('ap_plus') ? 2 : 3; },
+    maxEnergy: function () { return hasExtra('ap_plus') ? 130 : 100; },
     collectCard: collectCard,
     applyWound: applyWound,
     addCard: addTimeline,
@@ -1080,6 +1092,8 @@
     }
     // 家境生财：每年按家境产生盘缠收入
     if (L.attr.mny > 0) L.coin += Math.floor(L.attr.mny / 3);
+    // 产业经营：每年收租 + 经营事件
+    if (typeof Biz !== 'undefined') Biz.tick(L);
     // 职业年薪与晋升
     if (L.career && L.age >= 18) {
       var cs = careerOf(L.career.id);
@@ -1108,11 +1122,12 @@
         }
       }
     }
-    // 行动点：每 3 年回复 1 点（轮回殿增益可缩至 2 年），上限 3，回满提醒
-    var apInterval = hasExtra('ap_plus') ? 2 : 3;
-    if (L.age > 0 && L.age % apInterval === 0 && L.ap < 3) {
-      L.ap++;
-      if (L.ap >= 3) UI.miniToast('行动点已回满，去「行动」大展身手吧');
+    // 体力：每年伊始回满（轮回殿「只争朝夕」提上限至 130）
+    var maxE = hasExtra('ap_plus') ? 130 : 100;
+    if (L.age > 0) {
+      var wasLow = L.ap < maxE;
+      L.ap = maxE;
+      if (wasLow) UI.miniToast('新岁已至，体力回满（' + maxE + '）');
     }
     questCheck();                // 主线推进检查
     renderSide();
@@ -1188,6 +1203,11 @@
 
   function doFinish() {
     var L = G.life;
+    // 遗产结算：现金 + 产业残值（6 折），遗产税 30%，下一世开局继承
+    var bizVal = (typeof Biz !== 'undefined') ? Biz.estateValue(L) : 0;
+    var estate = L.coin + bizVal;
+    var inherit = Math.floor(estate * 0.7);
+    Save.data.legacy.inherit = inherit;
     Save.clearRun();   // 一世落幕，清除进行档
     // 牌组跨世继承：写回档案
     Save.data.deck = { collection: (L.collection || []).slice(), deckExtra: (L.deckExtra || []).slice() };
@@ -1209,7 +1229,7 @@
 
     // 总结界面
     setTimeout(function () {
-      renderSummary(ending, grade, reward, isNewEnding);
+      renderSummary(ending, grade, reward, isNewEnding, estate, inherit);
       UI.showScreen('summary');
     }, 1200);
   }
@@ -1232,7 +1252,7 @@
     ed_richlife: 'end_richlife.png'
   };
 
-  function renderSummary(ending, grade, reward, isNewEnding) {
+  function renderSummary(ending, grade, reward, isNewEnding, estate, inherit) {
     var L = G.life;
     // 结局插画：优先按结局 id，其次按书中界 flag，最后按享年阶段
     var art = $('summary-art');
@@ -1259,7 +1279,7 @@
     $('summary-grade').textContent = '享年 ' + Math.max(0, L.age) + ' 岁 · ' + (L.gender === 'M' ? '乾' : '坤');
     $('summary-verdict').textContent = ending ? ending.verdict : '一生如水，无波无澜。';
     $('summary-ending').textContent = ending ? ('结局 · ' + ending.name + (isNewEnding ? '（新）' : '')) : '';
-    $('summary-reward').textContent = '轮回点 +' + reward;
+    $('summary-reward').textContent = '轮回点 +' + reward + (inherit > 0 ? '　·　遗产 ' + estate + '，税后继承 ' + inherit : '');
     UI.drawCurve($('summary-curve'), L.history);
     var mh = '', seenTexts = {};
     L.moments.forEach(function (m) {   // 去重：同一文本只留第一次

@@ -1835,3 +1835,12 @@ body[data-world="novel_wuxian"] { --corner-url: url("../assets/ui/corner_novel_w
 body[data-world="novel_bazong"] { --corner-url: url("../assets/ui/corner_novel_bazong.svg"); }
 body[data-world="novel_moshi"] { --corner-url: url("../assets/ui/corner_novel_moshi.svg"); }
 body[data-world="xiuxian"] { --corner-url: url("../assets/ui/corner_xiuxian.svg"); }
+
+/* ---------- 产业经营 ---------- */
+.biz-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; margin-right: 8px;
+  background: linear-gradient(135deg, #b8862f, #8a6420); color: #f8f3e6;
+  font-size: 15px; vertical-align: middle;
+}
+.biz-lv { color: var(--gold); font-size: 13px; margin-left: 4px; }
