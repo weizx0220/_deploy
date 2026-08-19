@@ -1543,3 +1543,88 @@ body[data-world] .soc-favor { background: rgba(255,255,255,0.1); }
   border: 2px solid var(--gold, #b8862f); flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+
+/* ---------- 行囊全屏独立界面 ---------- */
+#overlay-inv { background: linear-gradient(160deg, #f4eddb 0%, #ece2c8 55%, #e6dbc2 100%); }
+#overlay-inv .overlay-panel {
+  width: 100%; height: 100%; max-height: none; border-radius: 0; border: none;
+  background: transparent; box-shadow: none;
+}
+#overlay-inv .overlay-head {
+  padding: 16px 26px; background: rgba(255,252,244,0.75);
+  border-bottom: 2px solid rgba(42,42,46,0.14);
+  backdrop-filter: blur(6px);
+}
+#overlay-inv .overlay-title { font-size: 26px; letter-spacing: 10px; }
+#overlay-inv .overlay-body {
+  flex: 1; max-width: 980px; width: 100%; margin: 0 auto; padding: 22px 26px 40px;
+}
+#overlay-inv .inv-head {
+  background: rgba(255,252,244,0.6); border: 1px solid rgba(42,42,46,0.14);
+  border-radius: 10px; padding: 10px 16px;
+}
+#overlay-inv .tab { font-size: 18px; }
+#overlay-inv .eq-circle { margin-top: 10px; }
+.eq-slot .eq-ico {
+  width: 44px; height: 44px; border-radius: 6px; object-fit: cover;
+  border: 1px solid rgba(42,42,46,0.18); background: #26262c;
+}
+#inv-list .map-act {
+  background: rgba(255,252,244,0.65); border: 1px solid rgba(42,42,46,0.14);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+}
+#inv-list .mini-ico {
+  width: 38px; height: 38px; border-radius: 6px; object-fit: cover;
+  border: 1px solid rgba(42,42,46,0.18); margin-right: 10px; vertical-align: middle;
+  background: #26262c;
+}
+body[data-world] #overlay-inv { background: linear-gradient(160deg, rgba(16,16,22,0.97), rgba(24,24,34,0.97)); }
+body[data-world] #overlay-inv .overlay-head,
+body[data-world] #overlay-inv .inv-head { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+body[data-world] #inv-list .map-act { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+
+/* ---------- 按钮挤压手感 ---------- */
+.ink-btn, .tab, .cat, .overlay-close, .hero-card, .world-card, .tk-card,
+.eq-slot, .dk-card, .place-act button, .mg-opt, button {
+  transition: transform .12s ease, box-shadow .15s ease;
+}
+.ink-btn:active, .tab:active, .cat:active, .overlay-close:active,
+.hero-card:active, .world-card:active, .tk-card:active, .eq-slot:active,
+.dk-card:active, .mg-opt:active, button:active {
+  transform: scale(0.93);
+  filter: brightness(0.94);
+}
+.ink-btn:disabled:active, button:disabled:active { transform: none; filter: none; }
+
+/* ---------- 触屏/点击波纹 ---------- */
+.tap-ripple {
+  position: fixed; z-index: 200; pointer-events: none;
+  border-radius: 50%; transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(184,134,47,0.5) 0%, rgba(184,134,47,0.18) 55%, transparent 70%);
+  animation: tapRipple .55s ease-out forwards;
+}
+.tap-ripple::after {
+  content: ""; position: absolute; inset: 30%;
+  border-radius: 50%; border: 1.5px solid rgba(165,40,27,0.55);
+}
+@keyframes tapRipple {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* ---------- 行囊界面细节修正 ---------- */
+/* 行内左侧文字区可收缩，描述不被挤成竖条 */
+#inv-list .map-act > div:first-child { flex: 1; min-width: 0; }
+#inv-list .map-act .l-desc { white-space: normal; word-break: break-all; }
+@media (max-width: 768px) {
+  #overlay-inv .overlay-body { padding: 14px 12px 30px; }
+  #inv-list .map-act { flex-wrap: wrap; padding: 10px; }
+  #inv-list .map-act > div:first-child { flex-basis: 100%; }
+  #inv-list .map-act .l-name { font-size: 15px; }
+  #inv-list .map-act .l-desc { font-size: 12px; }
+}
+
+/* 波纹加大加亮 */
+.tap-ripple {
+  background: radial-gradient(circle, rgba(214,168,76,0.65) 0%, rgba(184,134,47,0.3) 50%, transparent 70%);
+}

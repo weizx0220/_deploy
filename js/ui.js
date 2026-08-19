@@ -300,3 +300,19 @@ var UI = (function () {
     renderGallery: renderGallery, renderLegacy: renderLegacy
   };
 })();
+
+/* ---------- 全局触屏/点击波纹特效 ---------- */
+(function () {
+  function ripple(x, y) {
+    var el = document.createElement('div');
+    el.className = 'tap-ripple';
+    var size = 96;
+    el.style.width = size + 'px'; el.style.height = size + 'px';
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 600);
+  }
+  document.addEventListener('pointerdown', function (e) {
+    ripple(e.clientX, e.clientY);
+  }, { passive: true });
+})();

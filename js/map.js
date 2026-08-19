@@ -714,7 +714,8 @@ var MapX = (function () {
       var iid = L.equip[slot];
       var it = iid ? Game.item(iid) : null;
       var lv = it ? (L.forge[it.id] || 0) : 0;
-      slotEl.innerHTML = '<small>' + SLOT_NAMES[slot] + '</small><b>' + (it ? it.name : '——') + '</b>' +
+      var ico = (it && typeof Assets !== 'undefined') ? '<img class="eq-ico" src="' + Assets.url(it.id + '.png') + '" onerror="this.remove()">' : '';
+      slotEl.innerHTML = '<small>' + SLOT_NAMES[slot] + '</small>' + ico + '<b>' + (it ? it.name : '——') + '</b>' +
         (it && lv ? '<i>+' + lv + '</i>' : '');
       slotEl.classList.toggle('filled', !!it);
       slotEl.classList.toggle('sel', slotSel === slot);
