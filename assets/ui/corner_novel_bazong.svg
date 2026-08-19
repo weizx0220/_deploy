@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">
+  <defs>
+    <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0d0a8"/>
+      <stop offset="1" stop-color="#c05a3a"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#cg)" stroke-linecap="round">
+    <!-- 角框 -->
+    <path d="M4 60 V20 Q4 4 20 4 H60" stroke-width="3.4"/>
+    <path d="M10 66 V24 Q10 10 24 10 H66" stroke-width="1.4" opacity="0.65"/>
+    <!-- 主云纹卷 -->
+    <path d="M20 44 a14 14 0 1 1 14 14 a9 9 0 1 0 -2 -17" stroke-width="2.6"/>
+    <!-- 拖尾云丝 -->
+    <path d="M34 58 q10 6 8 18 q-2 10 -12 12" stroke-width="2" opacity="0.85"/>
+    <path d="M58 34 q6 10 18 8 q10 -2 12 -12" stroke-width="2" opacity="0.85"/>
+    <!-- 点缀 -->
+    <circle cx="20" cy="20" r="2.6" fill="url(#cg)" stroke="none"/>
+    <circle cx="76" cy="76" r="1.8" fill="url(#cg)" stroke="none" opacity="0.7"/>
+  </g>
+</svg>

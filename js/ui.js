@@ -189,7 +189,7 @@ var UI = (function () {
         var unlocked = haveA.indexOf(a.id) >= 0;
         if (unlocked) gotA++;
         var secret = a.hidden && !unlocked;
-        html += '<div class="gallery-item' + (unlocked ? '' : ' locked') + '">' +
+        html += '<div class="gallery-item' + (unlocked ? ' achieved' : ' locked') + '">' +
           '<div class="g-name">' + (secret ? '？？？' : a.name) + '</div>' +
           '<div class="g-desc">' + (secret ? '隐于命运之后' : a.desc) + '</div></div>';
       });

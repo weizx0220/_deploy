@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+  <defs>
+    <linearGradient id="cbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#33333a"/>
+      <stop offset="1" stop-color="#1b1b21"/>
+    </linearGradient>
+    <linearGradient id="cfg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0d489"/>
+      <stop offset="0.5" stop-color="#9a6f23"/>
+      <stop offset="1" stop-color="#e8c97a"/>
+    </linearGradient>
+    <radialGradient id="cglow" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#d4a94e" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#d4a94e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="300" height="420" fill="url(#cbg)"/>
+  <rect width="300" height="420" fill="url(#cglow)"/>
+  <!-- 双线框 -->
+  <rect x="12" y="12" width="276" height="396" fill="none" stroke="url(#cfg)" stroke-width="3" rx="8"/>
+  <rect x="22" y="22" width="256" height="376" fill="none" stroke="url(#cfg)" stroke-width="1.2" rx="5" opacity="0.6"/>
+  <!-- 四角云钩 -->
+  <g stroke="url(#cfg)" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.9">
+    <path d="M34 52 V42 Q34 34 42 34 H52"/>
+    <path d="M266 52 V42 Q266 34 258 34 H248"/>
+    <path d="M34 368 V378 Q34 386 42 386 H52"/>
+    <path d="M266 368 V378 Q266 386 258 386 H248"/>
+  </g>
+  <!-- 中央命字 + 云环 -->
+  <circle cx="150" cy="210" r="72" fill="none" stroke="url(#cfg)" stroke-width="2" opacity="0.75"/>
+  <circle cx="150" cy="210" r="62" fill="none" stroke="url(#cfg)" stroke-width="1" opacity="0.4" stroke-dasharray="6 5"/>
+  <g stroke="url(#cfg)" stroke-width="1.8" fill="none" opacity="0.8" stroke-linecap="round">
+    <path d="M150 130 a10 10 0 1 1 8 4"/>
+    <path d="M150 290 a10 10 0 1 0 -8 -4"/>
+    <path d="M70 210 a10 10 0 1 1 4 -8"/>
+    <path d="M230 210 a10 10 0 1 0 -4 8"/>
+  </g>
+  <text x="150" y="234" text-anchor="middle" font-family="STKaiti, KaiTi, serif" font-size="76" font-weight="bold"
+    fill="url(#cfg)" opacity="0.95">命</text>
+</svg>

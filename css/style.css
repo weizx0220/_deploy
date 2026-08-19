@@ -1781,3 +1781,57 @@ body[data-world] #overlay-map .overlay-head, body[data-world] #overlay-social .o
 #overlay-inv .overlay-panel::after, #overlay-map .overlay-panel::after, #overlay-social .overlay-panel::after {
   right: 6px; bottom: 6px; transform: scale(-1);
 }
+
+/* ---------- 六世界角纹配色（mask 换色，SVG 共用） ---------- */
+#overlay-inv .overlay-panel::before, #overlay-map .overlay-panel::before, #overlay-social .overlay-panel::before,
+#overlay-inv .overlay-panel::after, #overlay-map .overlay-panel::after, #overlay-social .overlay-panel::after {
+  background: var(--corner-grad, linear-gradient(135deg, #e8c97a, #9a6f23));
+  -webkit-mask: url("../assets/ui/corner.svg") no-repeat center / contain;
+  mask: url("../assets/ui/corner.svg") no-repeat center / contain;
+  opacity: 0.65;
+}
+body[data-world="life"] { --corner-grad: linear-gradient(135deg, #b8cfe8, #5a7ba4); }
+body[data-world="novel_wuxia"] { --corner-grad: linear-gradient(135deg, #b8d8a8, #4a7a52); }
+body[data-world="novel_wuxian"] { --corner-grad: linear-gradient(135deg, #d0b8f0, #8a5ab8); }
+body[data-world="novel_bazong"] { --corner-grad: linear-gradient(135deg, #f0d0a8, #c05a3a); }
+body[data-world="novel_moshi"] { --corner-grad: linear-gradient(135deg, #d8a878, #9c4d24); }
+body[data-world="xiuxian"] { --corner-grad: linear-gradient(135deg, #a8ecd4, #3d9b7e); }
+
+/* ---------- 功业碑：徽章底 ---------- */
+.gallery-item.achieved {
+  background-image: url("../assets/ui/badge.svg");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 58px;
+  border-color: var(--gold);
+}
+
+/* ---------- 抽签牌背 SVG 化 ---------- */
+.tcard-back {
+  background: url("../assets/ui/cardback.svg") center / cover no-repeat;
+  border: none;
+}
+.tcard-back::after { content: none; }
+/* 牌背悬停微光扫过 */
+.tcard-back::before {
+  content: ""; position: absolute; inset: 0; border-radius: 6px;
+  background: linear-gradient(115deg, transparent 30%, rgba(240,212,137,0.22) 50%, transparent 70%);
+  background-size: 250% 100%; background-position: 120% 0;
+  transition: background-position .9s ease;
+}
+.tcard:hover .tcard-back::before { background-position: -20% 0; }
+/* 徽章避让文字：缩小沉底 */
+.gallery-item.achieved { background-size: 44px; background-position: right 8px bottom 8px; opacity: 1; }
+.gallery-item.achieved .g-desc { padding-right: 48px; }
+
+/* 角纹回退为贴图方案 + 六世界配色 */
+#overlay-inv .overlay-panel::before, #overlay-map .overlay-panel::before, #overlay-social .overlay-panel::before,
+#overlay-inv .overlay-panel::after, #overlay-map .overlay-panel::after, #overlay-social .overlay-panel::after {
+  -webkit-mask: none; mask: none;
+  background: var(--corner-url, url("../assets/ui/corner.svg")) no-repeat center / contain;
+  opacity: 0.55;
+}
+body[data-world="life"] { --corner-url: url("../assets/ui/corner_life.svg"); }
+body[data-world="novel_wuxia"] { --corner-url: url("../assets/ui/corner_novel_wuxia.svg"); }
+body[data-world="novel_wuxian"] { --corner-url: url("../assets/ui/corner_novel_wuxian.svg"); }
+body[data-world="novel_bazong"] { --corner-url: url("../assets/ui/corner_novel_bazong.svg"); }
+body[data-world="novel_moshi"] { --corner-url: url("../assets/ui/corner_novel_moshi.svg"); }
+body[data-world="xiuxian"] { --corner-url: url("../assets/ui/corner_xiuxian.svg"); }
